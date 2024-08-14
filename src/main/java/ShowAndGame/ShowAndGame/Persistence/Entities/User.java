@@ -105,7 +105,7 @@ public class User implements UserDetails {
         return true;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
