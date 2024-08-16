@@ -19,11 +19,14 @@ public class Game {
     private int rating;
     @Column
     private String image;
-    @OneToMany
-    private List<Post> posts;
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FeedPost> posts;
+
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReviewPost> reviews;
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "owner_id")
-    private User owner;
+    private UserDev owner;
     @ManyToMany()
     @JoinTable(
             name = "game_followers",
@@ -42,7 +45,7 @@ public class Game {
     public Game() {
     }
 
-    public Game(String name, String description, int rating, String image, List<Post> posts, User owner, List<User> followers, List<Tag> tags) {
+    public Game(String name, String description, int rating, String image, List<FeedPost> posts, UserDev owner, List<User> followers, List<Tag> tags) {
         this.name = name;
         this.description = description;
         this.rating = rating;
@@ -93,11 +96,11 @@ public class Game {
         this.image = image;
     }
 
-    public List<Post> getPosts() {
+    public List<FeedPost> getPosts() {
         return posts;
     }
 
-    public void setPosts(List<Post> posts) {
+    public void setPosts(List<FeedPost> posts) {
         this.posts = posts;
     }
 
@@ -105,7 +108,7 @@ public class Game {
         return owner;
     }
 
-    public void setOwner(User owner) {
+    public void setOwner(UserDev owner) {
         this.owner = owner;
     }
 
@@ -123,5 +126,13 @@ public class Game {
 
     public void setTags(List<Tag> tags) {
         this.tags = tags;
+    }
+
+    public List<ReviewPost> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<ReviewPost> reviews) {
+        this.reviews = reviews;
     }
 }

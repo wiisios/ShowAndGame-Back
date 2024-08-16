@@ -33,27 +33,12 @@ public class User implements UserDetails {
     private List<Comment> comments;
     @ManyToMany(mappedBy = "followers")
     private List<Game> followedGames;
-    @OneToMany(mappedBy = "owner")
-    private List<Game> ownedGames;
     @OneToMany
     private List<Post> posts;
 
 
     public User(){
     };
-
-    public User(String userName, String password, String email, String profileImage, String backgroundImage, UserRole userRole, List<Post> posts, List<Comment> comments, List<Game> ownedGames, List<Game> followedGames){
-        this.userName = userName;
-        this.password = password;
-        this.email = email;
-        this.profileImage = profileImage;
-        this.backgroundImage = backgroundImage;
-        this.userRole = userRole;
-        this.comments = comments;
-        this.posts = posts;
-        this.ownedGames = ownedGames;
-        this.followedGames = followedGames;
-    }
 
     public User(String userName, String password, String email, String profileImage, String backgroundImage, UserRole userRole, List<Post> posts, List<Comment> comments, List<Game> followedGames){
         this.userName = userName;
@@ -167,14 +152,6 @@ public class User implements UserDetails {
 
     public void setFollowedGames(List<Game> followedGames) {
         this.followedGames = followedGames;
-    }
-
-    public List<Game> getOwnedGames() {
-        return ownedGames;
-    }
-
-    public void setOwnedGames(List<Game> ownedGames) {
-        this.ownedGames = ownedGames;
     }
 
     public List<Post> getPosts() {
