@@ -43,7 +43,7 @@ public class Tag {
         this.games = games;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

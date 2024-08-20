@@ -25,11 +25,11 @@ public class GameService {
         gameRepository.deleteById(id);
     }
 
-    public Optional<Game> getById(Long id) {
+    public Optional<Game> search(Long id) {
         return gameRepository.findById(id);
     }
 
-    public List<Game> getAll() {
+    public List<Game> searchAll() {
         return gameRepository.findAll();
     }
 
