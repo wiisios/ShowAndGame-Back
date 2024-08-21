@@ -14,16 +14,10 @@ public class Post {
     private long id;
 
     @Column
-    private String content;
+    private String description;
 
     @Column
     private Date date;
-
-    @Column
-    private Integer likes;
-
-    @OneToMany
-    private List<Comment> comments;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id")
@@ -35,13 +29,11 @@ public class Post {
 
     public Post() {
     }
-    public Post(String content, User user, Game game, Date date, Integer likes, List<Comment> comments) {
-        this.content = content;
+    public Post(String description, User user, Game game, Date date) {
+        this.description = description;
         this.user = user;
         this.game = game;
         this.date = date;
-        this.likes = likes;
-        this.comments = comments;
     }
 
     public Long getId() {
@@ -52,12 +44,12 @@ public class Post {
         this.id = id;
     }
 
-    public String getContent() {
-        return content;
+    public String getDescription() {
+        return description;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public User getUser() {
@@ -84,19 +76,4 @@ public class Post {
         this.date = date;
     }
 
-    public Integer getLikes() {
-        return likes;
-    }
-
-    public void setLikes(Integer likes) {
-        this.likes = likes;
-    }
-
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
 }
