@@ -10,7 +10,7 @@ public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
-    private long id;
+    private Long id;
 
     @Column
     private String name;

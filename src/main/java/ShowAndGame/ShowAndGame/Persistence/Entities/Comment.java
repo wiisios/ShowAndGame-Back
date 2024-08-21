@@ -10,21 +10,21 @@ public class Comment {
     @Column(name = "id", nullable = false)
     private long id;
     @Column
-    private String content;
+    private String description;
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id")
     private User user;
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "post_id")
-    private Post post;
+    private FeedPost feedPost;
 
     public Comment(){
     }
 
-    public Comment(String content, User user, Post post){
-        this.content = content;
+    public Comment(String description, User user, FeedPost feedPost){
+        this.description = description;
         this.user = user;
-        this.post = post;
+        this.feedPost = feedPost;
     }
 
     public Long getId() {
@@ -35,20 +35,20 @@ public class Comment {
         this.id = id;
     }
 
-    public String getContent() {
-        return content;
+    public String getDescription() {
+        return description;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public Post getPost() {
-        return post;
+    public FeedPost getfeedPost() {
+        return feedPost;
     }
 
-    public void setPost(Post post) {
-        this.post = post;
+    public void setFeedPost(FeedPost feedPost) {
+        this.feedPost = feedPost;
     }
 
     public User getUser() {

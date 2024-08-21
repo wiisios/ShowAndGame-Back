@@ -18,9 +18,11 @@ public class Game {
     @Column
     private int rating;
     @Column
-    private String image;
+    private String profileImage;
+    @Column
+    private String backgroundImage;
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FeedPost> posts;
+    private List<FeedPost> feedPosts;
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewPost> reviews;
@@ -45,12 +47,13 @@ public class Game {
     public Game() {
     }
 
-    public Game(String name, String description, int rating, String image, List<FeedPost> posts, UserDev owner, List<User> followers, List<Tag> tags) {
+    public Game(String name, String description, int rating, String profileImage, String backgroundImage, List<FeedPost> feedPosts, UserDev owner, List<User> followers, List<Tag> tags) {
         this.name = name;
         this.description = description;
         this.rating = rating;
-        this.image = image;
-        this.posts = posts;
+        this.profileImage = profileImage;
+        this.backgroundImage = backgroundImage;
+        this.feedPosts = feedPosts;
         this.owner = owner;
         this.followers = followers;
         this.tags = tags;
@@ -88,20 +91,12 @@ public class Game {
         this.rating = rating;
     }
 
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
     public List<FeedPost> getPosts() {
-        return posts;
+        return feedPosts;
     }
 
-    public void setPosts(List<FeedPost> posts) {
-        this.posts = posts;
+    public void setPosts(List<FeedPost> feedPosts) {
+        this.feedPosts = feedPosts;
     }
 
     public User getOwner() {
@@ -134,5 +129,21 @@ public class Game {
 
     public void setReviews(List<ReviewPost> reviews) {
         this.reviews = reviews;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public String getBackgroundImage() {
+        return backgroundImage;
+    }
+
+    public void setBackgroundImage(String backgroundImage) {
+        this.backgroundImage = backgroundImage;
     }
 }
