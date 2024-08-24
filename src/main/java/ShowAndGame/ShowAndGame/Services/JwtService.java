@@ -2,7 +2,6 @@ package ShowAndGame.ShowAndGame.Services;
 
 import ShowAndGame.ShowAndGame.Persistence.Entities.User;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

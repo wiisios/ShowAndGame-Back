@@ -1,8 +1,6 @@
 package ShowAndGame.ShowAndGame.Services;
 
-import ShowAndGame.ShowAndGame.Persistence.Entities.Post;
 import ShowAndGame.ShowAndGame.Persistence.Entities.Tag;
-import ShowAndGame.ShowAndGame.Persistence.Repository.PostRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

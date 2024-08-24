@@ -1,14 +1,26 @@
 package ShowAndGame.ShowAndGame.Persistence.Entities;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Entity
 public class FeedPost extends Post {
 
-    private List<String> images;
+    private List<String> images = new ArrayList<>();
     private Integer likes;
-    private List<Comment> comments;
 
+    @OneToMany(mappedBy = "feedPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments =  new ArrayList<>();
+
+
+    public FeedPost(){
+
+    }
     public FeedPost(String content, User user, Game game, Date date, List<String> images, Integer likes1, List<Comment> comments) {
         super(content, user, game, date);
         this.images = images;

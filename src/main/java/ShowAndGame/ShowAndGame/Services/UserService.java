@@ -1,14 +1,14 @@
 package ShowAndGame.ShowAndGame.Services;
 
-import ShowAndGame.ShowAndGame.Persistence.Entities.Game;
 import ShowAndGame.ShowAndGame.Persistence.Entities.User;
-import ShowAndGame.ShowAndGame.Persistence.Repository.GameRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class UserService {
     private UserRepository userRepository;
     @Autowired

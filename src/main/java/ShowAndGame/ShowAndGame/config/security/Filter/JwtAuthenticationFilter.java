@@ -42,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String username = jwtService.extractUsername(jwt);
 
         //4. Setear un objeto Authentication dentro del SecurityContext
-        User user = userRepository.findByUsername(username).get();
+        User user = userRepository.findByUserName(username).get();
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 username, null, user.getAuthorities()

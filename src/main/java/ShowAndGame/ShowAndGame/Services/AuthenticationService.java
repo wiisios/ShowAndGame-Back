@@ -26,12 +26,12 @@ public class AuthenticationService {
     public AuthenticationResponse login(AuthenticationRequest authRequest){
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                authRequest.getUsername(),authRequest.getPassword()
+                authRequest.getUserName(),authRequest.getPassword()
         );
 
         authenticationManager.authenticate(authToken);
 
-        User user = userRepository.findByUsername(authRequest.getUsername()).get();
+        User user = userRepository.findByUserName(authRequest.getUserName()).get();
 
         String jwt = jwtService.generateToken(user, generateExtraClaims(user));
 
