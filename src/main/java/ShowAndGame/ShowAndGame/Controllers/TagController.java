@@ -1,5 +1,6 @@
 package ShowAndGame.ShowAndGame.Controllers;
 
+import ShowAndGame.ShowAndGame.Persistence.Entities.FeedPost;
 import ShowAndGame.ShowAndGame.Persistence.Entities.Tag;
 import ShowAndGame.ShowAndGame.Services.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,10 @@ public class TagController {
         return ResponseEntity.ok(tag);
     }
 
+    @GetMapping("/{gameId}")
+    public ResponseEntity<List<Tag>> getTagsByGameId(@PathVariable Long gameId){
+        return ResponseEntity.ok(tagService.searchTagsByGameId(gameId));
+    }
 
     @PostMapping()
     public ResponseEntity<Tag> createTag(@RequestBody Tag tag){

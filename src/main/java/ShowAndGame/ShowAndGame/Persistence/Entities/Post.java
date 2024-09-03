@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-public class Post {
+public abstract class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

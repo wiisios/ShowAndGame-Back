@@ -1,5 +1,6 @@
 package ShowAndGame.ShowAndGame.Services;
 
+import ShowAndGame.ShowAndGame.Persistence.Dto.GameForFeedDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.Game;
 import ShowAndGame.ShowAndGame.Persistence.Repository.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class GameService {
@@ -31,6 +33,13 @@ public class GameService {
 
     public List<Game> searchAll() {
         return gameRepository.findAll();
+    }
+
+    public List<GameForFeedDto> searchAllForFeed() {
+        List<Game> games = gameRepository.findAll();
+        return games.stream()
+                .map(game -> new GameForFeedDto(game))
+                .collect(Collectors.toList());
     }
 
     public Game update(Game game) {

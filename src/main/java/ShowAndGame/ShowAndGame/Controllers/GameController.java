@@ -1,5 +1,6 @@
 package ShowAndGame.ShowAndGame.Controllers;
 
+import ShowAndGame.ShowAndGame.Persistence.Dto.GameForFeedDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.Game;
 import ShowAndGame.ShowAndGame.Services.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,11 @@ public class GameController {
         return ResponseEntity.ok(game);
     }
 
+    @GetMapping
+    public ResponseEntity<List<GameForFeedDto>> getGamesForFeed() {
+        List<GameForFeedDto> gameDTOs = gameService.searchAllForFeed();
+        return ResponseEntity.ok(gameDTOs);
+    }
 
     @PostMapping()
     public ResponseEntity<Game> createGame(@RequestBody Game game){
