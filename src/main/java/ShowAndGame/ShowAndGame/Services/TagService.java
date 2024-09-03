@@ -32,6 +32,8 @@ public class TagService {
         return tagRepository.findAll();
     }
 
+    public List<Tag> searchTagsByGameId(Long gameId) { return tagRepository.findByGameId(gameId);}
+
     public Tag update(Tag tag) {
         return tagRepository.save(tag);
     }
