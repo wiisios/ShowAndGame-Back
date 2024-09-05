@@ -11,7 +11,7 @@ import java.util.List;
 public class UserDev extends User {
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Game>ownedGames;
+    private List<Game> ownedGames;
 
     public UserDev(){
 
