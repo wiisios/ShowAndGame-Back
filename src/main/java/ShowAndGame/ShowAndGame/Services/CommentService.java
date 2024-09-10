@@ -1,5 +1,7 @@
 package ShowAndGame.ShowAndGame.Services;
 
+import ShowAndGame.ShowAndGame.Persistence.Dto.CommentDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GameForFeedDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.Comment;
 import ShowAndGame.ShowAndGame.Persistence.Repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
@@ -34,8 +37,11 @@ public class CommentService {
         return commentRepository.findAll();
     }
 
-    public List<Comment> getCommentsByPostId(Long postId) {
-        return commentRepository.findByFeedPostId(postId);
+    public List<CommentDto> getCommentsByPostId(Long postId) {
+        List<Comment> comments = commentRepository.findByFeedPostId(postId);
+        return comments.stream()
+                .map(comment -> new CommentDto(comment))
+                .collect(Collectors.toList());
     }
 
     public Comment update(Comment comment) {
