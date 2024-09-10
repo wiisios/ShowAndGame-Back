@@ -1,5 +1,6 @@
 package ShowAndGame.ShowAndGame.Controllers;
 
+import ShowAndGame.ShowAndGame.Persistence.Dto.CommentDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.Comment;
 import ShowAndGame.ShowAndGame.Services.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,8 @@ public class CommentController {
     }
 
     @GetMapping("/post/{postId}")
-    public List<Comment> getCommentsByPost(@PathVariable Long postId){
-      return commentService.getCommentsByPostId(postId);
+    public ResponseEntity<List<CommentDto>> getCommentsByPost(@PathVariable Long postId){
+      return ResponseEntity.ok(commentService.getCommentsByPostId(postId));
     }
 
 
