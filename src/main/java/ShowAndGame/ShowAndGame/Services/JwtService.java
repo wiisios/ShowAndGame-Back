@@ -21,7 +21,7 @@ public class JwtService {
     @Value("${security.jwt.secret-key}")
     private String SECRET_KEY;
 
-    public String generateToken(User user, Map<String, Object> extraClaims){
+    public String GenerateToken(User user, Map<String, Object> extraClaims){
 
         Date issuedAt = new Date(System.currentTimeMillis());
         Date expiration = new Date(issuedAt.getTime() + (EXPIRATION_MINUTES*60*1000));
@@ -31,24 +31,24 @@ public class JwtService {
                 .subject(user.getUsername())
                 .issuedAt(issuedAt)
                 .expiration(expiration)
-                .signWith(getSignInKey(), Jwts.SIG.HS256)
+                .signWith(GetSignInKey(), Jwts.SIG.HS256)
                 .compact();
 
     }
 
-    private SecretKey getSignInKey() {
+    private SecretKey GetSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String extractUsername(String jwt){
+    public String ExtractUsername(String jwt){
 
-        return extractAllClaims(jwt).getSubject();
+        return ExtractAllClaims(jwt).getSubject();
     }
 
-    private Claims extractAllClaims(String jwt) {
+    private Claims ExtractAllClaims(String jwt) {
         return Jwts.parser()
-                .verifyWith(getSignInKey())
+                .verifyWith(GetSignInKey())
                 .build()
                 .parseSignedClaims(jwt)
                 .getPayload();

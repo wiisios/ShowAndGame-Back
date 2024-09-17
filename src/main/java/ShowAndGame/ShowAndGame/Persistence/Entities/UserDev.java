@@ -2,7 +2,6 @@ package ShowAndGame.ShowAndGame.Persistence.Entities;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 import java.util.List;

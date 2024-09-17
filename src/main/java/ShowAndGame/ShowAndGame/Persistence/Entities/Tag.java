@@ -10,10 +10,13 @@ public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
-    private Long id;
+    private long id;
 
     @Column
     private String name;
+
+    @Column
+    private String color;
 
     @ManyToMany(mappedBy = "tags")
     private List<Game> games;
@@ -21,8 +24,9 @@ public class Tag {
     public Tag() {
     }
 
-    public Tag(String name, List<Game> games) {
+    public Tag(String name, String color, List<Game> games) {
         this.name = name;
+        this.color = color;
         this.games = games;
     }
 
@@ -49,5 +53,13 @@ public class Tag {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 }

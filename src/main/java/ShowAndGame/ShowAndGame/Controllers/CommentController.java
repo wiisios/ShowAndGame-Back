@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -20,34 +19,34 @@ public class CommentController {
 
 
     @GetMapping()
-    public ResponseEntity<List<Comment>> getAllComments() {return  ResponseEntity.ok(commentService.searchAll());}
+    public ResponseEntity<List<Comment>> getAllComments() {return  ResponseEntity.ok(commentService.GetAll());}
 
     @GetMapping("/{id}")
     public ResponseEntity<Comment> getComment(@PathVariable Long id) {
 
-        Comment comment = commentService.search(id).orElse((null));
+        Comment comment = commentService.GetById(id).orElse((null));
 
         return ResponseEntity.ok(comment);
     }
 
     @GetMapping("/post/{postId}")
     public ResponseEntity<List<CommentDto>> getCommentsByPost(@PathVariable Long postId){
-      return ResponseEntity.ok(commentService.getCommentsByPostId(postId));
+      return ResponseEntity.ok(commentService.GetCommentsByPostId(postId));
     }
 
 
     @PostMapping()
     public ResponseEntity<Comment> createComment(@RequestBody Comment comment){
 
-        return ResponseEntity.ok(commentService.create(comment));
+        return ResponseEntity.ok(commentService.Create(comment));
     }
 
     @PutMapping()
     public ResponseEntity<Comment> updateComment(@RequestBody Comment comment){
         ResponseEntity<Comment> response = null;
 
-        if (comment.getId() != null && commentService.search(comment.getId()).isPresent())
-            response = ResponseEntity.ok(commentService.update(comment));
+        if (comment.getId() != null && commentService.GetById(comment.getId()).isPresent())
+            response = ResponseEntity.ok(commentService.Update(comment));
         else
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
@@ -59,8 +58,8 @@ public class CommentController {
     public ResponseEntity<String> deleteComment(@PathVariable Long id){
         ResponseEntity<String> response = null;
 
-        if (commentService.search(id).isPresent()){
-            commentService.delete(id);
+        if (commentService.GetById(id).isPresent()){
+            commentService.Delete(id);
             response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Eliminado");}
         else
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();

@@ -2,8 +2,7 @@ package ShowAndGame.ShowAndGame.Persistence.Entities;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
 
 @Entity
 public abstract class Post {
@@ -17,7 +16,7 @@ public abstract class Post {
     private String description;
 
     @Column
-    private Date date;
+    private LocalDate date;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id")
@@ -29,7 +28,7 @@ public abstract class Post {
 
     public Post() {
     }
-    public Post(String description, User user, Game game, Date date) {
+    public Post(String description, User user, Game game, LocalDate date) {
         this.description = description;
         this.user = user;
         this.game = game;
@@ -68,11 +67,11 @@ public abstract class Post {
         this.game = game;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

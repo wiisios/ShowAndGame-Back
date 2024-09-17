@@ -1,7 +1,6 @@
 package ShowAndGame.ShowAndGame.Services;
 
 import ShowAndGame.ShowAndGame.Persistence.Dto.CommentDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GameForFeedDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.Comment;
 import ShowAndGame.ShowAndGame.Persistence.Repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,36 +14,36 @@ import java.util.stream.Collectors;
 public class CommentService {
 
 
-    private CommentRepository commentRepository;
+    private final CommentRepository commentRepository;
     @Autowired
     public CommentService(CommentRepository commentRepository){
         this.commentRepository = commentRepository;
     }
 
-    public Comment create(Comment comment) {
+    public Comment Create(Comment comment) {
         return commentRepository.save(comment);
     }
 
-    public void delete(Long id) {
+    public void Delete(Long id) {
         commentRepository.deleteById(id);
     }
 
-    public Optional<Comment> search(Long id) {
+    public Optional<Comment> GetById(Long id) {
         return commentRepository.findById(id);
     }
 
-    public List<Comment> searchAll() {
+    public List<Comment> GetAll() {
         return commentRepository.findAll();
     }
 
-    public List<CommentDto> getCommentsByPostId(Long postId) {
+    public List<CommentDto> GetCommentsByPostId(Long postId) {
         List<Comment> comments = commentRepository.findByFeedPostId(postId);
         return comments.stream()
                 .map(comment -> new CommentDto(comment))
                 .collect(Collectors.toList());
     }
 
-    public Comment update(Comment comment) {
+    public Comment Update(Comment comment) {
         return commentRepository.save(comment);
     }
 

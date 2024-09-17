@@ -18,33 +18,33 @@ public class FeedPostController {
     private FeedPostService feedPostService;
 
     @GetMapping()
-    public ResponseEntity<List<FeedPost>> getAllPosts() {return  ResponseEntity.ok(feedPostService.searchAll());}
+    public ResponseEntity<List<FeedPost>> getAllPosts() {return  ResponseEntity.ok(feedPostService.GetAll());}
 
     @GetMapping("/{id}")
     public ResponseEntity<FeedPost> getPost(@PathVariable Long id) {
 
-        FeedPost feedPost = feedPostService.search(id).orElse((null));
+        FeedPost feedPost = feedPostService.GetById(id).orElse((null));
 
         return ResponseEntity.ok(feedPost);
     }
 
     @GetMapping("/{gameId}")
     public ResponseEntity<List<FeedPost>> getPostByGameId(@PathVariable Long gameId){
-        return ResponseEntity.ok(feedPostService.searchFeedPostsByGameId(gameId));
+        return ResponseEntity.ok(feedPostService.GetFeedPostsByGameId(gameId));
     }
 
     @PostMapping()
     public ResponseEntity<FeedPost> createPost(@RequestBody FeedPost feedPost){
 
-        return ResponseEntity.ok(feedPostService.create(feedPost));
+        return ResponseEntity.ok(feedPostService.Create(feedPost));
     }
 
     @PutMapping()
     public ResponseEntity<FeedPost> updatePost(@RequestBody FeedPost feedPost){
         ResponseEntity<FeedPost> response = null;
 
-        if (feedPost.getId() != null && feedPostService.search(feedPost.getId()).isPresent())
-            response = ResponseEntity.ok(feedPostService.update(feedPost));
+        if (feedPost.getId() != null && feedPostService.GetById(feedPost.getId()).isPresent())
+            response = ResponseEntity.ok(feedPostService.Update(feedPost));
         else
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
@@ -56,8 +56,8 @@ public class FeedPostController {
     public ResponseEntity<String> deletePost(@PathVariable Long id){
         ResponseEntity<String> response = null;
 
-        if (feedPostService.search(id).isPresent()){
-            feedPostService.delete(id);
+        if (feedPostService.GetById(id).isPresent()){
+            feedPostService.Delete(id);
             response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Eliminado");}
         else
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();

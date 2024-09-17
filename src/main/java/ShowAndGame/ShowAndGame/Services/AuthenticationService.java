@@ -23,7 +23,7 @@ public class AuthenticationService {
     @Autowired
     private JwtService jwtService;
 
-    public AuthenticationResponse login(AuthenticationRequest authRequest){
+    public AuthenticationResponse Login(AuthenticationRequest authRequest){
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 authRequest.getUserName(),authRequest.getPassword()
@@ -33,12 +33,12 @@ public class AuthenticationService {
 
         User user = userRepository.findByUserName(authRequest.getUserName()).get();
 
-        String jwt = jwtService.generateToken(user, generateExtraClaims(user));
+        String jwt = jwtService.GenerateToken(user, GenerateExtraClaims(user));
 
         return new AuthenticationResponse(jwt);
     }
 
-    private Map<String, Object> generateExtraClaims(User user){
+    private Map<String, Object> GenerateExtraClaims(User user){
 
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("name", user.getUsername());

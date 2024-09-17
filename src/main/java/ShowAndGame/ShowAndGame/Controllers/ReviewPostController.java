@@ -1,7 +1,9 @@
 package ShowAndGame.ShowAndGame.Controllers;
 
-import ShowAndGame.ShowAndGame.Persistence.Entities.ReviewPost;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GetReviewPostDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostForCreationAndUpdateDto;
 import ShowAndGame.ShowAndGame.Services.ReviewPostService;
+import ShowAndGame.ShowAndGame.Util.CurrentUserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,38 +17,68 @@ public class ReviewPostController {
 
     @Autowired
     private ReviewPostService reviewPostService;
+    @Autowired
+    private CurrentUserUtil currentUserUtil;
 
     @GetMapping()
-    public ResponseEntity<List<ReviewPost>> getAllPosts() {return  ResponseEntity.ok(reviewPostService.searchAll());}
+    public ResponseEntity<List<GetReviewPostDto>> getAllPosts() {
+
+        return ResponseEntity.ok(reviewPostService.GetAll());
+    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReviewPost> getPost(@PathVariable Long id) {
+    public ResponseEntity<GetReviewPostDto> getPost(@PathVariable Long id) {
+        GetReviewPostDto reviewPost = reviewPostService.GetById(id);
 
-        ReviewPost reviewPost = reviewPostService.search(id).orElse((null));
+        if (reviewPost != null){
+            return ResponseEntity.ok(reviewPost);
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
 
-        return ResponseEntity.ok(reviewPost);
+
     }
 
     @GetMapping("/{gameId}")
-    public ResponseEntity<List<ReviewPost>> getReviewsPostsByGameId(@PathVariable Long gameId){
-        return ResponseEntity.ok(reviewPostService.searchReviewPostsByGameId(gameId));
+    public ResponseEntity<List<GetReviewPostDto>> getReviewsPostsByGameId(@PathVariable Long gameId){
+
+        return ResponseEntity.ok(reviewPostService.GetReviewPostsByGameId(gameId));
     }
 
-    @PostMapping()
-    public ResponseEntity<ReviewPost> createPost(@RequestBody ReviewPost reviewPost){
 
-        return ResponseEntity.ok(reviewPostService.create(reviewPost));
+    //Cuando se crea una review, hay que updatear el Game por el rating general
+    @PostMapping()
+    public ResponseEntity<String> createPost(@RequestBody ReviewPostForCreationAndUpdateDto reviewPost, @PathVariable Long gameId){
+        ResponseEntity<String> response = null;
+        Long userId = currentUserUtil.GetCurrentUserId();
+
+        if (gameId == null){
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game not found");
+        } else if (userId == null) {
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+        else {
+            reviewPostService.Create(reviewPost, gameId, userId);
+            response = ResponseEntity.ok().body("Post created");
+        }
+
+        //Hay que updatear el rating del juego
+
+        return response;
     }
 
     @PutMapping()
-    public ResponseEntity<ReviewPost> updatePost(@RequestBody ReviewPost reviewPost){
-        ResponseEntity<ReviewPost> response = null;
+    public ResponseEntity<GetReviewPostDto> UpdateReviewPost(@RequestBody GetReviewPostDto reviewPostToUpdate){
+        ResponseEntity<GetReviewPostDto> response = null;
 
-        if (reviewPost.getId() != null && reviewPostService.search(reviewPost.getId()).isPresent())
-            response = ResponseEntity.ok(reviewPostService.update(reviewPost));
-        else
+        if (reviewPostToUpdate.getId() != null && reviewPostService.GetById(reviewPostToUpdate.getId()) != null) {
+            reviewPostService.Update(reviewPostToUpdate);
+            response = ResponseEntity.status(HttpStatus.OK).body(reviewPostToUpdate);
+        }
+        else {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-
+        }
         return response;
     }
 
@@ -55,9 +87,9 @@ public class ReviewPostController {
     public ResponseEntity<String> deletePost(@PathVariable Long id){
         ResponseEntity<String> response = null;
 
-        if (reviewPostService.search(id).isPresent()){
-            reviewPostService.delete(id);
-            response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Eliminado");}
+        if (reviewPostService.GetById(id) != null){
+            reviewPostService.Delete(id);
+            response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted");}
         else
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 

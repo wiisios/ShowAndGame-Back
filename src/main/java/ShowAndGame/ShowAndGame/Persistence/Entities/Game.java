@@ -2,6 +2,7 @@ package ShowAndGame.ShowAndGame.Persistence.Entities;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,18 +37,19 @@ public class Game {
             inverseJoinColumns = @JoinColumn(name = "follower_id")
     )
     private List<User> followers;
+    private Integer followerAmount;
     @ManyToMany
     @JoinTable(
             name = "game_tags",
             joinColumns = @JoinColumn(name = "game_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    private List<Tag> tags;
+    private List<Tag> tags = new ArrayList<>();
 
     public Game() {
     }
 
-    public Game(String name, String description, int rating, String profileImage, String backgroundImage, List<FeedPost> feedPosts, UserDev owner, List<User> followers, List<Tag> tags) {
+    public Game(String name, String description, int rating, String profileImage, String backgroundImage, List<FeedPost> feedPosts, UserDev owner, List<User> followers, List<Tag> tags, Integer followerAmount) {
         this.name = name;
         this.description = description;
         this.rating = rating;
@@ -57,6 +59,7 @@ public class Game {
         this.owner = owner;
         this.followers = followers;
         this.tags = tags;
+        this.followerAmount = followerAmount;
     }
 
     public Long getId() {
@@ -145,5 +148,13 @@ public class Game {
 
     public void setBackgroundImage(String backgroundImage) {
         this.backgroundImage = backgroundImage;
+    }
+
+    public Integer getFollowerAmount() {
+        return followerAmount;
+    }
+
+    public void setFollowerAmount(Integer followerAmount) {
+        this.followerAmount = followerAmount;
     }
 }

@@ -31,13 +31,13 @@ public class HttpSecurityConfig {
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests( authConfig -> {
 
-                    // aca van las publicas
+                    // Public Url
                    authConfig.requestMatchers(HttpMethod.POST, "/auth/authenticate").permitAll();
                     authConfig.requestMatchers("/error").permitAll();
 
-                    // aca van las privadas
+                    // Private Url
 
-                    // por si nos olvidamos de mappear algun endpoint
+                    // In case we forgot some Url
                     authConfig.anyRequest().denyAll();
                 });
 

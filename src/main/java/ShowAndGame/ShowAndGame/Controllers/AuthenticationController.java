@@ -23,7 +23,7 @@ AuthenticationController {
     public ResponseEntity<AuthenticationResponse> login(
             @RequestBody @Valid AuthenticationRequest authRequest){
 
-        AuthenticationResponse jwtDto = authenticationService.login(authRequest);
+        AuthenticationResponse jwtDto = authenticationService.Login(authRequest);
 
         return ResponseEntity.ok(jwtDto);
     }

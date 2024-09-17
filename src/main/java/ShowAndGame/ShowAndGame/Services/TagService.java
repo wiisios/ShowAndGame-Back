@@ -1,5 +1,7 @@
 package ShowAndGame.ShowAndGame.Services;
 
+import ShowAndGame.ShowAndGame.Persistence.Dto.GetTagDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.TagForCreationAndUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.Tag;
 import ShowAndGame.ShowAndGame.Persistence.Repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,34 +9,57 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TagService {
-    private TagRepository tagRepository;
+    private final TagRepository tagRepository;
     @Autowired
     public TagService(TagRepository tagRepository){
         this.tagRepository = tagRepository;
     }
 
-    public Tag create(Tag tag) {
-        return tagRepository.save(tag);
+    public void Create(TagForCreationAndUpdateDto newTag) {
+        Tag tagToCreate = new Tag();
+
+        tagToCreate.setName(newTag.getName());
+        tagToCreate.setColor(newTag.getColor());
+        tagToCreate.setGames(newTag.getGames());
+
+        tagRepository.save(tagToCreate);
     }
 
-    public void delete(Long id) {
+    public void Delete(Long id) {
         tagRepository.deleteById(id);
     }
 
-    public Optional<Tag> search(Long id) {
+    public Optional<Tag> GetById(Long id) {
         return tagRepository.findById(id);
     }
 
-    public List<Tag> searchAll() {
-        return tagRepository.findAll();
+    public List<GetTagDto> GetAll() {
+        List<Tag> allTags = tagRepository.findAll();
+        return allTags.stream()
+                .map(GetTagDto::new)
+                .collect(Collectors.toList());
     }
 
-    public List<Tag> searchTagsByGameId(Long gameId) { return tagRepository.findByGameId(gameId);}
+    public List<GetTagDto> GetTagsByGameId(Long gameId) {
+        List<Tag> tagsByGame = tagRepository.findByGames_Id(gameId);
+        return tagsByGame.stream()
+                .map(GetTagDto::new)
+                .collect(Collectors.toList());
+    }
 
-    public Tag update(Tag tag) {
-        return tagRepository.save(tag);
+    public void Update(GetTagDto tagToUpdate) {
+        Optional<Tag> currentTag = tagRepository.findById(tagToUpdate.getId());
+        Tag tag = null;
+
+        if(currentTag.isPresent()){
+            tag = currentTag.get();
+            tag.setName(tagToUpdate.getName());
+            tag.setColor(tagToUpdate.getColor());
+            tagRepository.save(tag);
+        }
     }
 }

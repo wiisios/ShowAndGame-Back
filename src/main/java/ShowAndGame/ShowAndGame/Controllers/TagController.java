@@ -1,6 +1,7 @@
 package ShowAndGame.ShowAndGame.Controllers;
 
-import ShowAndGame.ShowAndGame.Persistence.Entities.FeedPost;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GetTagDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.TagForCreationAndUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.Tag;
 import ShowAndGame.ShowAndGame.Services.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,35 +19,49 @@ public class TagController {
     private TagService tagService;
 
     @GetMapping()
-    public ResponseEntity<List<Tag>> getAllTags() {return  ResponseEntity.ok(tagService.searchAll());}
+    public ResponseEntity<List<GetTagDto>> getAllTags() {
+
+        return  ResponseEntity.ok(tagService.GetAll());
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Tag> getTag(@PathVariable Long id) {
+        Tag tag = tagService.GetById(id).orElse(null);
 
-        Tag tag = tagService.search(id).orElse((null));
+        if (tag != null){
+            return ResponseEntity.ok(tag);
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
 
-        return ResponseEntity.ok(tag);
     }
 
     @GetMapping("/{gameId}")
-    public ResponseEntity<List<Tag>> getTagsByGameId(@PathVariable Long gameId){
-        return ResponseEntity.ok(tagService.searchTagsByGameId(gameId));
+    public ResponseEntity<List<GetTagDto>> getTagsByGameId(@PathVariable Long gameId){
+
+        return ResponseEntity.ok(tagService.GetTagsByGameId(gameId));
     }
 
     @PostMapping()
-    public ResponseEntity<Tag> createTag(@RequestBody Tag tag){
+    public ResponseEntity<TagForCreationAndUpdateDto> createTag(@RequestBody TagForCreationAndUpdateDto newTag){
 
-        return ResponseEntity.ok(tagService.create(tag));
+        tagService.Create(newTag);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(newTag);
     }
 
     @PutMapping()
-    public ResponseEntity<Tag> updateTag(@RequestBody Tag tag){
-        ResponseEntity<Tag> response = null;
+    public ResponseEntity<GetTagDto> updateTag(@RequestBody GetTagDto tagToUpdate){
+        ResponseEntity<GetTagDto> response = null;
 
-        if (tag.getId() != null && tagService.search(tag.getId()).isPresent())
-            response = ResponseEntity.ok(tagService.update(tag));
-        else
+        if (tagToUpdate.getId() != null && tagService.GetById(tagToUpdate.getId()).isPresent()) {
+            tagService.Update(tagToUpdate);
+            response = ResponseEntity.status(HttpStatus.OK).body(tagToUpdate);
+        }
+        else {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
 
         return response;
     }
@@ -56,9 +71,9 @@ public class TagController {
     public ResponseEntity<String> deleteTag(@PathVariable Long id){
         ResponseEntity<String> response = null;
 
-        if (tagService.search(id).isPresent()){
-            tagService.delete(id);
-            response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Eliminado");}
+        if (tagService.GetById(id).isPresent()){
+            tagService.Delete(id);
+            response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted");}
         else
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 

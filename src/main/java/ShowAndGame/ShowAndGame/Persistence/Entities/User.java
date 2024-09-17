@@ -28,7 +28,7 @@ public class User implements UserDetails {
     @Column
     private String backgroundImage;
     @Enumerated(EnumType.STRING)
-    private UserRole userRole;
+    private UserRole userRole = UserRole.USER;
     @OneToMany
     private List<Comment> comments;
     @ManyToMany(mappedBy = "followers")
