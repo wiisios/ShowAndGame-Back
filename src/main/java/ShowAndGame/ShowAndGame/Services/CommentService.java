@@ -1,8 +1,11 @@
 package ShowAndGame.ShowAndGame.Services;
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.CommentDto;
-import ShowAndGame.ShowAndGame.Persistence.Entities.Comment;
+import ShowAndGame.ShowAndGame.Persistence.Dto.CommentForCreationAndUpdateDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GetCommentForPostDto;
+import ShowAndGame.ShowAndGame.Persistence.Entities.*;
 import ShowAndGame.ShowAndGame.Persistence.Repository.CommentRepository;
+import ShowAndGame.ShowAndGame.Persistence.Repository.FeedPostRepository;
+import ShowAndGame.ShowAndGame.Persistence.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,36 +18,69 @@ public class CommentService {
 
 
     private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
+    private final FeedPostRepository feedPostRepository;
     @Autowired
-    public CommentService(CommentRepository commentRepository){
+    public CommentService(CommentRepository commentRepository, UserRepository userRepository, FeedPostRepository feedPostRepository){
+
         this.commentRepository = commentRepository;
+        this.userRepository = userRepository;
+        this.feedPostRepository = feedPostRepository;
     }
 
-    public Comment Create(Comment comment) {
-        return commentRepository.save(comment);
+    public void Create(CommentForCreationAndUpdateDto commentDto, Long postId, Long userId) {
+        Comment commentToCreate = new Comment();
+        Optional<FeedPost> feedPost = feedPostRepository.findById(postId);
+        Optional<User> user = userRepository.findById(userId);
+        FeedPost currentPost = null;
+        User currentUser = null;
+
+        if (feedPost.isPresent()) {
+            currentPost = feedPost.get();
+        }
+        if (user.isPresent()){
+            currentUser = user.get();
+        }
+
+        commentToCreate.setDescription(commentDto.getDescription());
+        commentToCreate.setUser(currentUser);
+        commentToCreate.setFeedPost(currentPost);
+
+        commentRepository.save((commentToCreate));
     }
 
     public void Delete(Long id) {
         commentRepository.deleteById(id);
     }
 
-    public Optional<Comment> GetById(Long id) {
-        return commentRepository.findById(id);
+    public Optional<GetCommentForPostDto> GetById(Long id) {
+         return commentRepository.findById(id).map(comment -> new GetCommentForPostDto(comment, comment.getUser()))
+         ;
     }
 
-    public List<Comment> GetAll() {
-        return commentRepository.findAll();
-    }
-
-    public List<CommentDto> GetCommentsByPostId(Long postId) {
-        List<Comment> comments = commentRepository.findByFeedPostId(postId);
-        return comments.stream()
-                .map(comment -> new CommentDto(comment))
+    public List<GetCommentForPostDto> GetAll() {
+        return commentRepository.findAll().stream()
+                .map(comment -> new GetCommentForPostDto(comment, comment.getUser()))
                 .collect(Collectors.toList());
     }
 
-    public Comment Update(Comment comment) {
-        return commentRepository.save(comment);
+    public List<GetCommentForPostDto> GetCommentsByPostId(Long postId) {
+        List<Comment> comments = commentRepository.findByFeedPostId(postId);
+        return comments.stream()
+                .map(comment -> new GetCommentForPostDto(comment, comment.getUser()))
+                .collect(Collectors.toList());
+    }
+
+    public void Update(GetCommentForPostDto commentToUpdate) {
+
+        Optional<Comment> currentComment = commentRepository.findById((commentToUpdate.getId()));
+        Comment comment = null;
+
+        if(currentComment.isPresent()){
+            comment = currentComment.get();
+            comment.setDescription(commentToUpdate.getDescription());
+            commentRepository.save(comment);
+        }
     }
 
 
