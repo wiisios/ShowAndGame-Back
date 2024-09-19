@@ -88,4 +88,24 @@ public class GameController {
 
         return response;
     }
+
+    @PutMapping("/{gameId}")
+    public ResponseEntity<String> FollowUnfollow(@RequestBody String state, @PathVariable Long gameId){
+        Long userId = currentUserUtil.GetCurrentUserId();
+        ResponseEntity<String> response = null;
+
+        if(state == "follow"){
+            gameService.Follow(userId, gameId);
+            response = ResponseEntity.ok().body("Followed");
+        }
+        else if(state == "unfollow"){
+            gameService.Unfollow(userId, gameId);
+            response = ResponseEntity.ok().body("Unfollowed");
+        }
+        else{
+            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        return response;
+    }
 }
