@@ -60,20 +60,28 @@ public class ReviewPostService {
 
     public GetReviewPostDto GetById(Long id) {
         Optional<ReviewPost> reviewPost = reviewPostRepository.findById(id);
-        return reviewPost.map(GetReviewPostDto::new).orElse(null);
+        User user = null;
+        ReviewPost currentReview = null;
+
+        if (reviewPost.isPresent()){
+            currentReview = reviewPost.get();
+            user = currentReview.getUser();
+        }
+
+        return new GetReviewPostDto(currentReview, user);
     }
 
     public List<GetReviewPostDto> GetAll() {
         List<ReviewPost> allReviewPosts =  reviewPostRepository.findAll();
         return allReviewPosts.stream()
-                .map(GetReviewPostDto::new)
+                .map(reviewPost -> new GetReviewPostDto(reviewPost, reviewPost.getUser()))
                 .collect(Collectors.toList());
     }
 
     public List<GetReviewPostDto> GetReviewPostsByGameId(Long gameId){
         List<ReviewPost> allReviewPosts =  reviewPostRepository.findByGameId(gameId);
         return allReviewPosts.stream()
-                .map(GetReviewPostDto::new)
+                .map(reviewPost -> new GetReviewPostDto(reviewPost, reviewPost.getUser()))
                 .collect(Collectors.toList());
     }
 

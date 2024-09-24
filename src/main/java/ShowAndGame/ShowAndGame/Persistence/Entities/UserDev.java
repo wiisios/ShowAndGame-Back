@@ -15,8 +15,8 @@ public class UserDev extends User {
     public UserDev(){
 
     }
-    public UserDev(String userName, String password, String email, String profileImage, String backgroundImage, UserRole userRole, List<Post> posts, List<Comment> comments, List<Game> followedGames, List<Game> ownedGames) {
-        super(userName, password, email, profileImage, backgroundImage, userRole, posts, comments, followedGames);
+    public UserDev(String userName, String password, String email, String profileImage, String backgroundImage, UserRole userRole, List<ReviewPost> reviewPosts, List<FeedPost> feedPosts, List<Comment> comments, List<Game> followedGames, List<Game> ownedGames) {
+        super(userName, password, email, profileImage, backgroundImage, userRole, reviewPosts, feedPosts,comments, followedGames);
         this.ownedGames = ownedGames;
     }
 

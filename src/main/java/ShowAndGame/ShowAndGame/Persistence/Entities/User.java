@@ -28,26 +28,29 @@ public class User implements UserDetails {
     @Column
     private String backgroundImage;
     @Enumerated(EnumType.STRING)
-    private UserRole userRole = UserRole.USER;
+    private UserRole userRole;
     @OneToMany
     private List<Comment> comments;
     @ManyToMany(mappedBy = "followers")
     private List<Game> followedGames;
     @OneToMany
-    private List<Post> posts;
+    private List<ReviewPost> reviewPosts;
+    @OneToMany
+    private List<FeedPost> feedPosts;
 
 
     public User(){
     };
 
-    public User(String userName, String password, String email, String profileImage, String backgroundImage, UserRole userRole, List<Post> posts, List<Comment> comments, List<Game> followedGames){
+    public User(String userName, String password, String email, String profileImage, String backgroundImage, UserRole userRole, List<ReviewPost> reviewPosts, List<FeedPost> feedPosts,List<Comment> comments, List<Game> followedGames){
         this.userName = userName;
         this.password = password;
         this.email = email;
         this.profileImage = profileImage;
         this.backgroundImage = backgroundImage;
         this.userRole = userRole;
-        this.posts = posts;
+        this.feedPosts = feedPosts;
+        this.reviewPosts = reviewPosts;
         this.comments = comments;
         this.followedGames = followedGames;
 
@@ -154,11 +157,19 @@ public class User implements UserDetails {
         this.followedGames = followedGames;
     }
 
-    public List<Post> getPosts() {
-        return posts;
+    public List<ReviewPost> getReviewPosts() {
+        return reviewPosts;
     }
 
-    public void setPosts(List<Post> posts) {
-        this.posts = posts;
+    public void setReviewPosts(List<ReviewPost> reviewPosts) {
+        this.reviewPosts = reviewPosts;
+    }
+
+    public List<FeedPost> getFeedPosts() {
+        return feedPosts;
+    }
+
+    public void setFeedPosts(List<FeedPost> feedPosts) {
+        this.feedPosts = feedPosts;
     }
 }

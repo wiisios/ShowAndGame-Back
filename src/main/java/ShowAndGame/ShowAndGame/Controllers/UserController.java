@@ -1,7 +1,10 @@
 package ShowAndGame.ShowAndGame.Controllers;
 
 
-import ShowAndGame.ShowAndGame.Persistence.Entities.User;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GetAllUsersDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GetUserByIdDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GetUserForUpdateProfileDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.UserForCreationDto;
 import ShowAndGame.ShowAndGame.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,42 +20,48 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping()
-    public ResponseEntity<List<User>> getAllUsers() {return  ResponseEntity.ok(userService.GetAll());}
+    @GetMapping("/all")
+    public ResponseEntity<List<GetAllUsersDto>> getAllUsers() {return  ResponseEntity.ok(userService.GetAll());}
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable Long id) {
+    public ResponseEntity<GetUserByIdDto> getUser(@PathVariable Long id) {
 
-        User user = userService.GetById(id).orElse((null));
+        GetUserByIdDto user = userService.GetById(id);
 
-        return ResponseEntity.ok(user);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
-
     @PostMapping()
-    public ResponseEntity<User> createUser(@RequestBody User user){
+    public ResponseEntity<String> CreateUser(@RequestBody UserForCreationDto user){
+        userService.Create(user);
 
-        return ResponseEntity.ok(userService.Create(user));
+        return ResponseEntity.ok().body("User created");
     }
 
     @PutMapping()
-    public ResponseEntity<User> updateUser(@RequestBody User user){
-        ResponseEntity<User> response = null;
+    public ResponseEntity<GetUserForUpdateProfileDto> UpdateUserProfile(@RequestBody GetUserForUpdateProfileDto userToUpdate){
+        ResponseEntity<GetUserForUpdateProfileDto> response = null;
 
-        if (user.getId() != null && userService.GetById(user.getId()).isPresent())
-            response = ResponseEntity.ok(userService.Update(user));
-        else
+        if (userToUpdate.getId() != null && userService.GetById(userToUpdate.getId()) != null){
+            userService.UpdateProfile(userToUpdate);
+            response = ResponseEntity.ok(userToUpdate);
+        }
+        else {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-
+        }
         return response;
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id){
         ResponseEntity<String> response = null;
 
-        if (userService.GetById(id).isPresent()){
+        if (userService.GetById(id) != null){
             userService.Delete(id);
             response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Eliminado");}
         else

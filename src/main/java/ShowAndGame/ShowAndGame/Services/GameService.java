@@ -3,11 +3,10 @@ package ShowAndGame.ShowAndGame.Services;
 import ShowAndGame.ShowAndGame.Persistence.Dto.GameForCreationAndUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.GetGameDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.GetGameForExploreDto;
-import ShowAndGame.ShowAndGame.Persistence.Entities.Game;
-import ShowAndGame.ShowAndGame.Persistence.Entities.Tag;
-import ShowAndGame.ShowAndGame.Persistence.Entities.UserDev;
+import ShowAndGame.ShowAndGame.Persistence.Entities.*;
 import ShowAndGame.ShowAndGame.Persistence.Repository.GameRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserDevRepository;
+import ShowAndGame.ShowAndGame.Persistence.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +19,12 @@ public class GameService {
 
     private final GameRepository gameRepository;
     private final UserDevRepository userDevRepository;
+    private final UserRepository userRepository;
     @Autowired
-    public GameService(GameRepository gameRepository, UserDevRepository userDevRepository){
+    public GameService(GameRepository gameRepository, UserDevRepository userDevRepository, UserRepository userRepository){
         this.gameRepository = gameRepository;
         this.userDevRepository = userDevRepository;
+        this.userRepository = userRepository;
     }
 
     public void Create(GameForCreationAndUpdateDto newGame, Long userDevId, List<Tag> tags) {
@@ -45,7 +46,6 @@ public class GameService {
         gameToCreate.setOwner(currentDev);
         gameToCreate.setTags(tags);
 
-
         gameRepository.save(gameToCreate);
     }
 
@@ -53,8 +53,15 @@ public class GameService {
         gameRepository.deleteById(id);
     }
 
-    public Optional<Game> GetById(Long id) {
-        return gameRepository.findById(id);
+    public GetGameDto GetById(Long id) {
+        Optional<Game> game = gameRepository.findById(id);
+        Game currentGame = null;
+
+        if (game.isPresent()){
+            currentGame = game.get();
+        }
+
+        return new GetGameDto(currentGame);
     }
 
     public List<GetGameDto> GetAll() {
@@ -84,7 +91,32 @@ public class GameService {
             game.setTags(gameToUpdate.getTags());
             gameRepository.save(game);
         }
+    }
 
-        // desde aca hay que actualizar la lista de tags
+    public void Follow(Long gameid, Long userId){
+        Optional<Game> currentGame = gameRepository.findById(gameid);
+        Optional<User> currentUser = userRepository.findById(userId);
+        Game game = null;
+        User user = null;
+
+        if (currentGame.isPresent() && currentUser.isPresent()){
+            game = currentGame.get();
+            user = currentUser.get();
+
+            List<User> followers = game.getFollowers();
+
+            if(followers.contains(user)){
+                followers.remove(user);
+                game.setFollowers(followers);
+                game.setFollowerAmount(game.getFollowerAmount()-1);
+                gameRepository.save(game);
+            }
+            else{
+                followers.add(user);
+                game.setFollowers(followers);
+                game.setFollowerAmount(game.getFollowerAmount()+1);
+                gameRepository.save(game);
+            }
+        }
     }
 }

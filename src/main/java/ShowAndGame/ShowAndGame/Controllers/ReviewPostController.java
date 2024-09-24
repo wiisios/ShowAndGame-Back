@@ -46,9 +46,8 @@ public class ReviewPostController {
         return ResponseEntity.ok(reviewPostService.GetReviewPostsByGameId(gameId));
     }
 
-
     //Cuando se crea una review, hay que updatear el Game por el rating general
-    @PostMapping()
+    @PostMapping("/{gameId}")
     public ResponseEntity<String> createPost(@RequestBody ReviewPostForCreationAndUpdateDto reviewPost, @PathVariable Long gameId){
         ResponseEntity<String> response = null;
         Long userId = currentUserUtil.GetCurrentUserId();
@@ -82,7 +81,6 @@ public class ReviewPostController {
         return response;
     }
 
-
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePost(@PathVariable Long id){
         ResponseEntity<String> response = null;
@@ -95,6 +93,4 @@ public class ReviewPostController {
 
         return response;
     }
-
-
 }

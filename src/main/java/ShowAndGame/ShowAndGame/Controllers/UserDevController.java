@@ -1,7 +1,9 @@
 package ShowAndGame.ShowAndGame.Controllers;
 
-import ShowAndGame.ShowAndGame.Persistence.Entities.Game;
-import ShowAndGame.ShowAndGame.Persistence.Entities.UserDev;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GetAllUsersDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GetUserByIdDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GetUserForUpdateProfileDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.UserForCreationDto;
 import ShowAndGame.ShowAndGame.Services.UserDevService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,39 +20,47 @@ public class UserDevController {
     private UserDevService userDevService;
 
     @GetMapping()
-    public ResponseEntity<List<UserDev>> GetAllDevs() {return  ResponseEntity.ok(userDevService.GetAll());}
+    public ResponseEntity<List<GetAllUsersDto>> GetAllDevs() {
+        return  ResponseEntity.ok(userDevService.GetAll());
+    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDev> GetDev(@PathVariable Long id) {
-        UserDev userDev = userDevService.GetById(id).orElse((null));
+    public ResponseEntity<GetUserByIdDto> GetDev(@PathVariable Long id) {
+        GetUserByIdDto userDev = userDevService.GetById(id);
 
-        return ResponseEntity.ok(userDev);
+        if (userDev != null) {
+            return ResponseEntity.ok(userDev);
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @PostMapping()
-    public ResponseEntity<UserDev> createDev(@RequestBody UserDev userDev){
+    public ResponseEntity<String> createDev(@RequestBody UserForCreationDto userDev){
+        userDevService.Create(userDev);
 
-        return ResponseEntity.ok(userDevService.Create(userDev));
+        return ResponseEntity.ok().body("UserDev created");
     }
 
     @PutMapping()
-    public ResponseEntity<UserDev> updateDev(@RequestBody UserDev userDev){
-        ResponseEntity<UserDev> response = null;
+    public ResponseEntity<GetUserForUpdateProfileDto> updateDev(@RequestBody GetUserForUpdateProfileDto userDev){
+        ResponseEntity<GetUserForUpdateProfileDto> response = null;
 
-        if (userDev.getId() != null && userDevService.GetById(userDev.getId()).isPresent())
-            response = ResponseEntity.ok(userDevService.Update(userDev));
-        else
+        if (userDev.getId() != null && userDevService.GetById(userDev.getId()) != null) {
+            userDevService.UpdateProfile(userDev);
+            response = ResponseEntity.ok(userDev);
+        } else {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-
+        }
         return response;
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteDevs(@PathVariable Long id){
         ResponseEntity<String> response = null;
 
-        if (userDevService.GetById(id).isPresent()){
+        if (userDevService.GetById(id) != null){
             userDevService.Delete(id);
             response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Eliminado");}
         else

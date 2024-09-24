@@ -32,10 +32,52 @@ public class HttpSecurityConfig {
                 .authorizeHttpRequests( authConfig -> {
 
                     // Public Url
-                   authConfig.requestMatchers(HttpMethod.POST, "/auth/authenticate").permitAll();
+                    authConfig.requestMatchers(HttpMethod.POST, "/auth/authenticate").permitAll();
+                    authConfig.requestMatchers(HttpMethod.POST, "/users").permitAll();
                     authConfig.requestMatchers("/error").permitAll();
 
                     // Private Url
+                    authConfig.requestMatchers(HttpMethod.POST,"/comments/**").hasAnyRole()
+                            .anyRequest().authenticated();
+
+                    authConfig.requestMatchers(HttpMethod.GET, "/feedPosts/**").hasAnyRole()
+                            .anyRequest().authenticated();
+                    authConfig.requestMatchers(HttpMethod.POST, "/feedPosts/**").hasAnyRole()
+                            .anyRequest().authenticated();
+
+                    authConfig.requestMatchers(HttpMethod.GET,"/reviewPosts/{gameId}").hasAnyRole()
+                            .anyRequest().authenticated();
+                    authConfig.requestMatchers(HttpMethod.POST,"/reviewPosts/**").hasAnyRole()
+                            .anyRequest().authenticated();
+
+                    authConfig.requestMatchers(HttpMethod.GET,"/tags").hasAnyRole()
+                            .anyRequest().authenticated();
+                    authConfig.requestMatchers(HttpMethod.GET,"/tags/{gameId}").hasAnyRole()
+                            .anyRequest().authenticated();
+                    authConfig.requestMatchers(HttpMethod.POST,"/tags/{gameId}").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.PUT,"/tags/{gameId}").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.DELETE,"/tags/{gameId}").hasRole("ADMIN");
+
+                    authConfig.requestMatchers(HttpMethod.GET,"/games/{id}").hasAnyRole()
+                            .anyRequest().authenticated();
+                    authConfig.requestMatchers(HttpMethod.GET,"/games/feed").hasAnyRole()
+                            .anyRequest().authenticated();
+                    authConfig.requestMatchers(HttpMethod.POST,"/games/**").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.PUT,"/games").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.PUT,"/games/{id}").hasAnyRole()
+                            .anyRequest().authenticated();
+                    authConfig.requestMatchers(HttpMethod.DELETE,"/games/**").hasRole("ADMIN");
+
+                    authConfig.requestMatchers(HttpMethod.GET,"/users/all").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.GET,"/users/{id}").hasRole("USER");
+                    authConfig.requestMatchers(HttpMethod.POST,"/users/**").hasAnyRole()
+                            .anyRequest().authenticated();
+                    authConfig.requestMatchers(HttpMethod.PUT,"/users/**").hasAnyRole()
+                            .anyRequest().authenticated();
+
+                    authConfig.requestMatchers(HttpMethod.GET,"/users/{id}").hasRole("DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.PUT,"/users/**").hasRole("DEVELOPER");
+
 
                     // In case we forgot some Url
                     authConfig.anyRequest().denyAll();
