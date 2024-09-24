@@ -70,15 +70,6 @@ public class GameController {
         return response;
     }
 
-    @PutMapping("/{gameId}")
-    public ResponseEntity<String> FollowGame(@PathVariable Long gameId){
-        Long currentUserDevId = currentUserUtil.GetCurrentUserId();
-
-        gameService.Follow(gameId, currentUserDevId);
-
-        return ResponseEntity.ok().body("Game followed");
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<String> DeleteGame(@PathVariable Long id){
         ResponseEntity<String> response = null;
@@ -88,6 +79,26 @@ public class GameController {
             response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted");}
         else
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+        return response;
+    }
+
+    @PutMapping("/{gameId}")
+    public ResponseEntity<String> FollowUnfollow(@RequestBody String state, @PathVariable Long gameId){
+        Long userId = currentUserUtil.GetCurrentUserId();
+        ResponseEntity<String> response = null;
+
+        if(state == "follow"){
+            gameService.Follow(userId, gameId);
+            response = ResponseEntity.ok().body("Followed");
+        }
+        else if(state == "unfollow"){
+            gameService.Unfollow(userId, gameId);
+            response = ResponseEntity.ok().body("Unfollowed");
+        }
+        else{
+            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
 
         return response;
     }
