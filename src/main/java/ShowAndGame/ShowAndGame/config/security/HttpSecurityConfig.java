@@ -11,6 +11,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -25,18 +30,25 @@ public class HttpSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf( csrfConfig -> csrfConfig.disable() )
-                .sessionManagement( sessionMangConfig -> sessionMangConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource())) // Configuración CORS
+                .csrf(csrfConfig -> csrfConfig.disable())
+                .sessionManagement(sessionMangConfig -> sessionMangConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests( authConfig -> {
+                .authorizeHttpRequests(authConfig -> {
 
-                    // Public Url
+                    // Public URL (Swagger)
+                    authConfig.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**", "/swagger-ui.html").permitAll();
+
+                    // Public URL
                     authConfig.requestMatchers(HttpMethod.POST, "/auth/authenticate").permitAll();
+                    authConfig.requestMatchers(HttpMethod.POST, "/authentication-controller/login").permitAll();
                     authConfig.requestMatchers(HttpMethod.POST, "/users").permitAll();
+
                     authConfig.requestMatchers("/error").permitAll();
 
-                    // Private Url
+
+                    //Private URL
                     authConfig.requestMatchers(HttpMethod.POST,"/comments/**").hasAnyRole()
                             .anyRequest().authenticated();
 
@@ -78,12 +90,24 @@ public class HttpSecurityConfig {
                     authConfig.requestMatchers(HttpMethod.GET,"/users/{id}").hasRole("DEVELOPER");
                     authConfig.requestMatchers(HttpMethod.PUT,"/users/**").hasRole("DEVELOPER");
 
-
                     // In case we forgot some Url
                     authConfig.anyRequest().denyAll();
                 });
 
-
         return http.build();
+    }
+
+    // CORS Configuration
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // Frontend permissions
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // CORS to all URL
+        return source;
     }
 }
