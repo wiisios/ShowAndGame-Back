@@ -60,9 +60,10 @@ public class CommentController {
     @PutMapping()
     public ResponseEntity<GetCommentForPostDto> updateComment(@RequestBody GetCommentForPostDto commentToUpdate){
         ResponseEntity<GetCommentForPostDto> response = null;
+        Long userId = currentUserUtil.GetCurrentUserId();
 
         if (commentToUpdate.getId() != null && commentService.GetById(commentToUpdate.getId()).isPresent()){
-            commentService.Update(commentToUpdate);
+            commentService.Update(commentToUpdate, userId);
             response = ResponseEntity.status(HttpStatus.OK).body(commentToUpdate);
         }
         else
@@ -75,9 +76,10 @@ public class CommentController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteComment(@PathVariable Long id){
         ResponseEntity<String> response = null;
+        Long userId = currentUserUtil.GetCurrentUserId();
 
         if (commentService.GetById(id).isPresent()){
-            commentService.Delete(id);
+            commentService.Delete(id, userId);
             response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Eliminado");}
         else
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();

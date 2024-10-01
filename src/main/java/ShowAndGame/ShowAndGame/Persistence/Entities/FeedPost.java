@@ -10,7 +10,7 @@ import java.util.List;
 @Entity
 public class FeedPost extends Post {
 
-    private String images;
+    private String image;
     private Integer likes;
 
     @OneToMany(mappedBy = "feedPost", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -20,19 +20,19 @@ public class FeedPost extends Post {
     public FeedPost(){
 
     }
-    public FeedPost(String content, User user, Game game, LocalDate date, String images, Integer likes1, List<Comment> comments) {
-        super(content, user, game, date);
-        this.images = images;
+    public FeedPost(String description, User user, Game game, LocalDate date, String image, Integer likes1, List<Comment> comments) {
+        super(description, user, game, date);
+        this.image = image;
         this.likes = likes1;
         this.comments = comments;
     }
 
-    public String getImages() {
-        return images;
+    public String getImage() {
+        return image;
     }
 
-    public void setImages(String images) {
-        this.images = images;
+    public void setImage(String images) {
+        this.image = images;
     }
 
 

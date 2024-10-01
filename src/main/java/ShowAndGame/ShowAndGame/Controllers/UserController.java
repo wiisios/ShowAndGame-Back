@@ -1,10 +1,7 @@
 package ShowAndGame.ShowAndGame.Controllers;
 
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetAllUsersDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetUserByIdDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetUserForUpdateProfileDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.UserForCreationDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.*;
 import ShowAndGame.ShowAndGame.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -64,6 +61,20 @@ public class UserController {
         if (userService.GetById(id) != null){
             userService.Delete(id);
             response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Eliminado");}
+        else
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+        return response;
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> UpdateUser(@PathVariable Long id, @RequestBody GetUserForAdminUpdateDto user){
+        ResponseEntity<String> response = null;
+
+        if (userService.GetById(id) != null){
+            userService.UpdateUser(user,id);
+            response = ResponseEntity.ok("User updated");
+        }
         else
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 

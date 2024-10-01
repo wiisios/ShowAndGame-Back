@@ -77,4 +77,16 @@ public class UserService {
     public Optional<User> GetByUserName(String userName){
         return userRepository.findByUserName(userName);
     }
+
+    public void UpdateUser(GetUserForAdminUpdateDto userToUpdate, Long id) {
+        Optional<User> currentUser = userRepository.findById(id);
+        User user = null;
+
+        if(currentUser.isPresent()){
+            user = currentUser.get();
+            user.setUserName(userToUpdate.getUserName());
+            user.setUserRole(userToUpdate.getUserRole());
+            userRepository.save(user);
+        }
+    }
 }

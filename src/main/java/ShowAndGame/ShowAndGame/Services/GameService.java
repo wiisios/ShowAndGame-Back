@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -44,9 +45,9 @@ public class GameService {
         gameToCreate.setDescription(newGame.getDescription());
         gameToCreate.setProfileImage(newGame.getProfileImage());
         gameToCreate.setBackgroundImage(newGame.getBackgroundImage());
-        gameToCreate.setRating(newGame.getRating());
-        gameToCreate.setFollowers(newGame.getFollowers());
-        gameToCreate.setFollowerAmount(newGame.getFollowerAmount());
+        gameToCreate.setRating(0);
+        gameToCreate.setFollowers(new ArrayList<User>());
+        gameToCreate.setFollowerAmount(0);
         gameToCreate.setOwner(currentDev);
         gameToCreate.setTags(tags);
 
