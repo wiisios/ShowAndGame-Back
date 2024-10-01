@@ -8,7 +8,6 @@ import java.util.List;
 public class TagForCreationAndUpdateDto {
     private String name;
     private String color;
-    private List<Game> games = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -26,11 +25,4 @@ public class TagForCreationAndUpdateDto {
         this.color = color;
     }
 
-    public List<Game> getGames() {
-        return games;
-    }
-
-    public void setGames(List<Game> games) {
-        this.games = games;
-    }
 }

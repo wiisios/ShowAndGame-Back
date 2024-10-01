@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -49,8 +50,16 @@ public class CommentService {
         commentRepository.save((commentToCreate));
     }
 
-    public void Delete(Long id) {
-        commentRepository.deleteById(id);
+    public void Delete(Long commentId, Long userId) {
+        Optional<Comment> currentComment = commentRepository.findById(commentId);
+        Comment comment = null;
+
+        if(currentComment.isPresent()){
+            comment = currentComment.get();
+            if (Objects.equals(comment.getUser().getId(), userId)) {
+                commentRepository.deleteById(commentId);
+            }}
+
     }
 
     public Optional<GetCommentForPostDto> GetById(Long id) {
@@ -71,15 +80,17 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
 
-    public void Update(GetCommentForPostDto commentToUpdate) {
+    public void Update(GetCommentForPostDto commentToUpdate, Long userId) {
 
         Optional<Comment> currentComment = commentRepository.findById((commentToUpdate.getId()));
         Comment comment = null;
 
         if(currentComment.isPresent()){
             comment = currentComment.get();
-            comment.setDescription(commentToUpdate.getDescription());
-            commentRepository.save(comment);
+            if (Objects.equals(comment.getUser().getId(), userId)) {
+                comment.setDescription(commentToUpdate.getDescription());
+                commentRepository.save(comment);
+            }
         }
     }
 

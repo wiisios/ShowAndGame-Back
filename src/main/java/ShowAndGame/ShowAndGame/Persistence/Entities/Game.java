@@ -52,7 +52,6 @@ public class Game {
     public Game(String name, String description, int rating, String profileImage, String backgroundImage, List<FeedPost> feedPosts, UserDev owner, List<User> followers, List<Tag> tags, Integer followerAmount) {
         this.name = name;
         this.description = description;
-        this.rating = rating;
         this.profileImage = profileImage;
         this.backgroundImage = backgroundImage;
         this.feedPosts = feedPosts;

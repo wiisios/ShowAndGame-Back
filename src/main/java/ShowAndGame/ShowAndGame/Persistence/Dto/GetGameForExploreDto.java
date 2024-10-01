@@ -9,13 +9,13 @@ public class GetGameForExploreDto {
 
     private long id;
     private String name;
-    private String profileImage;
+    private String backgroundImage;
     private List<Tag> tags;
 
     public GetGameForExploreDto(Game game) {
         this.id = game.getId();
         this.name = game.getName();
-        this.profileImage = game.getProfileImage();
+        this.backgroundImage = game.getProfileImage();
         this.tags = game.getTags();
     }
 
@@ -36,11 +36,11 @@ public class GetGameForExploreDto {
     }
 
     public String getProfileImage() {
-        return profileImage;
+        return backgroundImage;
     }
 
     public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
+        this.backgroundImage = profileImage;
     }
 
     public List<Tag> getTags() {
