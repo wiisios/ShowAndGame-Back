@@ -3,6 +3,7 @@ package ShowAndGame.ShowAndGame.Services;
 import ShowAndGame.ShowAndGame.Persistence.Dto.GameForCreationAndUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.GetGameDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.GetGameForExploreDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GetGamesByUserDto;
 import ShowAndGame.ShowAndGame.Persistence.Repository.GameRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserDevRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserRepository;
@@ -76,10 +77,24 @@ public class GameService {
                 .collect(Collectors.toList());
     }
 
-    public List<GetGameForExploreDto> GetAllForFeed() {
+    public List<GetGameForExploreDto> GetAllForExplore() {
         List<Game> games = gameRepository.findAll();
         return games.stream()
                 .map(GetGameForExploreDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<GetGamesByUserDto> GetGameByUser(Long userId) {
+        List<Game> games = gameRepository.findByFollowersId(userId);
+        return games.stream()
+                .map(GetGamesByUserDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<GetGamesByUserDto> GetGameByDeveloper(Long userId) {
+        List<Game> games = gameRepository.findByOwnerId(userId);
+        return games.stream()
+                .map(GetGamesByUserDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -98,9 +113,6 @@ public class GameService {
         }
     }
 
-    // Habria que chequear como maneja el que no este el usuario o el game
-
-    //asegura que todas las operaciones dentro del método se ejecuten como una única transacción, si falla se revertirá todoo
     @Transactional
     public void Follow(Long userId, Long gameId){
         Optional<User> currentUser = userRepository.findById(userId);

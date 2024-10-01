@@ -1,6 +1,13 @@
 package ShowAndGame.ShowAndGame.config.security;
 
 import ShowAndGame.ShowAndGame.config.security.Filter.JwtAuthenticationFilter;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,62 +47,43 @@ public class HttpSecurityConfig {
                     // Public URL (Swagger)
                     authConfig.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**", "/swagger-ui.html").permitAll();
 
-                    // Public URL
+                    // Public URLs
                     authConfig.requestMatchers(HttpMethod.POST, "/auth/authenticate").permitAll();
                     authConfig.requestMatchers(HttpMethod.POST, "/authentication-controller/login").permitAll();
                     authConfig.requestMatchers(HttpMethod.POST, "/users").permitAll();
-
                     authConfig.requestMatchers("/error").permitAll();
 
+                    // Private URLs
+                    authConfig.requestMatchers(HttpMethod.POST, "/comments/**").hasAnyRole("USER", "ADMIN");
+                    authConfig.requestMatchers(HttpMethod.GET, "/feedPosts/**").hasAnyRole("USER", "ADMIN");
+                    authConfig.requestMatchers(HttpMethod.POST, "/feedPosts/**").hasAnyRole("USER", "ADMIN");
+                    authConfig.requestMatchers(HttpMethod.GET, "/reviewPosts/{gameId}").hasAnyRole("USER", "ADMIN");
+                    authConfig.requestMatchers(HttpMethod.POST, "/reviewPosts/**").hasAnyRole("USER", "ADMIN");
+                    authConfig.requestMatchers(HttpMethod.GET, "/tags").hasAnyRole("USER", "ADMIN");
+                    authConfig.requestMatchers(HttpMethod.GET, "/tags/{gameId}").hasAnyRole("USER", "ADMIN");
+                    authConfig.requestMatchers(HttpMethod.POST, "/tags/{gameId}").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/tags/{gameId}").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.DELETE, "/tags/{gameId}").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.GET, "/games/{id}").hasAnyRole("USER", "ADMIN");
+                    authConfig.requestMatchers(HttpMethod.GET, "/games/feed").hasAnyRole("USER", "ADMIN");
+                    authConfig.requestMatchers(HttpMethod.POST, "/games/**").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/games").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/games/{id}").hasAnyRole("USER", "ADMIN");
+                    authConfig.requestMatchers(HttpMethod.DELETE, "/games/**").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.GET, "/users/all").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.GET, "/users/{id}").hasRole("USER");
+                    authConfig.requestMatchers(HttpMethod.POST, "/users/**").hasAnyRole("USER", "ADMIN");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/users/**").hasAnyRole("USER", "ADMIN");
+                    authConfig.requestMatchers(HttpMethod.GET, "/users/{id}").hasRole("DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/users/**").hasRole("DEVELOPER");
 
-                    //Private URL
-                    authConfig.requestMatchers(HttpMethod.POST,"/comments/**").hasAnyRole()
-                            .anyRequest().authenticated();
-
-                    authConfig.requestMatchers(HttpMethod.GET, "/feedPosts/**").hasAnyRole()
-                            .anyRequest().authenticated();
-                    authConfig.requestMatchers(HttpMethod.POST, "/feedPosts/**").hasAnyRole()
-                            .anyRequest().authenticated();
-
-                    authConfig.requestMatchers(HttpMethod.GET,"/reviewPosts/{gameId}").hasAnyRole()
-                            .anyRequest().authenticated();
-                    authConfig.requestMatchers(HttpMethod.POST,"/reviewPosts/**").hasAnyRole()
-                            .anyRequest().authenticated();
-
-                    authConfig.requestMatchers(HttpMethod.GET,"/tags").hasAnyRole()
-                            .anyRequest().authenticated();
-                    authConfig.requestMatchers(HttpMethod.GET,"/tags/{gameId}").hasAnyRole()
-                            .anyRequest().authenticated();
-                    authConfig.requestMatchers(HttpMethod.POST,"/tags/{gameId}").hasRole("ADMIN");
-                    authConfig.requestMatchers(HttpMethod.PUT,"/tags/{gameId}").hasRole("ADMIN");
-                    authConfig.requestMatchers(HttpMethod.DELETE,"/tags/{gameId}").hasRole("ADMIN");
-
-                    authConfig.requestMatchers(HttpMethod.GET,"/games/{id}").hasAnyRole()
-                            .anyRequest().authenticated();
-                    authConfig.requestMatchers(HttpMethod.GET,"/games/feed").hasAnyRole()
-                            .anyRequest().authenticated();
-                    authConfig.requestMatchers(HttpMethod.POST,"/games/**").hasRole("ADMIN");
-                    authConfig.requestMatchers(HttpMethod.PUT,"/games").hasRole("ADMIN");
-                    authConfig.requestMatchers(HttpMethod.PUT,"/games/{id}").hasAnyRole()
-                            .anyRequest().authenticated();
-                    authConfig.requestMatchers(HttpMethod.DELETE,"/games/**").hasRole("ADMIN");
-
-                    authConfig.requestMatchers(HttpMethod.GET,"/users/all").hasRole("ADMIN");
-                    authConfig.requestMatchers(HttpMethod.GET,"/users/{id}").hasRole("USER");
-                    authConfig.requestMatchers(HttpMethod.POST,"/users/**").hasAnyRole()
-                            .anyRequest().authenticated();
-                    authConfig.requestMatchers(HttpMethod.PUT,"/users/**").hasAnyRole()
-                            .anyRequest().authenticated();
-
-                    authConfig.requestMatchers(HttpMethod.GET,"/users/{id}").hasRole("DEVELOPER");
-                    authConfig.requestMatchers(HttpMethod.PUT,"/users/**").hasRole("DEVELOPER");
-
-                    // In case we forgot some Url
+                    // Catch-all for other requests: anyRequest
                     authConfig.anyRequest().denyAll();
                 });
 
         return http.build();
     }
+
 
     // CORS Configuration
     @Bean
@@ -110,4 +98,25 @@ public class HttpSecurityConfig {
         source.registerCorsConfiguration("/**", configuration); // CORS to all URL
         return source;
     }
+
+    @Bean
+    public OpenAPI openAPI() {
+        return new OpenAPI().addSecurityItem(new SecurityRequirement().
+                        addList("Bearer Authentication"))
+                .components(new Components().addSecuritySchemes
+                        ("Bearer Authentication", createAPIKeyScheme()))
+                .info(new Info().title("My REST API")
+                        .description("Some custom description of API.")
+                        .version("1.0").contact(new Contact().name("Sallo Szrajbman")
+                                .email( "www.baeldung.com").url("salloszraj@gmail.com"))
+                        .license(new License().name("License of API")
+                                .url("API license URL")));
+    }
+
+    private SecurityScheme createAPIKeyScheme() {
+        return new SecurityScheme().type(SecurityScheme.Type.HTTP)
+                .bearerFormat("JWT")
+                .scheme("bearer");
+    }
 }
+

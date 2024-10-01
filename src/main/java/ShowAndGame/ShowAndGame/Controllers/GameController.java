@@ -3,6 +3,7 @@ package ShowAndGame.ShowAndGame.Controllers;
 import ShowAndGame.ShowAndGame.Persistence.Dto.GameForCreationAndUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.GetGameDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.GetGameForExploreDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GetGamesByUserDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.Tag;
 import ShowAndGame.ShowAndGame.Services.GameService;
 import ShowAndGame.ShowAndGame.Util.CurrentUserUtil;
@@ -41,11 +42,24 @@ public class GameController {
         }
     }
 
-    @GetMapping("/feed")
+    @GetMapping("/explore")
     public ResponseEntity<List<GetGameForExploreDto>> GetGamesForExplore() {
-        List<GetGameForExploreDto> gameDTOs = gameService.GetAllForFeed();
+        List<GetGameForExploreDto> gameDTOs = gameService.GetAllForExplore();
         return ResponseEntity.ok(gameDTOs);
     }
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<GetGamesByUserDto>> GetGamesByUser(Long userId) {
+        List<GetGamesByUserDto> gamesByUserDtos = gameService.GetGameByUser(userId);
+        return ResponseEntity.ok(gamesByUserDtos);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<GetGamesByUserDto>> GetGamesByDeveloper(Long userId) {
+        List<GetGamesByUserDto> gamesByDeveloperDtos = gameService.GetGameByDeveloper(userId);
+        return ResponseEntity.ok(gamesByDeveloperDtos);
+    }
+
+
 
     @PostMapping()
     public ResponseEntity<String> CreateGame(@RequestBody GameForCreationAndUpdateDto newGame, List<Tag> tags){
