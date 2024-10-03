@@ -4,22 +4,12 @@ import ShowAndGame.ShowAndGame.Persistence.Entities.Tag;
 
 public class GetTagDto {
 
-    private Long id;
     private String name;
     private String color;
 
     public GetTagDto(Tag tag){
-        this.id = tag.getId();
         this.name = tag.getName();
         this.color = tag.getColor();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {

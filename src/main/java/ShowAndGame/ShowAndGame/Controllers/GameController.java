@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/games")
@@ -24,7 +25,7 @@ public class GameController {
     @Autowired
     private CurrentUserUtil currentUserUtil;
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<GetGameDto>> GetAllGames() {
         return ResponseEntity.ok(gameService.GetAll());
     }
@@ -48,16 +49,18 @@ public class GameController {
         return ResponseEntity.ok(gameDTOs);
     }
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<GetGamesByUserDto>> GetGamesByUser(@PathVariable Long userId) {
+    public ResponseEntity<List<GetGamesByUserDto>> GetGamesByUser(Long userId) {
         List<GetGamesByUserDto> gamesByUserDtos = gameService.GetGameByUser(userId);
         return ResponseEntity.ok(gamesByUserDtos);
     }
 
-    @GetMapping("/developer/{developerId}")
-    public ResponseEntity<List<GetGamesByUserDto>> GetGamesByDeveloper(@PathVariable Long developerId) {
-        List<GetGamesByUserDto> gamesByDeveloperDtos = gameService.GetGameByDeveloper(developerId);
+    @GetMapping("/developer/{userId}")
+    public ResponseEntity<List<GetGamesByUserDto>> GetGamesByDeveloper(Long userId) {
+        List<GetGamesByUserDto> gamesByDeveloperDtos = gameService.GetGameByDeveloper(userId);
         return ResponseEntity.ok(gamesByDeveloperDtos);
     }
+
+
 
     @PostMapping()
     public ResponseEntity<String> CreateGame(@RequestBody GameForCreationAndUpdateDto newGame, List<Tag> tags){
@@ -100,11 +103,11 @@ public class GameController {
         Long userId = currentUserUtil.GetCurrentUserId();
         ResponseEntity<String> response = null;
 
-        if(state == "follow"){
+        if(Objects.equals(state, "follow")){
             gameService.Follow(userId, gameId);
             response = ResponseEntity.ok().body("Followed");
         }
-        else if(state == "unfollow"){
+        else if(Objects.equals(state, "unfollow")){
             gameService.Unfollow(userId, gameId);
             response = ResponseEntity.ok().body("Unfollowed");
         }

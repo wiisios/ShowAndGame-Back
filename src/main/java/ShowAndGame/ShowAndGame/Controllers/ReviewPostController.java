@@ -1,6 +1,7 @@
 package ShowAndGame.ShowAndGame.Controllers;
 
 import ShowAndGame.ShowAndGame.Persistence.Dto.GetReviewPostDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GetReviewPostForUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostForCreationAndUpdateDto;
 import ShowAndGame.ShowAndGame.Services.ReviewPostService;
 import ShowAndGame.ShowAndGame.Util.CurrentUserUtil;
@@ -66,11 +67,11 @@ public class ReviewPostController {
     }
 
     @PutMapping()
-    public ResponseEntity<GetReviewPostDto> UpdateReviewPost(@RequestBody GetReviewPostDto reviewPostToUpdate){
-        ResponseEntity<GetReviewPostDto> response = null;
+    public ResponseEntity<GetReviewPostForUpdateDto> UpdateReviewPost(@RequestBody GetReviewPostForUpdateDto reviewPostToUpdate, @PathVariable Long reviewPostId){
+        ResponseEntity<GetReviewPostForUpdateDto> response = null;
 
-        if (reviewPostToUpdate.getId() != null && reviewPostService.GetById(reviewPostToUpdate.getId()) != null) {
-            reviewPostService.Update(reviewPostToUpdate);
+        if (reviewPostId != null && reviewPostService.GetById(reviewPostId) != null) {
+            reviewPostService.Update(reviewPostToUpdate, reviewPostId);
             response = ResponseEntity.status(HttpStatus.OK).body(reviewPostToUpdate);
         }
         else {

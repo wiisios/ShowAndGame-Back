@@ -3,12 +3,15 @@ package ShowAndGame.ShowAndGame.Persistence.Dto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.*;
 
 public class GetAllUsersDto {
+
+    private Long id;
     private String userName;
     private String email;
     private String profileImage;
     private UserRole userRole;
 
     public GetAllUsersDto(User user) {
+        this.id = user.getId();
         this.userName = user.getUsername();
         this.email = user.getEmail();
         this.profileImage = user.getProfileImage();

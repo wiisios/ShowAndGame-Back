@@ -19,14 +19,14 @@ public class TagController {
     private TagService tagService;
 
     @GetMapping()
-    public ResponseEntity<List<GetTagDto>> GetAllTags() {
+    public ResponseEntity<List<GetTagDto>> getAllTags() {
 
         return  ResponseEntity.ok(tagService.GetAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Tag> GetTag(@PathVariable Long id) {
-        Tag tag = tagService.GetById(id).orElse(null);
+    public ResponseEntity<GetTagDto> getTag(@PathVariable Long id) {
+        GetTagDto tag = tagService.GetById(id);
 
         if (tag != null){
             return ResponseEntity.ok(tag);
@@ -38,25 +38,25 @@ public class TagController {
     }
 
     @GetMapping("/{gameId}")
-    public ResponseEntity<List<GetTagDto>> GetTagsByGameId(@PathVariable Long gameId){
+    public ResponseEntity<List<GetTagDto>> getTagsByGameId(@PathVariable Long gameId){
 
         return ResponseEntity.ok(tagService.GetTagsByGameId(gameId));
     }
 
     @PostMapping()
-    public ResponseEntity<TagForCreationAndUpdateDto> CreateTag(@RequestBody TagForCreationAndUpdateDto newTag){
+    public ResponseEntity<TagForCreationAndUpdateDto> createTag(@RequestBody TagForCreationAndUpdateDto newTag){
 
         tagService.Create(newTag);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(newTag);
     }
 
-    @PutMapping()
-    public ResponseEntity<GetTagDto> UpdateTag(@RequestBody GetTagDto tagToUpdate){
+    @PutMapping("/{tagId}")
+    public ResponseEntity<GetTagDto> updateTag(@RequestBody GetTagDto tagToUpdate, @PathVariable Long tagId){
         ResponseEntity<GetTagDto> response = null;
 
-        if (tagToUpdate.getId() != null && tagService.GetById(tagToUpdate.getId()).isPresent()) {
-            tagService.Update(tagToUpdate);
+        if (tagId != null && tagService.GetById(tagId) != null) {
+            tagService.Update(tagToUpdate, tagId);
             response = ResponseEntity.status(HttpStatus.OK).body(tagToUpdate);
         }
         else {
@@ -68,10 +68,10 @@ public class TagController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> DeleteTag(@PathVariable Long id){
+    public ResponseEntity<String> deleteTag(@PathVariable Long id){
         ResponseEntity<String> response = null;
 
-        if (tagService.GetById(id).isPresent()){
+        if (tagService.GetById(id) != null){
             tagService.Delete(id);
             response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted");}
         else

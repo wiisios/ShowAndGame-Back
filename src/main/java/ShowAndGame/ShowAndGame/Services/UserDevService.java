@@ -67,8 +67,8 @@ public class UserDevService {
                 .collect(Collectors.toList());
     }
 
-    public void UpdateProfile(GetUserForUpdateProfileDto userDevToUpdate) {
-        Optional<UserDev> currentUserDev = userDevRepository.findById(userDevToUpdate.getId());
+    public void UpdateProfile(GetUserForUpdateProfileDto userDevToUpdate, Long userId) {
+        Optional<UserDev> currentUserDev = userDevRepository.findById(userId);
         UserDev userDev = null;
 
         if(currentUserDev.isPresent()){

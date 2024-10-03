@@ -37,18 +37,18 @@ public class UserDevController {
     }
 
     @PostMapping()
-    public ResponseEntity<String> CreateDev(@RequestBody UserForCreationDto userDev){
+    public ResponseEntity<String> createDev(@RequestBody UserForCreationDto userDev){
         userDevService.Create(userDev);
 
         return ResponseEntity.ok().body("UserDev created");
     }
 
     @PutMapping()
-    public ResponseEntity<GetUserForUpdateProfileDto> UpdateDev(@RequestBody GetUserForUpdateProfileDto userDev){
+    public ResponseEntity<GetUserForUpdateProfileDto> updateDev(@RequestBody GetUserForUpdateProfileDto userDev, @PathVariable Long userDevId){
         ResponseEntity<GetUserForUpdateProfileDto> response = null;
 
-        if (userDev.getId() != null && userDevService.GetById(userDev.getId()) != null) {
-            userDevService.UpdateProfile(userDev);
+        if (userDevId != null && userDevService.GetById(userDevId) != null) {
+            userDevService.UpdateProfile(userDev, userDevId);
             response = ResponseEntity.ok(userDev);
         } else {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -57,7 +57,7 @@ public class UserDevController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> DeleteDevs(@PathVariable Long id){
+    public ResponseEntity<String> deleteDevs(@PathVariable Long id){
         ResponseEntity<String> response = null;
 
         if (userDevService.GetById(id) != null){

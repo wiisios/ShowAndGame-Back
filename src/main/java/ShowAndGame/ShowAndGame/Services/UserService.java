@@ -62,8 +62,8 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public void UpdateProfile(GetUserForUpdateProfileDto userToUpdate) {
-        Optional<User> currentUser = userRepository.findById(userToUpdate.getId());
+    public void UpdateProfile(GetUserForUpdateProfileDto userToUpdate, Long userId) {
+        Optional<User> currentUser = userRepository.findById(userId);
         User user = null;
 
         if(currentUser.isPresent()){
@@ -78,8 +78,8 @@ public class UserService {
         return userRepository.findByUserName(userName);
     }
 
-    public void UpdateUser(GetUserForAdminUpdateDto userToUpdate, Long id) {
-        Optional<User> currentUser = userRepository.findById(id);
+    public void UpdateUser(GetUserForAdminUpdateDto userToUpdate, Long userId) {
+        Optional<User> currentUser = userRepository.findById(userId);
         User user = null;
 
         if(currentUser.isPresent()){

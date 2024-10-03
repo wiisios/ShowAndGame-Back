@@ -2,6 +2,7 @@ package ShowAndGame.ShowAndGame.Services;
 
 import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostForCreationdDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.GetFeedPostDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GetFeedPostForUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.Comment;
 import ShowAndGame.ShowAndGame.Persistence.Entities.FeedPost;
 import ShowAndGame.ShowAndGame.Persistence.Entities.Game;
@@ -86,14 +87,16 @@ public class FeedPostService {
                 .map(feedPost -> new GetFeedPostDto(feedPost)).collect(Collectors.toList());
     }
 
-    public void Update(FeedPost feedPostDto, Long userId) {
-        Optional<FeedPost> currentFeedPost = feedPostRepository.findById(feedPostDto.getId());
+    public void Update(GetFeedPostForUpdateDto feedPostDto, Long userId, Long feedPostId) {
+        Optional<FeedPost> currentFeedPost = feedPostRepository.findById(feedPostId);
         FeedPost feedPost = null;
 
         if(currentFeedPost.isPresent()) {
             feedPost = currentFeedPost.get();
             if (Objects.equals(feedPost.getUser().getId(), userId)) {
-                feedPostRepository.save(feedPostDto);
+                feedPost.setDescription(feedPostDto.getDescription());
+                feedPost.setImage(feedPostDto.getImage());
+                feedPostRepository.save(feedPost);
 
             }
         }

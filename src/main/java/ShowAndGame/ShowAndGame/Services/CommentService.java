@@ -2,6 +2,7 @@ package ShowAndGame.ShowAndGame.Services;
 
 import ShowAndGame.ShowAndGame.Persistence.Dto.CommentForCreationAndUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.GetCommentForPostDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GetCommentForUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.*;
 import ShowAndGame.ShowAndGame.Persistence.Repository.CommentRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.FeedPostRepository;
@@ -80,9 +81,9 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
 
-    public void Update(GetCommentForPostDto commentToUpdate, Long userId) {
+    public void Update(GetCommentForUpdateDto commentToUpdate, Long userId, Long commentId) {
 
-        Optional<Comment> currentComment = commentRepository.findById((commentToUpdate.getId()));
+        Optional<Comment> currentComment = commentRepository.findById(commentId);
         Comment comment = null;
 
         if(currentComment.isPresent()){
