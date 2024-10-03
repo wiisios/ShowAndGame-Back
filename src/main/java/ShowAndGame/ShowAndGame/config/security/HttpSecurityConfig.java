@@ -82,14 +82,14 @@ public class HttpSecurityConfig {
                     authConfig.requestMatchers(HttpMethod.GET, "/tags").hasAnyRole("ADMIN", "USER", "DEVELOPER");
                     authConfig.requestMatchers(HttpMethod.GET, "/tags/{gameId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
                     authConfig.requestMatchers(HttpMethod.POST, "/tags").hasRole("ADMIN");
-                    authConfig.requestMatchers(HttpMethod.PUT, "/tags").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/tags/{tagId}").hasRole("ADMIN");
                     authConfig.requestMatchers(HttpMethod.DELETE, "/tags/{id}").hasRole("ADMIN");
 
                         //User
                     authConfig.requestMatchers(HttpMethod.GET, "/users/all").hasAnyRole("ADMIN");
                     authConfig.requestMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole("ADMIN", "USER");
-                    authConfig.requestMatchers(HttpMethod.PUT, "/users").hasAnyRole("ADMIN", "USER");
-                    authConfig.requestMatchers(HttpMethod.PUT, "/users/{id}").hasAnyRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/users/{userId}").hasAnyRole("ADMIN", "USER");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/users/adminUpdate/{userId}").hasAnyRole("ADMIN");
 
                         //UserDev
                     authConfig.requestMatchers(HttpMethod.GET, "/developers/{id}").hasAnyRole("ADMIN", "DEVELOPER");
