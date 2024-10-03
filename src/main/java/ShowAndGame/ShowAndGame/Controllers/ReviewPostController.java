@@ -21,13 +21,13 @@ public class ReviewPostController {
     private CurrentUserUtil currentUserUtil;
 
     @GetMapping()
-    public ResponseEntity<List<GetReviewPostDto>> getAllPosts() {
+    public ResponseEntity<List<GetReviewPostDto>> GetAllPosts() {
 
         return ResponseEntity.ok(reviewPostService.GetAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GetReviewPostDto> getPost(@PathVariable Long id) {
+    public ResponseEntity<GetReviewPostDto> GetPost(@PathVariable Long id) {
         GetReviewPostDto reviewPost = reviewPostService.GetById(id);
 
         if (reviewPost != null){
@@ -36,19 +36,17 @@ public class ReviewPostController {
         else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-
-
     }
 
     @GetMapping("/{gameId}")
-    public ResponseEntity<List<GetReviewPostDto>> getReviewsPostsByGameId(@PathVariable Long gameId){
+    public ResponseEntity<List<GetReviewPostDto>> GetReviewsPostsByGameId(@PathVariable Long gameId){
 
         return ResponseEntity.ok(reviewPostService.GetReviewPostsByGameId(gameId));
     }
 
     //Cuando se crea una review, hay que updatear el Game por el rating general
     @PostMapping("/{gameId}")
-    public ResponseEntity<String> createPost(@RequestBody ReviewPostForCreationAndUpdateDto reviewPost, @PathVariable Long gameId){
+    public ResponseEntity<String> CreatePost(@RequestBody ReviewPostForCreationAndUpdateDto reviewPost, @PathVariable Long gameId){
         ResponseEntity<String> response = null;
         Long userId = currentUserUtil.GetCurrentUserId();
 
@@ -82,7 +80,7 @@ public class ReviewPostController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePost(@PathVariable Long id){
+    public ResponseEntity<String> DeletePost(@PathVariable Long id){
         ResponseEntity<String> response = null;
 
         if (reviewPostService.GetById(id) != null){

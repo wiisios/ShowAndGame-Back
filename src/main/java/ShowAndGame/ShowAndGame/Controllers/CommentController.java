@@ -24,10 +24,10 @@ public class CommentController {
 
 
     @GetMapping()
-    public ResponseEntity<List<GetCommentForPostDto>> getAllComments() {return  ResponseEntity.ok(commentService.GetAll());}
+    public ResponseEntity<List<GetCommentForPostDto>> GetAllComments() {return  ResponseEntity.ok(commentService.GetAll());}
 
     @GetMapping("/{id}")
-    public ResponseEntity<GetCommentForPostDto> getComment(@PathVariable Long id) {
+    public ResponseEntity<GetCommentForPostDto> GetComment(@PathVariable Long id) {
 
         GetCommentForPostDto comment = commentService.GetById(id).orElse((null));
 
@@ -35,13 +35,13 @@ public class CommentController {
     }
 
     @GetMapping("/post/{postId}")
-    public ResponseEntity<List<GetCommentForPostDto>> getCommentsByPost(@PathVariable Long postId){
+    public ResponseEntity<List<GetCommentForPostDto>> GetCommentsByPost(@PathVariable Long postId){
         return ResponseEntity.ok(commentService.GetCommentsByPostId(postId));
     }
 
 
     @PostMapping()
-        public ResponseEntity<String> createComment(@RequestBody CommentForCreationAndUpdateDto comment, Long postId){
+        public ResponseEntity<String> CreateComment(@RequestBody CommentForCreationAndUpdateDto comment, Long postId){
         ResponseEntity<String> response = null;
 
         Long userId = currentUserUtil.GetCurrentUserId();
@@ -58,7 +58,7 @@ public class CommentController {
     }
 
     @PutMapping()
-    public ResponseEntity<GetCommentForPostDto> updateComment(@RequestBody GetCommentForPostDto commentToUpdate){
+    public ResponseEntity<GetCommentForPostDto> UpdateComment(@RequestBody GetCommentForPostDto commentToUpdate){
         ResponseEntity<GetCommentForPostDto> response = null;
         Long userId = currentUserUtil.GetCurrentUserId();
 
@@ -74,7 +74,7 @@ public class CommentController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteComment(@PathVariable Long id){
+    public ResponseEntity<String> DeleteComment(@PathVariable Long id){
         ResponseEntity<String> response = null;
         Long userId = currentUserUtil.GetCurrentUserId();
 

@@ -9,11 +9,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -30,8 +33,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         //1. Obtaining the Header that has JWT
         String authHeader = request.getHeader("Authorization"); // Bearer jwt
 
-        if(authHeader == null || !authHeader.startsWith("Bearer ")){
-            filterChain.doFilter(request,response);
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
             return;
         }
 
@@ -42,17 +45,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String username = jwtService.ExtractUsername(jwt);
 
         //4. Setting an object Authentication inside SecurityContext
-        User user = userRepository.findByUserName(username).get();
 
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                username, null, user.getAuthorities()
-        );
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            User user = userRepository.findByUserName(username).orElse(null);
+            if (user != null && jwtService.isTokenValid(jwt, user)) {
 
-        SecurityContextHolder.getContext().setAuthentication(authToken);
+                // 3. Extraer los roles del JWT (extra claims)
+                String role = jwtService.ExtractClaim(jwt, "role");
 
-        //5. Running remaining filters
+                // 4. Convertir el rol en GrantedAuthority
+                List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
 
-        filterChain.doFilter(request, response);
+                // 5. Crear un token de autenticación con el rol extraído
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        user, null, authorities
+                );
 
+                // 6. Establecer el contexto de seguridad
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+
+            //5. Running remaining filters
+
+            filterChain.doFilter(request, response);
+
+        }
     }
 }

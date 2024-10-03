@@ -24,7 +24,7 @@ public class GameController {
     @Autowired
     private CurrentUserUtil currentUserUtil;
 
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<List<GetGameDto>> GetAllGames() {
         return ResponseEntity.ok(gameService.GetAll());
     }
@@ -48,18 +48,16 @@ public class GameController {
         return ResponseEntity.ok(gameDTOs);
     }
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<GetGamesByUserDto>> GetGamesByUser(Long userId) {
+    public ResponseEntity<List<GetGamesByUserDto>> GetGamesByUser(@PathVariable Long userId) {
         List<GetGamesByUserDto> gamesByUserDtos = gameService.GetGameByUser(userId);
         return ResponseEntity.ok(gamesByUserDtos);
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<GetGamesByUserDto>> GetGamesByDeveloper(Long userId) {
-        List<GetGamesByUserDto> gamesByDeveloperDtos = gameService.GetGameByDeveloper(userId);
+    @GetMapping("/developer/{developerId}")
+    public ResponseEntity<List<GetGamesByUserDto>> GetGamesByDeveloper(@PathVariable Long developerId) {
+        List<GetGamesByUserDto> gamesByDeveloperDtos = gameService.GetGameByDeveloper(developerId);
         return ResponseEntity.ok(gamesByDeveloperDtos);
     }
-
-
 
     @PostMapping()
     public ResponseEntity<String> CreateGame(@RequestBody GameForCreationAndUpdateDto newGame, List<Tag> tags){

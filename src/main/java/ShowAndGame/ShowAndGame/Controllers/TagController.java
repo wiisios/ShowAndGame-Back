@@ -19,13 +19,13 @@ public class TagController {
     private TagService tagService;
 
     @GetMapping()
-    public ResponseEntity<List<GetTagDto>> getAllTags() {
+    public ResponseEntity<List<GetTagDto>> GetAllTags() {
 
         return  ResponseEntity.ok(tagService.GetAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Tag> getTag(@PathVariable Long id) {
+    public ResponseEntity<Tag> GetTag(@PathVariable Long id) {
         Tag tag = tagService.GetById(id).orElse(null);
 
         if (tag != null){
@@ -38,13 +38,13 @@ public class TagController {
     }
 
     @GetMapping("/{gameId}")
-    public ResponseEntity<List<GetTagDto>> getTagsByGameId(@PathVariable Long gameId){
+    public ResponseEntity<List<GetTagDto>> GetTagsByGameId(@PathVariable Long gameId){
 
         return ResponseEntity.ok(tagService.GetTagsByGameId(gameId));
     }
 
     @PostMapping()
-    public ResponseEntity<TagForCreationAndUpdateDto> createTag(@RequestBody TagForCreationAndUpdateDto newTag){
+    public ResponseEntity<TagForCreationAndUpdateDto> CreateTag(@RequestBody TagForCreationAndUpdateDto newTag){
 
         tagService.Create(newTag);
 
@@ -52,7 +52,7 @@ public class TagController {
     }
 
     @PutMapping()
-    public ResponseEntity<GetTagDto> updateTag(@RequestBody GetTagDto tagToUpdate){
+    public ResponseEntity<GetTagDto> UpdateTag(@RequestBody GetTagDto tagToUpdate){
         ResponseEntity<GetTagDto> response = null;
 
         if (tagToUpdate.getId() != null && tagService.GetById(tagToUpdate.getId()).isPresent()) {
@@ -68,7 +68,7 @@ public class TagController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteTag(@PathVariable Long id){
+    public ResponseEntity<String> DeleteTag(@PathVariable Long id){
         ResponseEntity<String> response = null;
 
         if (tagService.GetById(id).isPresent()){

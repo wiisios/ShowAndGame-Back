@@ -6,6 +6,7 @@ import ShowAndGame.ShowAndGame.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,10 +19,10 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<GetAllUsersDto>> getAllUsers() {return  ResponseEntity.ok(userService.GetAll());}
+    public ResponseEntity<List<GetAllUsersDto>> GetAllUsers() {return  ResponseEntity.ok(userService.GetAll());}
 
     @GetMapping("/{id}")
-    public ResponseEntity<GetUserByIdDto> getUser(@PathVariable Long id) {
+    public ResponseEntity<GetUserByIdDto> GetUser(@PathVariable Long id) {
 
         GetUserByIdDto user = userService.GetById(id);
 
@@ -54,8 +55,8 @@ public class UserController {
         return response;
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id){
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> DeleteUser(@PathVariable Long id){
         ResponseEntity<String> response = null;
 
         if (userService.GetById(id) != null){

@@ -24,10 +24,10 @@ public class FeedPostController {
     private CurrentUserUtil currentUserUtil;
 
     @GetMapping()
-    public ResponseEntity<List<GetFeedPostDto>> getAllPosts() {return  ResponseEntity.ok(feedPostService.GetAll());}
+    public ResponseEntity<List<GetFeedPostDto>> GetAllPosts() {return  ResponseEntity.ok(feedPostService.GetAll());}
 
     @GetMapping("/{id}")
-    public ResponseEntity<GetFeedPostDto> getPost(@PathVariable Long id) {
+    public ResponseEntity<GetFeedPostDto> GetPost(@PathVariable Long id) {
 
         GetFeedPostDto feedPost = feedPostService.GetById(id).orElse((null));
 
@@ -35,12 +35,12 @@ public class FeedPostController {
     }
 
     @GetMapping("/{gameId}")
-    public ResponseEntity<List<GetFeedPostDto>> getPostByGameId(@PathVariable Long gameId){
+    public ResponseEntity<List<GetFeedPostDto>> GetPostByGameId(@PathVariable Long gameId){
         return ResponseEntity.ok(feedPostService.GetFeedPostsByGameId(gameId));
     }
 
     @PostMapping("/{gameId}")
-    public ResponseEntity<String> createPost(@RequestBody FeedPostForCreationdDto feedPost, @PathVariable Long gameId ){
+    public ResponseEntity<String> CreatePost(@RequestBody FeedPostForCreationdDto feedPost, @PathVariable Long gameId ){
         ResponseEntity<String> response = null;
         Long userId = currentUserUtil.GetCurrentUserId();
 
@@ -59,7 +59,7 @@ public class FeedPostController {
     }
 
     @PutMapping()
-    public ResponseEntity<FeedPost> updatePost(@RequestBody FeedPost feedPost){
+    public ResponseEntity<FeedPost> UpdatePost(@RequestBody FeedPost feedPost){
         ResponseEntity<FeedPost> response = null;
         Long userId = currentUserUtil.GetCurrentUserId();
 
@@ -74,7 +74,7 @@ public class FeedPostController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePost(@PathVariable Long id){
+    public ResponseEntity<String> DeletePost(@PathVariable Long id){
         ResponseEntity<String> response = null;
         Long userId = currentUserUtil.GetCurrentUserId();
 

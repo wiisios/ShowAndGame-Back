@@ -49,33 +49,52 @@ public class HttpSecurityConfig {
 
                     // Public URLs
                     authConfig.requestMatchers(HttpMethod.POST, "/auth/authenticate").permitAll();
-                    authConfig.requestMatchers(HttpMethod.POST, "/authentication-controller/login").permitAll();
                     authConfig.requestMatchers(HttpMethod.POST, "/users").permitAll();
                     authConfig.requestMatchers("/error").permitAll();
 
                     // Private URLs
-                    authConfig.requestMatchers(HttpMethod.POST, "/comments/**").hasAnyRole("USER", "ADMIN");
-                    authConfig.requestMatchers(HttpMethod.GET, "/feedPosts/**").hasAnyRole("USER", "ADMIN");
-                    authConfig.requestMatchers(HttpMethod.POST, "/feedPosts/**").hasAnyRole("USER", "ADMIN");
-                    authConfig.requestMatchers(HttpMethod.GET, "/reviewPosts/{gameId}").hasAnyRole("USER", "ADMIN");
-                    authConfig.requestMatchers(HttpMethod.POST, "/reviewPosts/**").hasAnyRole("USER", "ADMIN");
-                    authConfig.requestMatchers(HttpMethod.GET, "/tags").hasAnyRole("USER", "ADMIN");
-                    authConfig.requestMatchers(HttpMethod.GET, "/tags/{gameId}").hasAnyRole("USER", "ADMIN");
-                    authConfig.requestMatchers(HttpMethod.POST, "/tags/{gameId}").hasRole("ADMIN");
-                    authConfig.requestMatchers(HttpMethod.PUT, "/tags/{gameId}").hasRole("ADMIN");
-                    authConfig.requestMatchers(HttpMethod.DELETE, "/tags/{gameId}").hasRole("ADMIN");
-                    authConfig.requestMatchers(HttpMethod.GET, "/games/{id}").hasAnyRole("USER", "ADMIN");
-                    authConfig.requestMatchers(HttpMethod.GET, "/games/feed").hasAnyRole("USER", "ADMIN");
-                    authConfig.requestMatchers(HttpMethod.POST, "/games/**").hasRole("ADMIN");
-                    authConfig.requestMatchers(HttpMethod.PUT, "/games").hasRole("ADMIN");
-                    authConfig.requestMatchers(HttpMethod.PUT, "/games/{id}").hasAnyRole("USER", "ADMIN");
-                    authConfig.requestMatchers(HttpMethod.DELETE, "/games/**").hasRole("ADMIN");
-                    authConfig.requestMatchers(HttpMethod.GET, "/users/all").hasRole("ADMIN");
-                    authConfig.requestMatchers(HttpMethod.GET, "/users/{id}").hasRole("USER");
-                    authConfig.requestMatchers(HttpMethod.POST, "/users/**").hasAnyRole("USER", "ADMIN");
-                    authConfig.requestMatchers(HttpMethod.PUT, "/users/**").hasAnyRole("USER", "ADMIN");
-                    authConfig.requestMatchers(HttpMethod.GET, "/users/{id}").hasRole("DEVELOPER");
-                    authConfig.requestMatchers(HttpMethod.PUT, "/users/**").hasRole("DEVELOPER");
+
+                        //Comment
+                    authConfig.requestMatchers(HttpMethod.GET, "/comments/post/{postId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.POST, "/comments").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+
+                        //FeedPost
+                    authConfig.requestMatchers(HttpMethod.GET, "/feedPosts").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.GET, "/feedPosts/{id}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.GET, "/feedPosts/{gameId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.POST, "/feedPosts/{gameId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+
+                        //Game
+                    authConfig.requestMatchers(HttpMethod.GET, "/games/{id}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.GET, "/games/explore").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.GET, "/games/user/{userId}").hasAnyRole("ADMIN", "USER");
+                    authConfig.requestMatchers(HttpMethod.GET, "/games/developer/{developerId}").hasAnyRole("ADMIN", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.POST, "/games").hasAnyRole("ADMIN", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/games").hasAnyRole("ADMIN", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/games/{gameId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.DELETE, "/games/{id}").hasAnyRole("ADMIN", "DEVELOPER");
+
+                        //ReviewPost
+                    authConfig.requestMatchers(HttpMethod.GET, "/reviewPosts/{gameId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.POST, "/reviewPosts/{gameId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+
+                        //Tag
+                    authConfig.requestMatchers(HttpMethod.GET, "/tags").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.GET, "/tags/{gameId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.POST, "/tags").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/tags").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.DELETE, "/tags/{id}").hasRole("ADMIN");
+
+                        //User
+                    authConfig.requestMatchers(HttpMethod.GET, "/users/all").hasAnyRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole("ADMIN", "USER");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/users").hasAnyRole("ADMIN", "USER");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/users/{id}").hasAnyRole("ADMIN");
+
+                        //UserDev
+                    authConfig.requestMatchers(HttpMethod.GET, "/developers/{id}").hasAnyRole("ADMIN", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/developers").hasAnyRole("ADMIN", "DEVELOPER");
+
 
                     // Catch-all for other requests: anyRequest
                     authConfig.anyRequest().denyAll();
