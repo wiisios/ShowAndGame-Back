@@ -44,11 +44,11 @@ public class UserDevController {
     }
 
     @PutMapping()
-    public ResponseEntity<GetUserForUpdateProfileDto> updateDev(@RequestBody GetUserForUpdateProfileDto userDev){
+    public ResponseEntity<GetUserForUpdateProfileDto> updateDev(@RequestBody GetUserForUpdateProfileDto userDev, @PathVariable Long userDevId){
         ResponseEntity<GetUserForUpdateProfileDto> response = null;
 
-        if (userDev.getId() != null && userDevService.GetById(userDev.getId()) != null) {
-            userDevService.UpdateProfile(userDev);
+        if (userDevId != null && userDevService.GetById(userDevId) != null) {
+            userDevService.UpdateProfile(userDev, userDevId);
             response = ResponseEntity.ok(userDev);
         } else {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();

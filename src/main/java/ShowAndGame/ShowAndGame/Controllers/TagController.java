@@ -25,8 +25,8 @@ public class TagController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Tag> getTag(@PathVariable Long id) {
-        Tag tag = tagService.GetById(id).orElse(null);
+    public ResponseEntity<GetTagDto> getTag(@PathVariable Long id) {
+        GetTagDto tag = tagService.GetById(id);
 
         if (tag != null){
             return ResponseEntity.ok(tag);
@@ -51,12 +51,12 @@ public class TagController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newTag);
     }
 
-    @PutMapping()
-    public ResponseEntity<GetTagDto> updateTag(@RequestBody GetTagDto tagToUpdate){
+    @PutMapping("/{tagId}")
+    public ResponseEntity<GetTagDto> updateTag(@RequestBody GetTagDto tagToUpdate, @PathVariable Long tagId){
         ResponseEntity<GetTagDto> response = null;
 
-        if (tagToUpdate.getId() != null && tagService.GetById(tagToUpdate.getId()).isPresent()) {
-            tagService.Update(tagToUpdate);
+        if (tagId != null && tagService.GetById(tagId) != null) {
+            tagService.Update(tagToUpdate, tagId);
             response = ResponseEntity.status(HttpStatus.OK).body(tagToUpdate);
         }
         else {
@@ -71,7 +71,7 @@ public class TagController {
     public ResponseEntity<String> deleteTag(@PathVariable Long id){
         ResponseEntity<String> response = null;
 
-        if (tagService.GetById(id).isPresent()){
+        if (tagService.GetById(id) != null){
             tagService.Delete(id);
             response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted");}
         else

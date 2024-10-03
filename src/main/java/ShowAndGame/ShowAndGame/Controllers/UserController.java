@@ -40,12 +40,12 @@ public class UserController {
         return ResponseEntity.ok().body("User created");
     }
 
-    @PutMapping()
-    public ResponseEntity<GetUserForUpdateProfileDto> UpdateUserProfile(@RequestBody GetUserForUpdateProfileDto userToUpdate){
+    @PutMapping("/{userId}")
+    public ResponseEntity<GetUserForUpdateProfileDto> UpdateUserProfile(@RequestBody GetUserForUpdateProfileDto userToUpdate, @PathVariable Long userId){
         ResponseEntity<GetUserForUpdateProfileDto> response = null;
 
-        if (userToUpdate.getId() != null && userService.GetById(userToUpdate.getId()) != null){
-            userService.UpdateProfile(userToUpdate);
+        if (userId != null && userService.GetById(userId) != null){
+            userService.UpdateProfile(userToUpdate, userId);
             response = ResponseEntity.ok(userToUpdate);
         }
         else {
@@ -67,7 +67,7 @@ public class UserController {
         return response;
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/adminUpdate/{userId}")
     public ResponseEntity<String> UpdateUser(@PathVariable Long id, @RequestBody GetUserForAdminUpdateDto user){
         ResponseEntity<String> response = null;
 

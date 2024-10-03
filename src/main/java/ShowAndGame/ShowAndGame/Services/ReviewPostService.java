@@ -1,6 +1,7 @@
 package ShowAndGame.ShowAndGame.Services;
 
 import ShowAndGame.ShowAndGame.Persistence.Dto.GetReviewPostDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GetReviewPostForUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostForCreationAndUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.Game;
 import ShowAndGame.ShowAndGame.Persistence.Entities.ReviewPost;
@@ -85,8 +86,8 @@ public class ReviewPostService {
                 .collect(Collectors.toList());
     }
 
-    public void Update(GetReviewPostDto reviewPostToUpdate) {
-        Optional<ReviewPost> currentPost = reviewPostRepository.findById(reviewPostToUpdate.getId());
+    public void Update(GetReviewPostForUpdateDto reviewPostToUpdate, Long reviewPostId) {
+        Optional<ReviewPost> currentPost = reviewPostRepository.findById(reviewPostId);
         ReviewPost reviewPost = null;
 
         if(currentPost.isPresent()){

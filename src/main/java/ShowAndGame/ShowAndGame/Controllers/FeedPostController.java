@@ -3,6 +3,7 @@ package ShowAndGame.ShowAndGame.Controllers;
 
 import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostForCreationdDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.GetFeedPostDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GetFeedPostForUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.FeedPost;
 import ShowAndGame.ShowAndGame.Services.FeedPostService;
 import ShowAndGame.ShowAndGame.Util.CurrentUserUtil;
@@ -58,13 +59,13 @@ public class FeedPostController {
         return response;
     }
 
-    @PutMapping()
-    public ResponseEntity<FeedPost> updatePost(@RequestBody FeedPost feedPost){
-        ResponseEntity<FeedPost> response = null;
+    @PutMapping("/{postId}")
+    public ResponseEntity<GetFeedPostForUpdateDto> updatePost(@RequestBody GetFeedPostForUpdateDto feedPost, @PathVariable Long feedPostId){
+        ResponseEntity<GetFeedPostForUpdateDto> response = null;
         Long userId = currentUserUtil.GetCurrentUserId();
 
-        if (feedPost.getId() != null && feedPostService.GetById(feedPost.getId()).isPresent()){
-            feedPostService.Update(feedPost, userId);
+        if (feedPostId != null && feedPostService.GetById(feedPostId).isPresent()){
+            feedPostService.Update(feedPost, userId, feedPostId);
             response = ResponseEntity.ok(feedPost);}
         else
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();

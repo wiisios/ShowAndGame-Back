@@ -34,8 +34,13 @@ public class TagService {
         tagRepository.deleteById(id);
     }
 
-    public Optional<Tag> GetById(Long id) {
-        return tagRepository.findById(id);
+    public GetTagDto GetById(Long id) {
+        Optional<Tag> currentTag = tagRepository.findById(id);
+        Tag tag = null;
+
+        if (currentTag.isPresent())
+                tag = currentTag.get();
+        return new GetTagDto(tag);
     }
 
     public List<GetTagDto> GetAll() {
@@ -52,8 +57,8 @@ public class TagService {
                 .collect(Collectors.toList());
     }
 
-    public void Update(GetTagDto tagToUpdate) {
-        Optional<Tag> currentTag = tagRepository.findById(tagToUpdate.getId());
+    public void Update(GetTagDto tagToUpdate, Long tagId) {
+        Optional<Tag> currentTag = tagRepository.findById(tagId);
         Tag tag = null;
 
         if(currentTag.isPresent()){

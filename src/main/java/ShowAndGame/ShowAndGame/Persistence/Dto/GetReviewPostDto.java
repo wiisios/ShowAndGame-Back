@@ -6,7 +6,6 @@ import ShowAndGame.ShowAndGame.Persistence.Entities.User;
 import java.time.LocalDate;
 
 public class GetReviewPostDto {
-    private Long id;
     private String description;
     private LocalDate date;
     private Integer rating;
@@ -14,20 +13,11 @@ public class GetReviewPostDto {
     private String userProfileImage;
 
     public GetReviewPostDto(ReviewPost reviewPost, User user) {
-        this.id = reviewPost.getId();
         this.description = reviewPost.getDescription();
         this.date = reviewPost.getDate();
         this.rating = reviewPost.getRating();
         this.userName = user.getUsername();
         this.userProfileImage = user.getProfileImage();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getDescription() {

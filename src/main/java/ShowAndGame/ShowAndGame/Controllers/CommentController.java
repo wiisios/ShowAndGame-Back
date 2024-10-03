@@ -2,6 +2,7 @@ package ShowAndGame.ShowAndGame.Controllers;
 
 import ShowAndGame.ShowAndGame.Persistence.Dto.CommentForCreationAndUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.GetCommentForPostDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GetCommentForUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.Comment;
 import ShowAndGame.ShowAndGame.Services.CommentService;
 import ShowAndGame.ShowAndGame.Util.CurrentUserUtil;
@@ -57,13 +58,13 @@ public class CommentController {
         return response;
     }
 
-    @PutMapping()
-    public ResponseEntity<GetCommentForPostDto> updateComment(@RequestBody GetCommentForPostDto commentToUpdate){
-        ResponseEntity<GetCommentForPostDto> response = null;
+    @PutMapping("/{commentId}")
+    public ResponseEntity<GetCommentForUpdateDto> updateComment(@RequestBody GetCommentForUpdateDto commentToUpdate, @PathVariable Long commentId){
+        ResponseEntity<GetCommentForUpdateDto> response = null;
         Long userId = currentUserUtil.GetCurrentUserId();
 
-        if (commentToUpdate.getId() != null && commentService.GetById(commentToUpdate.getId()).isPresent()){
-            commentService.Update(commentToUpdate, userId);
+        if (commentId != null && commentService.GetById(commentId).isPresent()){
+            commentService.Update(commentToUpdate, userId, commentId);
             response = ResponseEntity.status(HttpStatus.OK).body(commentToUpdate);
         }
         else
