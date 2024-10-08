@@ -1,8 +1,8 @@
 package ShowAndGame.ShowAndGame.Services;
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.CommentForCreationAndUpdateDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetCommentForPostDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetCommentForUpdateDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.CommentDto.CommentForCreationAndUpdateDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.CommentDto.GetCommentForPostDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.CommentDto.GetCommentForUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.*;
 import ShowAndGame.ShowAndGame.Persistence.Repository.CommentRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.FeedPostRepository;

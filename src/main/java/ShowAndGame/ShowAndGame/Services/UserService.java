@@ -1,6 +1,6 @@
 package ShowAndGame.ShowAndGame.Services;
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.*;
+import ShowAndGame.ShowAndGame.Persistence.Dto.UserDto.*;
 import ShowAndGame.ShowAndGame.Persistence.Entities.User;
 import ShowAndGame.ShowAndGame.Persistence.Entities.UserRole;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserRepository;

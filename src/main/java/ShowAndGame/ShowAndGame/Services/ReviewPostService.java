@@ -1,8 +1,9 @@
 package ShowAndGame.ShowAndGame.Services;
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetReviewPostDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetReviewPostForUpdateDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostForCreationAndUpdateDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostDto.GetReviewPostDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostDto.GetReviewPostForUpdateDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostDto.ReviewPostForCreationAndUpdateDto;
+import ShowAndGame.ShowAndGame.Persistence.Entities.FeedPost;
 import ShowAndGame.ShowAndGame.Persistence.Entities.Game;
 import ShowAndGame.ShowAndGame.Persistence.Entities.ReviewPost;
 import ShowAndGame.ShowAndGame.Persistence.Entities.User;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -55,8 +57,16 @@ public class ReviewPostService {
         reviewPostRepository.save(reviewPostToCreate);
     }
 
-    public void Delete(Long id) {
-        reviewPostRepository.deleteById(id);
+    public void Delete(Long id, Long userId) {
+        Optional<ReviewPost> currentReviewPost = reviewPostRepository.findById(id);
+        ReviewPost reviewPost = null;
+
+        if(currentReviewPost.isPresent()){
+            reviewPost = currentReviewPost.get();
+            if (Objects.equals(reviewPost.getUser().getId(), userId)){
+                reviewPostRepository.deleteById(id);
+            }
+        }
     }
 
     public GetReviewPostDto GetById(Long id) {

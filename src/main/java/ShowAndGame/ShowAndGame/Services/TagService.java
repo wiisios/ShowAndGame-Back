@@ -1,7 +1,8 @@
 package ShowAndGame.ShowAndGame.Services;
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetTagDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.TagForCreationAndUpdateDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.TagDto.GetTagDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.TagDto.TagForCreationDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.TagDto.TagForUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.Tag;
 import ShowAndGame.ShowAndGame.Persistence.Repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class TagService {
         this.tagRepository = tagRepository;
     }
 
-    public void Create(TagForCreationAndUpdateDto newTag) {
+    public void Create(TagForCreationDto newTag) {
         Tag tagToCreate = new Tag();
 
         tagToCreate.setName(newTag.getName());
@@ -57,7 +58,7 @@ public class TagService {
                 .collect(Collectors.toList());
     }
 
-    public void Update(GetTagDto tagToUpdate, Long tagId) {
+    public void Update(TagForUpdateDto tagToUpdate, Long tagId) {
         Optional<Tag> currentTag = tagRepository.findById(tagId);
         Tag tag = null;
 

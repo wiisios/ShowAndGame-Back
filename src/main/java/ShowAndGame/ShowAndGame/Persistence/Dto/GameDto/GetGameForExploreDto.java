@@ -1,7 +1,7 @@
-package ShowAndGame.ShowAndGame.Persistence.Dto;
+package ShowAndGame.ShowAndGame.Persistence.Dto.GameDto;
 
+import ShowAndGame.ShowAndGame.Persistence.Dto.TagDto.GetTagDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.Game;
-import ShowAndGame.ShowAndGame.Persistence.Entities.Tag;
 
 import java.util.List;
 import java.util.stream.Collectors;

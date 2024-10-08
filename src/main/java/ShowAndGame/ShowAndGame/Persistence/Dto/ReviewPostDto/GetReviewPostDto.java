@@ -1,26 +1,47 @@
-package ShowAndGame.ShowAndGame.Persistence.Dto;
+package ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostDto;
 
-import ShowAndGame.ShowAndGame.Persistence.Entities.Comment;
+import ShowAndGame.ShowAndGame.Persistence.Entities.ReviewPost;
 import ShowAndGame.ShowAndGame.Persistence.Entities.User;
 
-public class GetCommentForPostDto {
+import java.time.LocalDate;
 
-    private  Long id;
+public class GetReviewPostDto {
     private String description;
+    private LocalDate date;
+    private Integer rating;
     private String userName;
     private String userProfileImage;
 
-    public GetCommentForPostDto(Comment comment, User user){
-        this.description = comment.getDescription();
+    public GetReviewPostDto(ReviewPost reviewPost, User user) {
+        this.description = reviewPost.getDescription();
+        this.date = reviewPost.getDate();
+        this.rating = reviewPost.getRating();
         this.userName = user.getUsername();
         this.userProfileImage = user.getProfileImage();
     }
+
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
     }
 
     public String getUserName() {
@@ -37,13 +58,5 @@ public class GetCommentForPostDto {
 
     public void setUserProfileImage(String userProfileImage) {
         this.userProfileImage = userProfileImage;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 }

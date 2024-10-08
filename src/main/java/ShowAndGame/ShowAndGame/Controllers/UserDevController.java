@@ -1,9 +1,9 @@
 package ShowAndGame.ShowAndGame.Controllers;
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetAllUsersDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetUserByIdDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetUserForUpdateProfileDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.UserForCreationDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.UserDto.GetAllUsersDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.UserDto.GetUserByIdDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.UserDto.GetUserForUpdateProfileDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.UserDto.UserForCreationDto;
 import ShowAndGame.ShowAndGame.Services.UserDevService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

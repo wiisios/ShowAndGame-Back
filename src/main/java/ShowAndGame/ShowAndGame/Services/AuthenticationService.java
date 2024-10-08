@@ -1,7 +1,7 @@
 package ShowAndGame.ShowAndGame.Services;
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.AuthenticationRequest;
-import ShowAndGame.ShowAndGame.Persistence.Dto.AuthenticationResponse;
+import ShowAndGame.ShowAndGame.Persistence.Dto.AuthenticationDto.AuthenticationRequest;
+import ShowAndGame.ShowAndGame.Persistence.Dto.AuthenticationDto.AuthenticationResponse;
 import ShowAndGame.ShowAndGame.Persistence.Entities.User;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

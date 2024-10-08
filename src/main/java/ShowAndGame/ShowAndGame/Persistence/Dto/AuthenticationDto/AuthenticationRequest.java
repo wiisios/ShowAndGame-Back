@@ -1,10 +1,8 @@
-package ShowAndGame.ShowAndGame.Persistence.Dto;
+package ShowAndGame.ShowAndGame.Persistence.Dto.AuthenticationDto;
 
-public class UserForCreationDto {
-
+public class AuthenticationRequest {
     private String userName;
     private String password;
-    private String email;
 
     public String getUserName() {
         return userName;
@@ -20,13 +18,5 @@ public class UserForCreationDto {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 }

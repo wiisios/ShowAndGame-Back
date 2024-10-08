@@ -1,8 +1,8 @@
 package ShowAndGame.ShowAndGame.Controllers;
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetTagDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.TagForCreationAndUpdateDto;
-import ShowAndGame.ShowAndGame.Persistence.Entities.Tag;
+import ShowAndGame.ShowAndGame.Persistence.Dto.TagDto.GetTagDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.TagDto.TagForCreationDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.TagDto.TagForUpdateDto;
 import ShowAndGame.ShowAndGame.Services.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,7 +44,7 @@ public class TagController {
     }
 
     @PostMapping()
-    public ResponseEntity<TagForCreationAndUpdateDto> createTag(@RequestBody TagForCreationAndUpdateDto newTag){
+    public ResponseEntity<TagForCreationDto> createTag(@RequestBody TagForCreationDto newTag){
 
         tagService.Create(newTag);
 
@@ -52,8 +52,8 @@ public class TagController {
     }
 
     @PutMapping("/{tagId}")
-    public ResponseEntity<GetTagDto> updateTag(@RequestBody GetTagDto tagToUpdate, @PathVariable Long tagId){
-        ResponseEntity<GetTagDto> response = null;
+    public ResponseEntity<TagForUpdateDto> updateTag(@RequestBody TagForUpdateDto tagToUpdate, @PathVariable Long tagId){
+        ResponseEntity<TagForUpdateDto> response = null;
 
         if (tagId != null && tagService.GetById(tagId) != null) {
             tagService.Update(tagToUpdate, tagId);

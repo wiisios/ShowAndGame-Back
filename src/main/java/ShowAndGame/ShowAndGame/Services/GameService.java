@@ -1,22 +1,21 @@
 package ShowAndGame.ShowAndGame.Services;
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.GameForCreationAndUpdateDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetGameDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetGameForExploreDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetGamesByUserDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GameDto.GameForCreationDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GameDto.GetGameDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GameDto.GetGameForExploreDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GameDto.GetGamesByUserDto;
+import ShowAndGame.ShowAndGame.Persistence.Entities.*;
 import ShowAndGame.ShowAndGame.Persistence.Repository.GameRepository;
+import ShowAndGame.ShowAndGame.Persistence.Repository.TagRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserDevRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserRepository;
-import ShowAndGame.ShowAndGame.Persistence.Entities.Game;
-import ShowAndGame.ShowAndGame.Persistence.Entities.Tag;
-import ShowAndGame.ShowAndGame.Persistence.Entities.User;
-import ShowAndGame.ShowAndGame.Persistence.Entities.UserDev;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -26,17 +25,22 @@ public class GameService {
     private final GameRepository gameRepository;
     private final UserDevRepository userDevRepository;
     private final UserRepository userRepository;
+    private final TagRepository tagRepository;
     @Autowired
-    public GameService(GameRepository gameRepository, UserDevRepository userDevRepository, UserRepository userRepository){
+    public GameService(GameRepository gameRepository, UserDevRepository userDevRepository, UserRepository userRepository, TagRepository tagRepository){
         this.gameRepository = gameRepository;
         this.userDevRepository = userDevRepository;
         this.userRepository = userRepository;
+        this.tagRepository = tagRepository;
     }
 
-    public void Create(GameForCreationAndUpdateDto newGame, Long userDevId, List<Tag> tags) {
+    public void Create(GameForCreationDto newGame, Long userDevId) {
         Game gameToCreate = new Game();
         Optional<UserDev> dev = userDevRepository.findById(userDevId);
         UserDev currentDev = null;
+        List<Long> tags = newGame.getTagsId();
+
+        List<Tag> tagsForCreation = tags.stream().map(tag -> tagRepository.findById(tag).get()).toList();
 
         if (dev.isPresent()){
             currentDev = dev.get();
@@ -50,13 +54,21 @@ public class GameService {
         gameToCreate.setFollowers(new ArrayList<User>());
         gameToCreate.setFollowerAmount(0);
         gameToCreate.setOwner(currentDev);
-        gameToCreate.setTags(tags);
+        gameToCreate.setTags(tagsForCreation);
 
         gameRepository.save(gameToCreate);
     }
 
-    public void Delete(Long id) {
-        gameRepository.deleteById(id);
+    public void Delete(Long id, Long userDevId) {
+        Optional<Game> currentGame = gameRepository.findById(id);
+        Game game = null;
+
+        if(currentGame.isPresent()){
+            game = currentGame.get();
+            if (Objects.equals(game.getOwner().getId(), userDevId)){
+                gameRepository.deleteById(id);
+            }
+        }
     }
 
     public GetGameDto GetById(Long id) {

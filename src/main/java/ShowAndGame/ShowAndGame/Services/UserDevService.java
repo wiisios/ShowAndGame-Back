@@ -1,9 +1,9 @@
 package ShowAndGame.ShowAndGame.Services;
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetAllUsersDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetUserByIdDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetUserForUpdateProfileDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.UserForCreationDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.UserDto.GetAllUsersDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.UserDto.GetUserByIdDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.UserDto.GetUserForUpdateProfileDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.UserDto.UserForCreationDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.UserDev;
 import ShowAndGame.ShowAndGame.Persistence.Entities.UserRole;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserDevRepository;

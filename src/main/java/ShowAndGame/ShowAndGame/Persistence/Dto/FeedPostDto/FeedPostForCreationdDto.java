@@ -1,4 +1,4 @@
-package ShowAndGame.ShowAndGame.Persistence.Dto;
+package ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto;
 
 public class FeedPostForCreationdDto {
     private String description;

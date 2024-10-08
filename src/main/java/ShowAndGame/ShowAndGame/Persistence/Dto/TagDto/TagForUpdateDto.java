@@ -1,13 +1,10 @@
-package ShowAndGame.ShowAndGame.Persistence.Dto;
+package ShowAndGame.ShowAndGame.Persistence.Dto.TagDto;
 
-import ShowAndGame.ShowAndGame.Persistence.Entities.Game;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class TagForCreationAndUpdateDto {
+public class TagForUpdateDto {
     private String name;
     private String color;
+
+
 
     public String getName() {
         return name;
@@ -24,5 +21,4 @@ public class TagForCreationAndUpdateDto {
     public void setColor(String color) {
         this.color = color;
     }
-
 }

@@ -41,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         //2. Obtaining JWT from that Header
         String jwt = authHeader.split(" ")[1];
 
-        //3. Obtaining subject of jwt
+        //3. Obtaining subject from jwt
         String username = jwtService.ExtractUsername(jwt);
 
         //4. Setting an object Authentication inside SecurityContext
@@ -50,22 +50,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             User user = userRepository.findByUserName(username).orElse(null);
             if (user != null && jwtService.isTokenValid(jwt, user)) {
 
-                // 3. Extraer los roles del JWT (extra claims)
+                // 5. Obtaining roles from JWT (extra claims)
                 String role = jwtService.ExtractClaim(jwt, "role");
 
-                // 4. Convertir el rol en GrantedAuthority
+                // 6. Changing role into GrantedAuthority
                 List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
 
-                // 5. Crear un token de autenticación con el rol extraído
+                // 7. Creating an authentication token with extracted role
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         user, null, authorities
                 );
 
-                // 6. Establecer el contexto de seguridad
+                // 8. Setting security context
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
 
-            //5. Running remaining filters
+            //9. Running remaining filters
 
             filterChain.doFilter(request, response);
 

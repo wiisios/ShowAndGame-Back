@@ -1,14 +1,15 @@
-package ShowAndGame.ShowAndGame.Persistence.Dto;
+package ShowAndGame.ShowAndGame.Persistence.Dto.CommentDto;
 
 import ShowAndGame.ShowAndGame.Persistence.Entities.Comment;
 import ShowAndGame.ShowAndGame.Persistence.Entities.User;
 
-public class GetCommentForUpdateDto {
+public class CommentForCreationAndUpdateDto {
     private String description;
-
-    public GetCommentForUpdateDto(Comment comment, User user){
+    public CommentForCreationAndUpdateDto(Comment comment, User user){
         this.description = comment.getDescription();
+
     }
+
     public String getDescription() {
         return description;
     }

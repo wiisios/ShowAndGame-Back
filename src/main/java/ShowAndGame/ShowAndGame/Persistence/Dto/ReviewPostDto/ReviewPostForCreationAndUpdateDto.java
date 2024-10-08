@@ -1,4 +1,4 @@
-package ShowAndGame.ShowAndGame.Persistence.Dto;
+package ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostDto;
 
 public class ReviewPostForCreationAndUpdateDto {
     private String description;

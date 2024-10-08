@@ -1,8 +1,8 @@
 package ShowAndGame.ShowAndGame.Controllers;
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetReviewPostDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetReviewPostForUpdateDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostForCreationAndUpdateDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostDto.GetReviewPostDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostDto.GetReviewPostForUpdateDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostDto.ReviewPostForCreationAndUpdateDto;
 import ShowAndGame.ShowAndGame.Services.ReviewPostService;
 import ShowAndGame.ShowAndGame.Util.CurrentUserUtil;
 import org.springframework.beans.factory.annotation.Autowired;

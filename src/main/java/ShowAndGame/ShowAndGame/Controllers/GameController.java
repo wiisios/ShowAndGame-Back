@@ -1,10 +1,9 @@
 package ShowAndGame.ShowAndGame.Controllers;
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.GameForCreationAndUpdateDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetGameDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetGameForExploreDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetGamesByUserDto;
-import ShowAndGame.ShowAndGame.Persistence.Entities.Tag;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GameDto.GameForCreationDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GameDto.GetGameDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GameDto.GetGameForExploreDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GameDto.GetGamesByUserDto;
 import ShowAndGame.ShowAndGame.Services.GameService;
 import ShowAndGame.ShowAndGame.Util.CurrentUserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,9 +62,9 @@ public class GameController {
 
 
     @PostMapping()
-    public ResponseEntity<String> CreateGame(@RequestBody GameForCreationAndUpdateDto newGame, List<Tag> tags){
+    public ResponseEntity<String> CreateGame(@RequestBody GameForCreationDto newGame){
         Long currentUserDevId = currentUserUtil.GetCurrentUserDevId();
-        gameService.Create(newGame, currentUserDevId, tags);
+        gameService.Create(newGame, currentUserDevId);
 
         return ResponseEntity.ok().body("Game created");
     }
@@ -88,9 +87,10 @@ public class GameController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> DeleteGame(@PathVariable Long id){
         ResponseEntity<String> response = null;
+        Long userDevId = currentUserUtil.GetCurrentUserDevId();
 
         if (gameService.GetById(id) != null){
-            gameService.Delete(id);
+            gameService.Delete(id, userDevId);
             response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted");}
         else
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();

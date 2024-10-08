@@ -1,4 +1,4 @@
-package ShowAndGame.ShowAndGame.Persistence.Dto;
+package ShowAndGame.ShowAndGame.Persistence.Dto.UserDto;
 
 import ShowAndGame.ShowAndGame.Persistence.Entities.*;
 

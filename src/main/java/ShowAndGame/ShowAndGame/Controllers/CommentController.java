@@ -1,9 +1,8 @@
 package ShowAndGame.ShowAndGame.Controllers;
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.CommentForCreationAndUpdateDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetCommentForPostDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetCommentForUpdateDto;
-import ShowAndGame.ShowAndGame.Persistence.Entities.Comment;
+import ShowAndGame.ShowAndGame.Persistence.Dto.CommentDto.CommentForCreationAndUpdateDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.CommentDto.GetCommentForPostDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.CommentDto.GetCommentForUpdateDto;
 import ShowAndGame.ShowAndGame.Services.CommentService;
 import ShowAndGame.ShowAndGame.Util.CurrentUserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +21,7 @@ public class CommentController {
 
     @Autowired
     private CurrentUserUtil currentUserUtil;
-
-
+    
     @GetMapping()
     public ResponseEntity<List<GetCommentForPostDto>> getAllComments() {return  ResponseEntity.ok(commentService.GetAll());}
 

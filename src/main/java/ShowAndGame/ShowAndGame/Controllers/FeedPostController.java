@@ -1,10 +1,9 @@
 package ShowAndGame.ShowAndGame.Controllers;
 
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostForCreationdDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetFeedPostDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetFeedPostForUpdateDto;
-import ShowAndGame.ShowAndGame.Persistence.Entities.FeedPost;
+import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.FeedPostForCreationdDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.GetFeedPostDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.GetFeedPostForUpdateDto;
 import ShowAndGame.ShowAndGame.Services.FeedPostService;
 import ShowAndGame.ShowAndGame.Util.CurrentUserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
