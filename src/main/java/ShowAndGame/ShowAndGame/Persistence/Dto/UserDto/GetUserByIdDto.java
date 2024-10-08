@@ -1,8 +1,10 @@
 package ShowAndGame.ShowAndGame.Persistence.Dto.UserDto;
 
+import ShowAndGame.ShowAndGame.Persistence.Dto.GameDto.GetGamesByUserDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GetUserByIdDto {
     private Long id;
@@ -10,11 +12,10 @@ public class GetUserByIdDto {
     private String email;
     private String profileImage;
     private String backgroundImage;
-    private List<Comment> comments;
-    private List<Game> followedGames;
-    private List<ReviewPost> reviewPosts;
-    private List<FeedPost> feedPosts;
-    private List<Game> ownedGames;
+    private List<GetGamesByUserDto> followedGames;
+    private List<GetGamesByUserDto> OwnedGames;
+
+
 
     public GetUserByIdDto(User user) {
         this.id = user.getId();
@@ -22,10 +23,7 @@ public class GetUserByIdDto {
         this.email = user.getEmail();
         this.profileImage = user.getProfileImage();
         this.backgroundImage = user.getBackgroundImage();
-        this.comments = user.getComments();
-        this.followedGames = user.getFollowedGames();
-        this.reviewPosts = user.getReviewPosts();
-        this.feedPosts = user.getFeedPosts();
+        this.followedGames = user.getFollowedGames().stream().map(game -> new GetGamesByUserDto(game)).collect(Collectors.toList());
     }
 
     public GetUserByIdDto(UserDev userDev){
@@ -34,27 +32,8 @@ public class GetUserByIdDto {
         this.email = userDev.getEmail();
         this.profileImage = userDev.getProfileImage();
         this.backgroundImage = userDev.getBackgroundImage();
-        this.comments = userDev.getComments();
-        this.followedGames = userDev.getFollowedGames();
-        this.reviewPosts = userDev.getReviewPosts();
-        this.feedPosts = userDev.getFeedPosts();
-        this.ownedGames = userDev.getOwnedGames();
-    }
-
-    public List<FeedPost> getFeedPosts() {
-        return feedPosts;
-    }
-
-    public void setFeedPosts(List<FeedPost> feedPosts) {
-        this.feedPosts = feedPosts;
-    }
-
-    public List<ReviewPost> getReviewPosts() {
-        return reviewPosts;
-    }
-
-    public void setReviewPosts(List<ReviewPost> reviewPosts) {
-        this.reviewPosts = reviewPosts;
+        this.followedGames = userDev.getFollowedGames().stream().map(game -> new GetGamesByUserDto(game)).collect(Collectors.toList());
+        this.OwnedGames = userDev.getOwnedGames().stream().map(game -> new GetGamesByUserDto(game)).collect(Collectors.toList());
     }
 
     public Long getId() {
@@ -97,27 +76,20 @@ public class GetUserByIdDto {
         this.backgroundImage = backgroundImage;
     }
 
-    public List<Comment> getComments() {
-        return comments;
-    }
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
-
-    public List<Game> getFollowedGames() {
+    public List<GetGamesByUserDto> getFollowedGames() {
         return followedGames;
     }
 
-    public void setFollowedGames(List<Game> followedGames) {
+    public void setFollowedGames(List<GetGamesByUserDto> followedGames) {
         this.followedGames = followedGames;
     }
 
-    public List<Game> getOwnedGames() {
-        return ownedGames;
+    public List<GetGamesByUserDto> getOwnedGames() {
+        return OwnedGames;
     }
 
-    public void setOwnedGames(List<Game> ownedGames) {
-        this.ownedGames = ownedGames;
+    public void setOwnedGames(List<GetGamesByUserDto> ownedGames) {
+        OwnedGames = ownedGames;
     }
 }

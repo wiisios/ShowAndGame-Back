@@ -63,10 +63,18 @@ public class GameController {
 
     @PostMapping()
     public ResponseEntity<String> CreateGame(@RequestBody GameForCreationDto newGame){
+        ResponseEntity<String> response = null;
         Long currentUserDevId = currentUserUtil.GetCurrentUserDevId();
-        gameService.Create(newGame, currentUserDevId);
+        System.out.println(currentUserDevId);
 
-        return ResponseEntity.ok().body("Game created");
+        if (currentUserDevId != null){
+        gameService.Create(newGame, currentUserDevId);
+        response = ResponseEntity.ok().body("Game created");
+        } else {
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return response;
     }
 
     @PutMapping()

@@ -83,9 +83,10 @@ public class ReviewPostController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> DeletePost(@PathVariable Long id){
         ResponseEntity<String> response = null;
+        Long userId  = currentUserUtil.GetCurrentUserId();
 
         if (reviewPostService.GetById(id) != null){
-            reviewPostService.Delete(id);
+            reviewPostService.Delete(id, userId);
             response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted");}
         else
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();

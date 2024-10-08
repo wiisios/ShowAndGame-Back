@@ -8,6 +8,7 @@ import ShowAndGame.ShowAndGame.Persistence.Entities.UserDev;
 import ShowAndGame.ShowAndGame.Persistence.Entities.UserRole;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserDevRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,16 +19,18 @@ import java.util.stream.Collectors;
 @Service
 public class UserDevService {
     private final UserDevRepository userDevRepository;
+    private final PasswordEncoder passwordEncoder;
     @Autowired
-    public UserDevService(UserDevRepository userDevRepository){
+    public UserDevService(UserDevRepository userDevRepository, PasswordEncoder passwordEncoder){
         this.userDevRepository = userDevRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UserDev Create(UserForCreationDto newUserDev) {
         UserDev userDev = new UserDev();
 
         userDev.setUserName(newUserDev.getUserName());
-        userDev.setPassword(newUserDev.getPassword());
+        userDev.setPassword(passwordEncoder.encode(newUserDev.getPassword()));
         userDev.setEmail(newUserDev.getEmail());
         userDev.setProfileImage(null);
         userDev.setBackgroundImage(null);
