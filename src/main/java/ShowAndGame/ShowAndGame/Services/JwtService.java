@@ -41,7 +41,6 @@ public class JwtService {
     }
 
     public String ExtractUsername(String jwt){
-
         return ExtractAllClaims(jwt).getSubject();
     }
 
@@ -55,6 +54,10 @@ public class JwtService {
 
     public String ExtractClaim(String token, String claimName) {
         return ExtractAllClaims(token).get(claimName, String.class);
+    }
+
+    public Integer ExtractIdClaim(String token, String claimName) {
+        return ExtractAllClaims(token).get(claimName, Integer.class);
     }
 
     public boolean isTokenValid(String token, User user) {

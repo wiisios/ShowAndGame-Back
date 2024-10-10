@@ -34,25 +34,9 @@ public class CurrentUserUtil {
     }
 
     public Long GetCurrentUserId(){
-        Optional<User> user = userService.GetByUserName(jwtService.ExtractUsername(GetJwtToken()));
-        User currentUser = null;
-        Long currentUserId = null;
-        if (user.isPresent()){
-            currentUser = user.get();
-            currentUserId = currentUser.getId();
-        }
-        return currentUserId;
-    }
+        Integer userId = jwtService.ExtractIdClaim(GetJwtToken(), "id");
 
-    public Long GetCurrentUserDevId(){
-        Optional<UserDev> userDev = userDevService.GetByUserName(jwtService.ExtractUsername(GetJwtToken()));
-        UserDev currentUserDev = null;
-        Long currentUserDevId = null;
-        if (userDev.isPresent()){
-            currentUserDev = userDev.get();
-            currentUserDevId = currentUserDev.getId();
-        }
-        return currentUserDevId;
+        return Long.valueOf(userId);
     }
 
     public List<Game> GetUserDevGames(){

@@ -64,11 +64,11 @@ public class GameController {
     @PostMapping()
     public ResponseEntity<String> CreateGame(@RequestBody GameForCreationDto newGame){
         ResponseEntity<String> response = null;
-        Long currentUserDevId = currentUserUtil.GetCurrentUserDevId();
-        System.out.println(currentUserDevId);
+        Long currentUserId = currentUserUtil.GetCurrentUserId();
+        System.out.println(currentUserId);
 
-        if (currentUserDevId != null){
-        gameService.Create(newGame, currentUserDevId);
+        if (currentUserId != null){
+        gameService.Create(newGame, currentUserId);
         response = ResponseEntity.ok().body("Game created");
         } else {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -95,7 +95,7 @@ public class GameController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> DeleteGame(@PathVariable Long id){
         ResponseEntity<String> response = null;
-        Long userDevId = currentUserUtil.GetCurrentUserDevId();
+        Long userDevId = currentUserUtil.GetCurrentUserId();
 
         if (gameService.GetById(id) != null){
             gameService.Delete(id, userDevId);

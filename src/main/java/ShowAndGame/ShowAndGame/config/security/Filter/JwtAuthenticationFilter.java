@@ -58,8 +58,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 // 7. Creating an authentication token with extracted role
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        user, null, authorities
+                        user, jwt, authorities
                 );
+                System.out.println(authToken);
 
                 // 8. Setting security context
                 SecurityContextHolder.getContext().setAuthentication(authToken);

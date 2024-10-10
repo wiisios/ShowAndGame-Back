@@ -3,6 +3,7 @@ package ShowAndGame.ShowAndGame.Persistence.Entities;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 
