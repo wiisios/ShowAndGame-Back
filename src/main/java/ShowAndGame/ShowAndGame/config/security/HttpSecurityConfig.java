@@ -88,7 +88,7 @@ public class HttpSecurityConfig {
 
                         //User
                     authConfig.requestMatchers(HttpMethod.GET, "/users/all").hasAnyRole("ADMIN");
-                    authConfig.requestMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole("ADMIN", "USER");
+                    authConfig.requestMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
                     authConfig.requestMatchers(HttpMethod.PUT, "/users/{userId}").hasAnyRole("ADMIN", "USER");
                     authConfig.requestMatchers(HttpMethod.PUT, "/users/adminUpdate/{userId}").hasAnyRole("ADMIN");
                     authConfig.requestMatchers(HttpMethod.DELETE, "/users/{id}").hasRole("ADMIN");

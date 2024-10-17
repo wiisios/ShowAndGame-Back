@@ -56,8 +56,8 @@ public class GameController {
 
     @GetMapping("/dev/{devId}")
     public ResponseEntity<List<GetGamesForDeveloperDto>> GetGamesByDeveloper(@PathVariable Long devId){
-        List<GetGamesForDeveloperDto> gamesByDevDtos = gameService.getGamesByDeveloper(devId);
-        return ResponseEntity.ok(gamesByDevDtos);
+        List<GetGamesForDeveloperDto> gamesByDevDto = gameService.getGamesByDeveloper(devId);
+        return ResponseEntity.ok(gamesByDevDto);
     }
 
     @PostMapping()

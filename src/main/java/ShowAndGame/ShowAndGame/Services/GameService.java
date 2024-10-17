@@ -108,13 +108,17 @@ public class GameService {
         Optional<Game> currentGame = gameRepository.findById(gameToUpdate.getId());
         Game game = null;
 
+        List<Tag> updatedTags = gameToUpdate.getTags().stream()
+                .map(tagDto -> tagRepository.findById(tagDto.getId()).get())
+                .collect(Collectors.toList());
+
         if(currentGame.isPresent()){
             game = currentGame.get();
             game.setName(gameToUpdate.getName());
             game.setProfileImage(gameToUpdate.getProfileImage());
             game.setBackgroundImage(gameToUpdate.getBackgroundImage());
             game.setDescription(gameToUpdate.getDescription());
-            game.setTags(gameToUpdate.getTags());
+            game.setTags(updatedTags);
             gameRepository.save(game);
         }
     }

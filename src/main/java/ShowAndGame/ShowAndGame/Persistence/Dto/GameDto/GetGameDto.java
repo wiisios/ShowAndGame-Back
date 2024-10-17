@@ -1,8 +1,10 @@
 package ShowAndGame.ShowAndGame.Persistence.Dto.GameDto;
 
+import ShowAndGame.ShowAndGame.Persistence.Dto.TagDto.GetTagDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GetGameDto {
     private Long id;
@@ -12,7 +14,7 @@ public class GetGameDto {
     private String description;
     private Integer rating;
     private boolean isFollowed;
-    private List<Tag> tags;
+    private List<GetTagDto> tags;
 
     public GetGameDto(Game game, boolean isFollowed) {
         this.id = game.getId();
@@ -20,7 +22,7 @@ public class GetGameDto {
         this.description = game.getDescription();
         this.profileImage = game.getProfileImage();
         this.backgroundImage = game.getBackgroundImage();
-        this.tags = game.getTags();
+        this.tags = game.getTags().stream().map(GetTagDto::new).collect(Collectors.toList());
         this.rating = game.getRating();
         this.isFollowed = isFollowed;
     }
@@ -65,14 +67,6 @@ public class GetGameDto {
         this.backgroundImage = backgroundImage;
     }
 
-    public List<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<Tag> tags) {
-        this.tags = tags;
-    }
-
     public Integer getRating() {
         return rating;
     }
@@ -87,5 +81,13 @@ public class GetGameDto {
 
     public void setFollowed(boolean followed) {
         isFollowed = followed;
+    }
+
+    public List<GetTagDto> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<GetTagDto> tags) {
+        this.tags = tags;
     }
 }
