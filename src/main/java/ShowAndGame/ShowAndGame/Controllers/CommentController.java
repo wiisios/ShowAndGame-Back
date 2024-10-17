@@ -21,7 +21,8 @@ public class CommentController {
 
     @Autowired
     private CurrentUserUtil currentUserUtil;
-    
+
+
     @GetMapping()
     public ResponseEntity<List<GetCommentForPostDto>> getAllComments() {return  ResponseEntity.ok(commentService.GetAll());}
 

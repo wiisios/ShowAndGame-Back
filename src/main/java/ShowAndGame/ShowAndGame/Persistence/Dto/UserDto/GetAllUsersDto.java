@@ -17,12 +17,6 @@ public class GetAllUsersDto {
         this.profileImage = user.getProfileImage();
         this.userRole = user.getUserRole();
     }
-    public GetAllUsersDto(UserDev userDev) {
-        this.userName = userDev.getUsername();
-        this.email = userDev.getEmail();
-        this.profileImage = userDev.getProfileImage();
-        this.userRole = userDev.getUserRole();
-    }
 
     public String getUserName() {
         return userName;

@@ -9,20 +9,22 @@ public class GetFeedPostDto {
     private Long id;
     private String description;
     private String image;
-    private Integer likes;
+    private Integer likesCounter;
     private LocalDate date;
     private String username;
     private String userProfileImage;
+    private boolean isLiked;
 
 
-    public GetFeedPostDto(FeedPost feedPost) {
+    public GetFeedPostDto(FeedPost feedPost, boolean isLiked) {
         this.id = feedPost.getId();
         this.description = feedPost.getDescription();
         this.image = feedPost.getImage();
-        this.likes = feedPost.getLikes();
+        this.likesCounter = feedPost.getLikesCounter();
         this.date = feedPost.getDate();
         this.username = feedPost.getUser().getUsername();
         this.userProfileImage = feedPost.getUser().getProfileImage();
+        this.isLiked = isLiked;
     }
 
     public Long getId() {
@@ -49,14 +51,6 @@ public class GetFeedPostDto {
         this.image = image;
     }
 
-    public Integer getLikes() {
-        return likes;
-    }
-
-    public void setLikes(Integer likes) {
-        this.likes = likes;
-    }
-
     public LocalDate getDate() {
         return date;
     }
@@ -79,5 +73,21 @@ public class GetFeedPostDto {
 
     public void setUserProfileImage(String userProfileImage) {
         this.userProfileImage = userProfileImage;
+    }
+
+    public Integer getLikesCounter() {
+        return likesCounter;
+    }
+
+    public void setLikesCounter(Integer likesCounter) {
+        this.likesCounter = likesCounter;
+    }
+
+    public boolean isLiked() {
+        return isLiked;
+    }
+
+    public void setLiked(boolean liked) {
+        isLiked = liked;
     }
 }

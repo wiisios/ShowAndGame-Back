@@ -10,6 +10,7 @@ import ShowAndGame.ShowAndGame.Persistence.Entities.User;
 import ShowAndGame.ShowAndGame.Persistence.Repository.FeedPostRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.GameRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,27 +26,30 @@ public class FeedPostService {
     private final FeedPostRepository feedPostRepository;
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
+    private final LikeService likeService;
     @Autowired
-    public FeedPostService(FeedPostRepository feedPostRepository, GameRepository gameRepository, UserRepository userRepository){
+    public FeedPostService(FeedPostRepository feedPostRepository, GameRepository gameRepository, UserRepository userRepository, LikeService likeService){
         this.feedPostRepository = feedPostRepository;
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
+        this.likeService = likeService;
     }
 
     public void Create(FeedPostForCreationdDto newFeedPost, Long userId, Long gameId) {
         FeedPost feedPostToCreate = new FeedPost();
         Optional<Game> game = gameRepository.findById(gameId);
         Optional<User> user = userRepository.findById(userId);
-        Game currentGame = null;
-        User currentUser = null;
         LocalDate dateNow = LocalDate.now();
 
-        if (game.isPresent()) {
-            currentGame = game.get();
+        if (!game.isPresent()) {
+            throw new EntityNotFoundException("Game with id " + gameId + " not found");
         }
-        if (user.isPresent()){
-            currentUser = user.get();
+        if (!user.isPresent()) {
+            throw new EntityNotFoundException("User with id " + userId + " not found");
         }
+
+        Game currentGame = game.get();
+        User currentUser = user.get();
 
         feedPostToCreate.setDescription(newFeedPost.getDescription());
         feedPostToCreate.setImage(newFeedPost.getImage());
@@ -53,7 +57,7 @@ public class FeedPostService {
         feedPostToCreate.setGame(currentGame);
         feedPostToCreate.setDate(dateNow);
         feedPostToCreate.setComments(new ArrayList<Comment>());
-        feedPostToCreate.setLikes(0);
+        feedPostToCreate.setLikesCounter(0);
 
         feedPostRepository.save(feedPostToCreate);
     }
@@ -71,20 +75,29 @@ public class FeedPostService {
 
     }
 
-    public Optional<GetFeedPostDto> GetById(Long id) {
-
-        return feedPostRepository.findById(id).map(feedPost -> new GetFeedPostDto(feedPost));
+    public Optional<GetFeedPostDto> GetById(Long id, Long userId) {
+        return feedPostRepository.findById(id)
+                .map(feedPost -> {
+                    boolean isLiked = likeService.isLikedCheck(userId, feedPost.getId());
+                    return new GetFeedPostDto(feedPost, isLiked); // Pasamos el estado de like
+                });
     }
 
-    public List<GetFeedPostDto> GetAll() {
+    public List<GetFeedPostDto> GetAll(Long userId) {
         return feedPostRepository.findAll().stream()
-                .map(feedPost -> new GetFeedPostDto(feedPost))
+                .map(feedPost -> {
+                    boolean isLiked = likeService.isLikedCheck(userId, feedPost.getId());
+                    return new GetFeedPostDto(feedPost, isLiked); // Incluimos el estado del like
+                })
                 .collect(Collectors.toList());
     }
 
-    public List<GetFeedPostDto> GetFeedPostsByGameId(Long gameId){
-        return  feedPostRepository.findByGameId(gameId).stream()
-                .map(feedPost -> new GetFeedPostDto(feedPost)).collect(Collectors.toList());
+    public List<GetFeedPostDto> GetFeedPostsByGameId(Long gameId, Long userId) {
+        return feedPostRepository.findByGameId(gameId).stream()
+                .map(feedPost -> {
+                    boolean isLiked = likeService.isLikedCheck(userId, feedPost.getId());
+                    return new GetFeedPostDto(feedPost, isLiked);
+                }).collect(Collectors.toList());
     }
 
     public void Update(GetFeedPostForUpdateDto feedPostDto, Long userId, Long feedPostId) {
@@ -101,6 +114,4 @@ public class FeedPostService {
             }
         }
     }
-
-
 }

@@ -1,8 +1,6 @@
 package ShowAndGame.ShowAndGame.Persistence.Entities;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,7 +9,9 @@ import java.util.List;
 public class FeedPost extends Post {
 
     private String image;
-    private Integer likes;
+    private Integer likesCounter;
+    @OneToMany(mappedBy = "feedPostsLiked", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likes;
 
     @OneToMany(mappedBy = "feedPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
@@ -20,11 +20,12 @@ public class FeedPost extends Post {
     public FeedPost(){
 
     }
-    public FeedPost(String description, User user, Game game, LocalDate date, String image, Integer likes1, List<Comment> comments) {
+    public FeedPost(String description, User user, Game game, LocalDate date, String image, List<Comment> comments, Integer likesCounter, List<Like> likes) {
         super(description, user, game, date);
         this.image = image;
-        this.likes = likes1;
         this.comments = comments;
+        this.likesCounter = likesCounter;
+        this.likes = likes;
     }
 
     public String getImage() {
@@ -35,24 +36,27 @@ public class FeedPost extends Post {
         this.image = images;
     }
 
-
-    public Integer getLikes() {
-        return likes;
-    }
-
-
-    public void setLikes(Integer likes) {
-        this.likes = likes;
-    }
-
-
     public List<Comment> getComments() {
         return comments;
     }
-
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
 
+    public Integer getLikesCounter() {
+        return likesCounter;
+    }
+
+    public void setLikesCounter(Integer likesCounter) {
+        this.likesCounter = likesCounter;
+    }
+
+    public List<Like> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(List<Like> likes) {
+        this.likes = likes;
+    }
 }

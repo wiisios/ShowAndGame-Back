@@ -32,10 +32,11 @@ public class UserService {
         user.setProfileImage(null);
         user.setBackgroundImage(null);
         user.setUserRole(UserRole.USER);
-        user.setFollowedGames(new ArrayList<>());
+        user.setOwnedGames(new ArrayList<>());
         user.setFeedPosts(new ArrayList<>());
         user.setReviewPosts(new ArrayList<>());
         user.setComments(new ArrayList<>());
+        user.setLikes(new ArrayList<>());
 
         return userRepository.save(user);
     }

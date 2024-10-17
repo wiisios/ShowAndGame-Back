@@ -6,14 +6,14 @@ import ShowAndGame.ShowAndGame.Persistence.Entities.Game;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class GetGameForExploreDto {
+public class GetGameCardDto {
 
     private long id;
     private String name;
     private String backgroundImage;
     private List<GetTagDto> tags;
 
-    public GetGameForExploreDto(Game game) {
+    public GetGameCardDto(Game game) {
         this.id = game.getId();
         this.name = game.getName();
         this.backgroundImage = game.getBackgroundImage();

@@ -1,19 +1,13 @@
 package ShowAndGame.ShowAndGame.Services;
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.GameDto.GameForCreationDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GameDto.GetGameDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GameDto.GetGameForExploreDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GameDto.GetGamesByUserDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GameDto.*;
 import ShowAndGame.ShowAndGame.Persistence.Entities.*;
 import ShowAndGame.ShowAndGame.Persistence.Repository.GameRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.TagRepository;
-import ShowAndGame.ShowAndGame.Persistence.Repository.UserDevRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -23,21 +17,21 @@ import java.util.stream.Collectors;
 public class GameService {
 
     private final GameRepository gameRepository;
-    private final UserDevRepository userDevRepository;
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
+    private final FollowService followService;
     @Autowired
-    public GameService(GameRepository gameRepository, UserDevRepository userDevRepository, UserRepository userRepository, TagRepository tagRepository){
+    public GameService(GameRepository gameRepository, UserRepository userRepository, TagRepository tagRepository, FollowService followService){
         this.gameRepository = gameRepository;
-        this.userDevRepository = userDevRepository;
         this.userRepository = userRepository;
         this.tagRepository = tagRepository;
+        this.followService = followService;
     }
 
-    public void Create(GameForCreationDto newGame, Long userDevId) {
+    public void Create(GameForCreationDto newGame, Long userId) {
         Game gameToCreate = new Game();
-        Optional<UserDev> dev = userDevRepository.findById(userDevId);
-        UserDev currentDev = null;
+        Optional<User> dev = userRepository.findById(userId);
+        User currentDev = null;
         List<Long> tags = newGame.getTagsId();
 
         List<Tag> tagsForCreation = tags.stream().map(tag -> tagRepository.findById(tag).get()).toList();
@@ -51,7 +45,6 @@ public class GameService {
         gameToCreate.setProfileImage(newGame.getProfileImage());
         gameToCreate.setBackgroundImage(newGame.getBackgroundImage());
         gameToCreate.setRating(0);
-        gameToCreate.setFollowers(new ArrayList<User>());
         gameToCreate.setFollowerAmount(0);
         gameToCreate.setOwner(currentDev);
         gameToCreate.setTags(tagsForCreation);
@@ -71,46 +64,47 @@ public class GameService {
         }
     }
 
-    public GetGameDto GetById(Long id) {
-        Optional<Game> game = gameRepository.findById(id);
-        Game currentGame = null;
+    public GetGameDto GetById(Long gameId, Long userId) {
+        Optional<Game> game = gameRepository.findById(gameId);
 
         if (game.isPresent()){
-            currentGame = game.get();
+            boolean isFollowed = followService.isFollowedCheck(userId, gameId);
+            return new GetGameDto(game.get(), isFollowed);
         }
-
-        return new GetGameDto(currentGame);
+        else {
+            return null;
+        }
     }
 
-    public List<GetGameDto> GetAll() {
+    public List<GetGameCardDto> GetAll() {
         List<Game> allGames = gameRepository.findAll();
         return allGames.stream()
-                .map(GetGameDto::new)
+                .map(GetGameCardDto::new)
                 .collect(Collectors.toList());
     }
 
-    public List<GetGameForExploreDto> GetAllForExplore() {
+    public List<GetGameCardDto> GetAllForExplore() {
         List<Game> games = gameRepository.findAll();
         return games.stream()
-                .map(GetGameForExploreDto::new)
+                .map(GetGameCardDto::new)
                 .collect(Collectors.toList());
     }
 
-    public List<GetGamesByUserDto> GetGameByUser(Long userId) {
-        List<Game> games = gameRepository.findByFollowersId(userId);
-        return games.stream()
-                .map(GetGamesByUserDto::new)
+    public List<GetGameDto> GetGameForUserProfile(Long userId) {
+        return gameRepository.findByFollows_UserWhoFollowed_Id(userId).stream()
+                .map(game -> {
+                  boolean isFollowed = followService.isFollowedCheck(userId, game.getId());
+                  return new GetGameDto(game, isFollowed);
+                }).collect(Collectors.toList());
+    }
+
+    public List<GetGamesForDeveloperDto> getGamesByDeveloper(Long devId) {
+        return gameRepository.findByOwnerId(devId).stream()
+                .map(GetGamesForDeveloperDto::new)
                 .collect(Collectors.toList());
     }
 
-    public List<GetGamesByUserDto> GetGameByDeveloper(Long userId) {
-        List<Game> games = gameRepository.findByOwnerId(userId);
-        return games.stream()
-                .map(GetGamesByUserDto::new)
-                .collect(Collectors.toList());
-    }
-
-    public void Update(GetGameDto gameToUpdate) {
+    public void Update(GetGamesForDeveloperDto gameToUpdate) {
         Optional<Game> currentGame = gameRepository.findById(gameToUpdate.getId());
         Game game = null;
 
@@ -123,53 +117,5 @@ public class GameService {
             game.setTags(gameToUpdate.getTags());
             gameRepository.save(game);
         }
-    }
-
-    @Transactional
-    public void Follow(Long userId, Long gameId){
-        Optional<User> currentUser = userRepository.findById(userId);
-        Optional<Game> currentGame = gameRepository.findById(gameId);
-        Game game = null;
-        User user = null;
-
-        if(currentGame.isPresent()){
-            game = currentGame.get();
-        }
-
-        if(currentUser.isPresent()){
-            user = currentUser.get();
-        }
-
-        game.getFollowers().add(user);
-        user.getFollowedGames().add(game);
-        game.setFollowerAmount(game.getFollowerAmount() + 1);
-
-        gameRepository.save(game);
-        userRepository.save(user);
-
-    }
-
-    @Transactional
-    public void Unfollow(Long userId, Long gameId){
-        Optional<User> currentUser = userRepository.findById(userId);
-        Optional<Game> currentGame = gameRepository.findById(gameId);
-        Game game = null;
-        User user = null;
-
-        if(currentGame.isPresent()){
-            game = currentGame.get();
-        }
-
-        if(currentUser.isPresent()){
-            user = currentUser.get();
-        }
-
-        game.getFollowers().remove(user);
-        user.getFollowedGames().remove(game);
-        game.setFollowerAmount(game.getFollowerAmount() - 1);
-
-        gameRepository.save(game);
-        userRepository.save(user);
-
     }
 }

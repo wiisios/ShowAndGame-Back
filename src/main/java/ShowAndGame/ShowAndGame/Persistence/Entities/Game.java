@@ -29,14 +29,7 @@ public class Game {
     private List<ReviewPost> reviews;
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "owner_id")
-    private UserDev owner;
-    @ManyToMany()
-    @JoinTable(
-            name = "game_followers",
-            joinColumns = @JoinColumn(name = "game_id"),
-            inverseJoinColumns = @JoinColumn(name = "follower_id")
-    )
-    private List<User> followers;
+    private User owner;
     private Integer followerAmount;
     @ManyToMany
     @JoinTable(
@@ -46,19 +39,23 @@ public class Game {
     )
     private List<Tag> tags = new ArrayList<>();
 
+    @OneToMany(mappedBy = "gamesFollowed", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Follow> follows;
+
     public Game() {
     }
 
-    public Game(String name, String description, int rating, String profileImage, String backgroundImage, List<FeedPost> feedPosts, UserDev owner, List<User> followers, List<Tag> tags, Integer followerAmount) {
+    public Game(String name, String description, int rating, String profileImage, String backgroundImage, List<FeedPost> feedPosts, User owner, List<Tag> tags, Integer followerAmount, List<Follow> follows) {
         this.name = name;
         this.description = description;
         this.profileImage = profileImage;
         this.backgroundImage = backgroundImage;
+        this.rating = rating;
         this.feedPosts = feedPosts;
         this.owner = owner;
-        this.followers = followers;
         this.tags = tags;
         this.followerAmount = followerAmount;
+        this.follows = follows;
     }
 
     public Long getId() {
@@ -105,16 +102,8 @@ public class Game {
         return owner;
     }
 
-    public void setOwner(UserDev owner) {
+    public void setOwner(User owner) {
         this.owner = owner;
-    }
-
-    public List<User> getFollowers() {
-        return followers;
-    }
-
-    public void setFollowers(List<User> followers) {
-        this.followers = followers;
     }
 
     public List<Tag> getTags() {
@@ -155,5 +144,13 @@ public class Game {
 
     public void setFollowerAmount(Integer followerAmount) {
         this.followerAmount = followerAmount;
+    }
+
+    public List<Follow> getFollows() {
+        return follows;
+    }
+
+    public void setFollows(List<Follow> follows) {
+        this.follows = follows;
     }
 }

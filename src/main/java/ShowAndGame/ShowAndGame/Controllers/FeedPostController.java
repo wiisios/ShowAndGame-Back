@@ -5,6 +5,7 @@ import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.FeedPostForCreationdD
 import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.GetFeedPostDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.GetFeedPostForUpdateDto;
 import ShowAndGame.ShowAndGame.Services.FeedPostService;
+import ShowAndGame.ShowAndGame.Services.LikeService;
 import ShowAndGame.ShowAndGame.Util.CurrentUserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,20 +24,27 @@ public class FeedPostController {
     @Autowired
     private CurrentUserUtil currentUserUtil;
 
+    @Autowired
+    private LikeService likeService;
+
     @GetMapping()
-    public ResponseEntity<List<GetFeedPostDto>> getAllPosts() {return  ResponseEntity.ok(feedPostService.GetAll());}
+    public ResponseEntity<List<GetFeedPostDto>> getAllPosts() {
+        Long userId = currentUserUtil.GetCurrentUserId();
+        return  ResponseEntity.ok(feedPostService.GetAll(userId));
+    }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<GetFeedPostDto> getPost(@PathVariable Long id) {
-
-        GetFeedPostDto feedPost = feedPostService.GetById(id).orElse((null));
+    @GetMapping("/{postId}")
+    public ResponseEntity<GetFeedPostDto> getPost(@PathVariable Long postId) {
+        Long userId = currentUserUtil.GetCurrentUserId();
+        GetFeedPostDto feedPost = feedPostService.GetById(postId, userId).orElse((null));
 
         return ResponseEntity.ok(feedPost);
     }
 
-    @GetMapping("/{gameId}")
+    @GetMapping("/game/{gameId}")
     public ResponseEntity<List<GetFeedPostDto>> getPostByGameId(@PathVariable Long gameId){
-        return ResponseEntity.ok(feedPostService.GetFeedPostsByGameId(gameId));
+        Long userId = currentUserUtil.GetCurrentUserId();
+        return ResponseEntity.ok(feedPostService.GetFeedPostsByGameId(gameId, userId));
     }
 
     @PostMapping("/{gameId}")
@@ -59,12 +67,12 @@ public class FeedPostController {
     }
 
     @PutMapping("/{postId}")
-    public ResponseEntity<GetFeedPostForUpdateDto> updatePost(@RequestBody GetFeedPostForUpdateDto feedPost, @PathVariable Long feedPostId){
+    public ResponseEntity<GetFeedPostForUpdateDto> updatePost(@RequestBody GetFeedPostForUpdateDto feedPost, @PathVariable Long postId){
         ResponseEntity<GetFeedPostForUpdateDto> response = null;
         Long userId = currentUserUtil.GetCurrentUserId();
 
-        if (feedPostId != null && feedPostService.GetById(feedPostId).isPresent()){
-            feedPostService.Update(feedPost, userId, feedPostId);
+        if (postId != null && feedPostService.GetById(postId, userId).isPresent()){
+            feedPostService.Update(feedPost, userId, postId);
             response = ResponseEntity.ok(feedPost);}
         else
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -78,7 +86,7 @@ public class FeedPostController {
         ResponseEntity<String> response = null;
         Long userId = currentUserUtil.GetCurrentUserId();
 
-        if (feedPostService.GetById(id).isPresent()){
+        if (feedPostService.GetById(id, userId).isPresent()){
             feedPostService.Delete(id, userId);
             response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Eliminado");}
         else
@@ -87,8 +95,18 @@ public class FeedPostController {
         return response;
     }
 
+    @PutMapping("/{postId}")
+    public ResponseEntity<String> Like(@PathVariable Long postId){
+        Long userId = currentUserUtil.GetCurrentUserId();
 
-    
+        likeService.toggleLike(userId, postId);
+
+        boolean isLiked = likeService.isLikedCheck(userId, postId);
+
+        String response = isLiked ? "Like added" : "Like removed";
+
+        return ResponseEntity.ok(response);
+    }
 }
 
 
