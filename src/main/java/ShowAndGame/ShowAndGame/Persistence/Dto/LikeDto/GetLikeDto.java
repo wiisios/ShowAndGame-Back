@@ -1,14 +1,14 @@
 package ShowAndGame.ShowAndGame.Persistence.Dto.LikeDto;
 
-import ShowAndGame.ShowAndGame.Persistence.Entities.Like;
+import ShowAndGame.ShowAndGame.Persistence.Entities.UserLike;
 
 public class GetLikeDto {
     private Long id;
     private boolean isLiked;
 
-    public GetLikeDto(Like like) {
-        this.id = like.getId();
-        this.isLiked = like.isLiked();
+    public GetLikeDto(UserLike userLike) {
+        this.id = userLike.getId();
+        this.isLiked = userLike.isLiked();
     }
 
     public boolean isLiked() {

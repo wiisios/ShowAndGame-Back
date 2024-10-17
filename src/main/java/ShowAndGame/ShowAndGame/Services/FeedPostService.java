@@ -26,13 +26,13 @@ public class FeedPostService {
     private final FeedPostRepository feedPostRepository;
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
-    private final LikeService likeService;
+    private final UserLikeService userLikeService;
     @Autowired
-    public FeedPostService(FeedPostRepository feedPostRepository, GameRepository gameRepository, UserRepository userRepository, LikeService likeService){
+    public FeedPostService(FeedPostRepository feedPostRepository, GameRepository gameRepository, UserRepository userRepository, UserLikeService userLikeService){
         this.feedPostRepository = feedPostRepository;
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
-        this.likeService = likeService;
+        this.userLikeService = userLikeService;
     }
 
     public void Create(FeedPostForCreationdDto newFeedPost, Long userId, Long gameId) {
@@ -78,7 +78,7 @@ public class FeedPostService {
     public Optional<GetFeedPostDto> GetById(Long id, Long userId) {
         return feedPostRepository.findById(id)
                 .map(feedPost -> {
-                    boolean isLiked = likeService.isLikedCheck(userId, feedPost.getId());
+                    boolean isLiked = userLikeService.isLikedCheck(userId, feedPost.getId());
                     return new GetFeedPostDto(feedPost, isLiked); // Pasamos el estado de like
                 });
     }
@@ -86,7 +86,7 @@ public class FeedPostService {
     public List<GetFeedPostDto> GetAll(Long userId) {
         return feedPostRepository.findAll().stream()
                 .map(feedPost -> {
-                    boolean isLiked = likeService.isLikedCheck(userId, feedPost.getId());
+                    boolean isLiked = userLikeService.isLikedCheck(userId, feedPost.getId());
                     return new GetFeedPostDto(feedPost, isLiked); // Incluimos el estado del like
                 })
                 .collect(Collectors.toList());
@@ -95,7 +95,7 @@ public class FeedPostService {
     public List<GetFeedPostDto> GetFeedPostsByGameId(Long gameId, Long userId) {
         return feedPostRepository.findByGameId(gameId).stream()
                 .map(feedPost -> {
-                    boolean isLiked = likeService.isLikedCheck(userId, feedPost.getId());
+                    boolean isLiked = userLikeService.isLikedCheck(userId, feedPost.getId());
                     return new GetFeedPostDto(feedPost, isLiked);
                 }).collect(Collectors.toList());
     }

@@ -37,16 +37,16 @@ public class User implements UserDetails {
     private List<ReviewPost> reviewPosts;
     @OneToMany
     private List<FeedPost> feedPosts;
-    @OneToMany(mappedBy = "usersWhoLiked", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Like> likes;
-    @OneToMany(mappedBy = "usersWhoFollowed", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "userWhoLiked", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserLike> userLikes;
+    @OneToMany(mappedBy = "userWhoFollowed", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Follow> follows;
 
 
     public User(){
     };
 
-    public User(String userName, String password, String email, String profileImage, String backgroundImage, UserRole userRole, List<ReviewPost> reviewPosts, List<FeedPost> feedPosts, List<Comment> comments, List<Game> ownedGames, List<Like> likes, List<Follow> follows){
+    public User(String userName, String password, String email, String profileImage, String backgroundImage, UserRole userRole, List<ReviewPost> reviewPosts, List<FeedPost> feedPosts, List<Comment> comments, List<Game> ownedGames, List<UserLike> userLikes, List<Follow> follows){
         this.userName = userName;
         this.password = password;
         this.email = email;
@@ -57,7 +57,7 @@ public class User implements UserDetails {
         this.reviewPosts = reviewPosts;
         this.comments = comments;
         this.ownedGames = ownedGames;
-        this.likes = likes;
+        this.userLikes = userLikes;
         this.follows = follows;
     }
 
@@ -178,12 +178,12 @@ public class User implements UserDetails {
         this.feedPosts = feedPosts;
     }
 
-    public List<Like> getLikes() {
-        return likes;
+    public List<UserLike> getLikes() {
+        return userLikes;
     }
 
-    public void setLikes(List<Like> likes) {
-        this.likes = likes;
+    public void setLikes(List<UserLike> userLikes) {
+        this.userLikes = userLikes;
     }
 
     public List<Follow> getFollows() {

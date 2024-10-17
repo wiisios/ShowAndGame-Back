@@ -5,7 +5,7 @@ import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.FeedPostForCreationdD
 import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.GetFeedPostDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.GetFeedPostForUpdateDto;
 import ShowAndGame.ShowAndGame.Services.FeedPostService;
-import ShowAndGame.ShowAndGame.Services.LikeService;
+import ShowAndGame.ShowAndGame.Services.UserLikeService;
 import ShowAndGame.ShowAndGame.Util.CurrentUserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ public class FeedPostController {
     private CurrentUserUtil currentUserUtil;
 
     @Autowired
-    private LikeService likeService;
+    private UserLikeService userLikeService;
 
     @GetMapping()
     public ResponseEntity<List<GetFeedPostDto>> getAllPosts() {
@@ -95,13 +95,13 @@ public class FeedPostController {
         return response;
     }
 
-    @PutMapping("/{postId}")
+    @PutMapping("/like/{postId}")
     public ResponseEntity<String> Like(@PathVariable Long postId){
         Long userId = currentUserUtil.GetCurrentUserId();
 
-        likeService.toggleLike(userId, postId);
+        userLikeService.toggleLike(userId, postId);
 
-        boolean isLiked = likeService.isLikedCheck(userId, postId);
+        boolean isLiked = userLikeService.isLikedCheck(userId, postId);
 
         String response = isLiked ? "Like added" : "Like removed";
 

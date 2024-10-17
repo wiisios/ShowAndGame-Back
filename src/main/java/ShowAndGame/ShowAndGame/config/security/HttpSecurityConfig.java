@@ -63,7 +63,7 @@ public class HttpSecurityConfig {
                     authConfig.requestMatchers(HttpMethod.GET, "/feedPosts/{postId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
                     authConfig.requestMatchers(HttpMethod.GET, "/feedPosts/game/{gameId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
                     authConfig.requestMatchers(HttpMethod.POST, "/feedPosts/{gameId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
-                    authConfig.requestMatchers(HttpMethod.PUT, "/feedPosts/{postId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/feedPosts/like/{postId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
 
                         //Game
                     authConfig.requestMatchers(HttpMethod.GET, "/games/{id}").hasAnyRole("ADMIN", "USER", "DEVELOPER");

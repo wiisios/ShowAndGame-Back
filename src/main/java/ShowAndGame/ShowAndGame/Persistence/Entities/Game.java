@@ -39,7 +39,7 @@ public class Game {
     )
     private List<Tag> tags = new ArrayList<>();
 
-    @OneToMany(mappedBy = "gamesFollowed", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "gameFollowed", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Follow> follows;
 
     public Game() {

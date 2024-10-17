@@ -1,10 +1,7 @@
 package ShowAndGame.ShowAndGame.Persistence.Dto.UserDto;
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.GameDto.GetGamesByUserDto;
-import ShowAndGame.ShowAndGame.Persistence.Entities.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import ShowAndGame.ShowAndGame.Persistence.Entities.*;
 
 public class GetUserByIdDto {
     private Long id;
@@ -12,8 +9,6 @@ public class GetUserByIdDto {
     private String email;
     private String profileImage;
     private String backgroundImage;
-    private List<GetGamesByUserDto> followedGames;
-    private List<GetGamesByUserDto> OwnedGames;
 
 
 
@@ -23,17 +18,6 @@ public class GetUserByIdDto {
         this.email = user.getEmail();
         this.profileImage = user.getProfileImage();
         this.backgroundImage = user.getBackgroundImage();
-        this.followedGames = user.getFollowedGames().stream().map(game -> new GetGamesByUserDto(game)).collect(Collectors.toList());
-    }
-
-    public GetUserByIdDto(UserDev userDev){
-        this.id = userDev.getId();
-        this.userName = userDev.getUsername();
-        this.email = userDev.getEmail();
-        this.profileImage = userDev.getProfileImage();
-        this.backgroundImage = userDev.getBackgroundImage();
-        this.followedGames = userDev.getFollowedGames().stream().map(game -> new GetGamesByUserDto(game)).collect(Collectors.toList());
-        this.OwnedGames = userDev.getOwnedGames().stream().map(game -> new GetGamesByUserDto(game)).collect(Collectors.toList());
     }
 
     public Long getId() {
@@ -74,22 +58,5 @@ public class GetUserByIdDto {
 
     public void setBackgroundImage(String backgroundImage) {
         this.backgroundImage = backgroundImage;
-    }
-
-
-    public List<GetGamesByUserDto> getFollowedGames() {
-        return followedGames;
-    }
-
-    public void setFollowedGames(List<GetGamesByUserDto> followedGames) {
-        this.followedGames = followedGames;
-    }
-
-    public List<GetGamesByUserDto> getOwnedGames() {
-        return OwnedGames;
-    }
-
-    public void setOwnedGames(List<GetGamesByUserDto> ownedGames) {
-        OwnedGames = ownedGames;
     }
 }

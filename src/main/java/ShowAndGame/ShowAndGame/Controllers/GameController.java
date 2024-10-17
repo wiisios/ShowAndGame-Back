@@ -63,6 +63,7 @@ public class GameController {
     @PostMapping()
     public ResponseEntity<String> CreateGame(@RequestBody GameForCreationDto newGame){
         Long currentUserId = currentUserUtil.GetCurrentUserId();
+        ResponseEntity<String> response = null;
 
         if (currentUserId != null){
         gameService.Create(newGame, currentUserId);

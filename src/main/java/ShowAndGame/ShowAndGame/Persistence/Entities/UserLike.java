@@ -3,7 +3,7 @@ package ShowAndGame.ShowAndGame.Persistence.Entities;
 import jakarta.persistence.*;
 
 @Entity
-public class Like {
+public class UserLike {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name="id", nullable = false)
@@ -18,11 +18,11 @@ public class Like {
     private FeedPost feedPostLiked;
     private boolean isLiked;
 
-    public Like(){
+    public UserLike(){
 
     }
 
-    public Like(Long id, User userWhoLiked, FeedPost feedPostLiked, boolean isLiked) {
+    public UserLike(Long id, User userWhoLiked, FeedPost feedPostLiked, boolean isLiked) {
         this.id = id;
         this.userWhoLiked = userWhoLiked;
         this.feedPostLiked = feedPostLiked;
