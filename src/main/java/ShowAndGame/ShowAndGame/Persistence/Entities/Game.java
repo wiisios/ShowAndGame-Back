@@ -17,7 +17,11 @@ public class Game {
     @Column
     private String description;
     @Column
-    private int rating;
+    private float rating;
+    @Column
+    private int reviewAmount;
+    @Column
+    private float totalReview;
     @Column
     private String profileImage;
     @Column
@@ -45,9 +49,11 @@ public class Game {
     public Game() {
     }
 
-    public Game(String name, String description, int rating, String profileImage, String backgroundImage, List<FeedPost> feedPosts, User owner, List<Tag> tags, Integer followerAmount, List<Follow> follows) {
+    public Game(String name, String description, float rating, int reviewAmount, float totalReview, String profileImage, String backgroundImage, List<FeedPost> feedPosts, User owner, List<Tag> tags, Integer followerAmount, List<Follow> follows) {
         this.name = name;
         this.description = description;
+        this.reviewAmount = reviewAmount;
+        this.totalReview = totalReview;
         this.profileImage = profileImage;
         this.backgroundImage = backgroundImage;
         this.rating = rating;
@@ -82,11 +88,11 @@ public class Game {
         this.description = description;
     }
 
-    public int getRating() {
+    public float getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(float rating) {
         this.rating = rating;
     }
 
@@ -152,5 +158,21 @@ public class Game {
 
     public void setFollows(List<Follow> follows) {
         this.follows = follows;
+    }
+
+    public int getReviewAmount() {
+        return reviewAmount;
+    }
+
+    public void setReviewAmount(int reviewAmount) {
+        this.reviewAmount = reviewAmount;
+    }
+
+    public float getTotalReview() {
+        return totalReview;
+    }
+
+    public void setTotalReview(float totalReview) {
+        this.totalReview = totalReview;
     }
 }

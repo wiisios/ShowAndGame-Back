@@ -1,7 +1,6 @@
 package ShowAndGame.ShowAndGame.Services;
 
 import ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostDto.GetReviewPostDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostDto.GetReviewPostForUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostDto.ReviewPostForCreationAndUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.FeedPost;
 import ShowAndGame.ShowAndGame.Persistence.Entities.Game;
@@ -10,6 +9,7 @@ import ShowAndGame.ShowAndGame.Persistence.Entities.User;
 import ShowAndGame.ShowAndGame.Persistence.Repository.GameRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.ReviewPostRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,29 +24,31 @@ public class ReviewPostService {
     private final ReviewPostRepository reviewPostRepository;
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
+    private final GameService gameService;
 
     @Autowired
-    public ReviewPostService(ReviewPostRepository reviewPostRepository, GameRepository gameRepository, UserRepository userRepository){
+    public ReviewPostService(ReviewPostRepository reviewPostRepository, GameRepository gameRepository, UserRepository userRepository, GameService gameService){
         this.reviewPostRepository = reviewPostRepository;
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
+        this.gameService = gameService;
     }
 
     public void Create(ReviewPostForCreationAndUpdateDto newReviewPost, Long gameId, Long userId) {
-
         ReviewPost reviewPostToCreate = new ReviewPost();
         Optional<Game> game = gameRepository.findById(gameId);
         Optional<User> user = userRepository.findById(userId);
-        Game currentGame = null;
-        User currentUser = null;
         LocalDate dateNow = LocalDate.now();
 
-        if (game.isPresent()) {
-            currentGame = game.get();
+        if (game.isEmpty()) {
+            throw new EntityNotFoundException("Game with id " + gameId + " not found");
         }
-        if (user.isPresent()){
-            currentUser = user.get();
+        if (user.isEmpty()) {
+            throw new EntityNotFoundException("User with id " + userId + " not found");
         }
+
+        Game currentGame = game.get();
+        User currentUser = user.get();
 
         reviewPostToCreate.setDescription(newReviewPost.getDescription());
         reviewPostToCreate.setDate(dateNow);
@@ -54,57 +56,59 @@ public class ReviewPostService {
         reviewPostToCreate.setGame(currentGame);
         reviewPostToCreate.setUser(currentUser);
 
+        gameService.UpdateRating(currentGame, newReviewPost);
+
         reviewPostRepository.save(reviewPostToCreate);
     }
 
     public void Delete(Long id, Long userId) {
         Optional<ReviewPost> currentReviewPost = reviewPostRepository.findById(id);
-        ReviewPost reviewPost = null;
 
         if(currentReviewPost.isPresent()){
-            reviewPost = currentReviewPost.get();
+            ReviewPost reviewPost = currentReviewPost.get();
             if (Objects.equals(reviewPost.getUser().getId(), userId)){
                 reviewPostRepository.deleteById(id);
             }
         }
     }
 
-    public GetReviewPostDto GetById(Long id) {
-        Optional<ReviewPost> reviewPost = reviewPostRepository.findById(id);
-        User user = null;
-        ReviewPost currentReview = null;
+    public GetReviewPostDto GetById(Long postId) {
+        Optional<ReviewPost> reviewPost = reviewPostRepository.findById(postId);
 
-        if (reviewPost.isPresent()){
-            currentReview = reviewPost.get();
-            user = currentReview.getUser();
+        if (reviewPost.isEmpty()){
+            throw new EntityNotFoundException("Review with id " + postId + " not found");
         }
 
-        return new GetReviewPostDto(currentReview, user);
+        ReviewPost currentReview = reviewPost.get();
+
+        return new GetReviewPostDto(currentReview);
     }
 
     public List<GetReviewPostDto> GetAll() {
-        List<ReviewPost> allReviewPosts =  reviewPostRepository.findAll();
-        return allReviewPosts.stream()
-                .map(reviewPost -> new GetReviewPostDto(reviewPost, reviewPost.getUser()))
+
+        return reviewPostRepository.findAll().stream()
+                .map(GetReviewPostDto::new)
                 .collect(Collectors.toList());
     }
 
     public List<GetReviewPostDto> GetReviewPostsByGameId(Long gameId){
         List<ReviewPost> allReviewPosts =  reviewPostRepository.findByGameId(gameId);
+
         return allReviewPosts.stream()
-                .map(reviewPost -> new GetReviewPostDto(reviewPost, reviewPost.getUser()))
+                .map(GetReviewPostDto::new)
                 .collect(Collectors.toList());
     }
 
-    public void Update(GetReviewPostForUpdateDto reviewPostToUpdate, Long reviewPostId) {
+    public void Update(ReviewPostForCreationAndUpdateDto reviewPostToUpdate, Long reviewPostId, Long userId) {
         Optional<ReviewPost> currentPost = reviewPostRepository.findById(reviewPostId);
-        ReviewPost reviewPost = null;
 
         if(currentPost.isPresent()){
-            reviewPost = currentPost.get();
-            reviewPost.setDescription(reviewPostToUpdate.getDescription());
-            reviewPost.setRating(reviewPostToUpdate.getRating());
-            reviewPostRepository.save(reviewPost);
+            ReviewPost reviewPost = currentPost.get();
+            if (Objects.equals(reviewPost.getUser().getId(), userId)) {
+                reviewPost.setDescription(reviewPostToUpdate.getDescription());
+                reviewPost.setRating(reviewPostToUpdate.getRating());
+                reviewPostRepository.save(reviewPost);
+            }
         }
     }
 }

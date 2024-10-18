@@ -12,11 +12,12 @@ public class GetGameDto {
     private String backgroundImage;
     private String name;
     private String description;
-    private Integer rating;
+    private float rating;
     private boolean isFollowed;
     private List<GetTagDto> tags;
+    private String owner;
 
-    public GetGameDto(Game game, boolean isFollowed) {
+    public GetGameDto(Game game, boolean isFollowed, String owner) {
         this.id = game.getId();
         this.name = game.getName();
         this.description = game.getDescription();
@@ -25,6 +26,7 @@ public class GetGameDto {
         this.tags = game.getTags().stream().map(GetTagDto::new).collect(Collectors.toList());
         this.rating = game.getRating();
         this.isFollowed = isFollowed;
+        this.owner = owner;
     }
 
     public Long getId() {
@@ -67,11 +69,11 @@ public class GetGameDto {
         this.backgroundImage = backgroundImage;
     }
 
-    public Integer getRating() {
+    public float getRating() {
         return rating;
     }
 
-    public void setRating(Integer rating) {
+    public void setRating(float rating) {
         this.rating = rating;
     }
 
@@ -89,5 +91,13 @@ public class GetGameDto {
 
     public void setTags(List<GetTagDto> tags) {
         this.tags = tags;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

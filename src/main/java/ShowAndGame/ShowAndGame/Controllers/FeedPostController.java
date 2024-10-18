@@ -100,6 +100,7 @@ public class FeedPostController {
         Long userId = currentUserUtil.GetCurrentUserId();
 
         userLikeService.toggleLike(userId, postId);
+        feedPostService.UpdateLikesAmount(postId);
 
         boolean isLiked = userLikeService.isLikedCheck(userId, postId);
 

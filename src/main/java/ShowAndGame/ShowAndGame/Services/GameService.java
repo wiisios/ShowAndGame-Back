@@ -1,6 +1,7 @@
 package ShowAndGame.ShowAndGame.Services;
 
 import ShowAndGame.ShowAndGame.Persistence.Dto.GameDto.*;
+import ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostDto.ReviewPostForCreationAndUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.*;
 import ShowAndGame.ShowAndGame.Persistence.Repository.GameRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.TagRepository;
@@ -28,7 +29,7 @@ public class GameService {
         this.followService = followService;
     }
 
-    public void Create(GameForCreationDto newGame, Long userId) {
+    public void Create(GameForCreationAndUpdateDto newGame, Long userId) {
         Game gameToCreate = new Game();
         Optional<User> dev = userRepository.findById(userId);
         User currentDev = null;
@@ -48,6 +49,8 @@ public class GameService {
         gameToCreate.setFollowerAmount(0);
         gameToCreate.setOwner(currentDev);
         gameToCreate.setTags(tagsForCreation);
+        gameToCreate.setReviewAmount(0);
+        gameToCreate.setTotalReview(0);
 
         gameRepository.save(gameToCreate);
     }
@@ -68,8 +71,10 @@ public class GameService {
         Optional<Game> game = gameRepository.findById(gameId);
 
         if (game.isPresent()){
+            Game currentGame = game.get();
+            User developer = userRepository.findById(currentGame.getId()).get();
             boolean isFollowed = followService.isFollowedCheck(userId, gameId);
-            return new GetGameDto(game.get(), isFollowed);
+            return new GetGameDto(currentGame, isFollowed, developer.getUsername());
         }
         else {
             return null;
@@ -90,12 +95,11 @@ public class GameService {
                 .collect(Collectors.toList());
     }
 
-    public List<GetGameDto> GetGameForUserProfile(Long userId) {
-        return gameRepository.findByFollows_UserWhoFollowed_Id(userId).stream()
-                .map(game -> {
-                  boolean isFollowed = followService.isFollowedCheck(userId, game.getId());
-                  return new GetGameDto(game, isFollowed);
-                }).collect(Collectors.toList());
+    public List<GetGameCardDto> GetGameForUserProfile(Long userId) {
+        return gameRepository.findByFollows_UserWhoFollowed_Id(userId)
+                .stream()
+                .map(GetGameCardDto::new)
+                .collect(Collectors.toList());
     }
 
     public List<GetGamesForDeveloperDto> getGamesByDeveloper(Long devId) {
@@ -104,22 +108,29 @@ public class GameService {
                 .collect(Collectors.toList());
     }
 
-    public void Update(GetGamesForDeveloperDto gameToUpdate) {
-        Optional<Game> currentGame = gameRepository.findById(gameToUpdate.getId());
-        Game game = null;
+    public void Update(GameForCreationAndUpdateDto gameToUpdate, Long gameId) {
+        Optional<Game> currentGame = gameRepository.findById(gameId);
 
-        List<Tag> updatedTags = gameToUpdate.getTags().stream()
-                .map(tagDto -> tagRepository.findById(tagDto.getId()).get())
-                .collect(Collectors.toList());
+        List<Long> tags = gameToUpdate.getTagsId();
+
+        List<Tag> tagsForUpdate = tags.stream().map(tag -> tagRepository.findById(tag).get()).toList();
 
         if(currentGame.isPresent()){
-            game = currentGame.get();
+            Game game = currentGame.get();
             game.setName(gameToUpdate.getName());
             game.setProfileImage(gameToUpdate.getProfileImage());
             game.setBackgroundImage(gameToUpdate.getBackgroundImage());
             game.setDescription(gameToUpdate.getDescription());
-            game.setTags(updatedTags);
+            game.setTags(tagsForUpdate);
             gameRepository.save(game);
         }
+    }
+
+    public void UpdateRating(Game game, ReviewPostForCreationAndUpdateDto review){
+        game.setTotalReview(review.getRating());
+        game.setReviewAmount(game.getReviewAmount()+1);
+
+        game.setRating(game.getTotalReview() / game.getReviewAmount());
+        gameRepository.save(game);
     }
 }

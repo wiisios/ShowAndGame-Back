@@ -12,12 +12,12 @@ public class GetReviewPostDto {
     private String userName;
     private String userProfileImage;
 
-    public GetReviewPostDto(ReviewPost reviewPost, User user) {
+    public GetReviewPostDto(ReviewPost reviewPost) {
         this.description = reviewPost.getDescription();
         this.date = reviewPost.getDate();
         this.rating = reviewPost.getRating();
-        this.userName = user.getUsername();
-        this.userProfileImage = user.getProfileImage();
+        this.userName = reviewPost.getUser().getUsername();
+        this.userProfileImage = reviewPost.getUser().getProfileImage();
     }
 
     public String getDescription() {

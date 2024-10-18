@@ -49,9 +49,9 @@ public class GameController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<GetGameDto>> GetGamesByUser(@PathVariable Long userId) {
-        List<GetGameDto> gamesByUserDtos = gameService.GetGameForUserProfile(userId);
-        return ResponseEntity.ok(gamesByUserDtos);
+    public ResponseEntity<List<GetGameCardDto>> GetGamesByUser(@PathVariable Long userId) {
+        List<GetGameCardDto> gamesByUserDto = gameService.GetGameForUserProfile(userId);
+        return ResponseEntity.ok(gamesByUserDto);
     }
 
     @GetMapping("/dev/{devId}")
@@ -61,7 +61,7 @@ public class GameController {
     }
 
     @PostMapping()
-    public ResponseEntity<String> CreateGame(@RequestBody GameForCreationDto newGame){
+    public ResponseEntity<String> CreateGame(@RequestBody GameForCreationAndUpdateDto newGame){
         Long currentUserId = currentUserUtil.GetCurrentUserId();
         ResponseEntity<String> response = null;
 
@@ -75,13 +75,13 @@ public class GameController {
         return response;
     }
 
-    @PutMapping()
-    public ResponseEntity<GetGamesForDeveloperDto> UpdateGame(@RequestBody GetGamesForDeveloperDto gameToUpdate){
-        ResponseEntity<GetGamesForDeveloperDto> response = null;
+    @PutMapping("/update/{gameId}")
+    public ResponseEntity<GameForCreationAndUpdateDto> UpdateGame(@RequestBody GameForCreationAndUpdateDto gameToUpdate, @PathVariable Long gameId){
+        ResponseEntity<GameForCreationAndUpdateDto> response = null;
         Long userId = currentUserUtil.GetCurrentUserId();
 
-        if (gameToUpdate.getId() != null && gameService.GetById(gameToUpdate.getId(), userId) != null){
-            gameService.Update(gameToUpdate);
+        if (gameId != null && gameService.GetById(gameId, userId) != null){
+            gameService.Update(gameToUpdate, gameId);
             response = ResponseEntity.ok(gameToUpdate);
         }
         else {
@@ -105,7 +105,7 @@ public class GameController {
         return response;
     }
 
-    @PutMapping("/{gameId}")
+    @PutMapping("/follow/{gameId}")
     public ResponseEntity<String> Follow(@PathVariable Long gameId){
         Long userId = currentUserUtil.GetCurrentUserId();
 

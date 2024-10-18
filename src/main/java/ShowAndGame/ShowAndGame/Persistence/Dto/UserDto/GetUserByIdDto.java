@@ -10,8 +10,6 @@ public class GetUserByIdDto {
     private String profileImage;
     private String backgroundImage;
 
-
-
     public GetUserByIdDto(User user) {
         this.id = user.getId();
         this.userName = user.getUsername();

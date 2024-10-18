@@ -41,10 +41,10 @@ public class FeedPostService {
         Optional<User> user = userRepository.findById(userId);
         LocalDate dateNow = LocalDate.now();
 
-        if (!game.isPresent()) {
+        if (game.isEmpty()) {
             throw new EntityNotFoundException("Game with id " + gameId + " not found");
         }
-        if (!user.isPresent()) {
+        if (user.isEmpty()) {
             throw new EntityNotFoundException("User with id " + userId + " not found");
         }
 
@@ -64,10 +64,9 @@ public class FeedPostService {
 
     public void Delete(Long id, Long userId) {
         Optional<FeedPost> currentFeedPost = feedPostRepository.findById(id);
-        FeedPost feedPost = null;
 
         if(currentFeedPost.isPresent()){
-            feedPost = currentFeedPost.get();
+            FeedPost feedPost = currentFeedPost.get();
             if (Objects.equals(feedPost.getUser().getId(), userId)){
                 feedPostRepository.deleteById(id);
             }
@@ -79,7 +78,7 @@ public class FeedPostService {
         return feedPostRepository.findById(id)
                 .map(feedPost -> {
                     boolean isLiked = userLikeService.isLikedCheck(userId, feedPost.getId());
-                    return new GetFeedPostDto(feedPost, isLiked); // Pasamos el estado de like
+                    return new GetFeedPostDto(feedPost, isLiked);
                 });
     }
 
@@ -87,7 +86,7 @@ public class FeedPostService {
         return feedPostRepository.findAll().stream()
                 .map(feedPost -> {
                     boolean isLiked = userLikeService.isLikedCheck(userId, feedPost.getId());
-                    return new GetFeedPostDto(feedPost, isLiked); // Incluimos el estado del like
+                    return new GetFeedPostDto(feedPost, isLiked);
                 })
                 .collect(Collectors.toList());
     }
@@ -113,5 +112,13 @@ public class FeedPostService {
 
             }
         }
+    }
+
+    public void UpdateLikesAmount(Long postId){
+        FeedPost currentPost = feedPostRepository.findById(postId).get();
+
+        currentPost.setLikesCounter(currentPost.getLikesCounter()+1);
+        feedPostRepository.save(currentPost);
+
     }
 }

@@ -71,13 +71,15 @@ public class HttpSecurityConfig {
                     authConfig.requestMatchers(HttpMethod.GET, "/games/user/{userId}").hasAnyRole("ADMIN", "USER");
                     authConfig.requestMatchers(HttpMethod.GET, "/games/dev/{devId}").hasAnyRole("ADMIN", "DEVELOPER");
                     authConfig.requestMatchers(HttpMethod.POST, "/games").hasAnyRole("ADMIN", "DEVELOPER");
-                    authConfig.requestMatchers(HttpMethod.PUT, "/games").hasAnyRole("ADMIN", "DEVELOPER");
-                    authConfig.requestMatchers(HttpMethod.PUT, "/games/{gameId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/games/update/{gameId}").hasAnyRole("ADMIN", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/games/follow/{gameId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
                     authConfig.requestMatchers(HttpMethod.DELETE, "/games/{id}").hasAnyRole("ADMIN", "DEVELOPER");
 
                         //ReviewPost
-                    authConfig.requestMatchers(HttpMethod.GET, "/reviewPosts/{gameId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.GET, "/reviewPosts/gamePosts/{gameId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
                     authConfig.requestMatchers(HttpMethod.POST, "/reviewPosts/{gameId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/reviewPosts/{id}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.DELETE, "/reviewPosts/{id}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
 
                         //Tag
                     authConfig.requestMatchers(HttpMethod.GET, "/tags").hasAnyRole("ADMIN", "USER", "DEVELOPER");

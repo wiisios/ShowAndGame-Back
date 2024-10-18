@@ -1,7 +1,6 @@
 package ShowAndGame.ShowAndGame.Controllers;
 
 import ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostDto.GetReviewPostDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostDto.GetReviewPostForUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostDto.ReviewPostForCreationAndUpdateDto;
 import ShowAndGame.ShowAndGame.Services.ReviewPostService;
 import ShowAndGame.ShowAndGame.Util.CurrentUserUtil;
@@ -39,13 +38,12 @@ public class ReviewPostController {
         }
     }
 
-    @GetMapping("/{gameId}")
+    @GetMapping("/gamePosts/{gameId}")
     public ResponseEntity<List<GetReviewPostDto>> GetReviewsPostsByGameId(@PathVariable Long gameId){
 
         return ResponseEntity.ok(reviewPostService.GetReviewPostsByGameId(gameId));
     }
 
-    //Cuando se crea una review, hay que updatear el Game por el rating general
     @PostMapping("/{gameId}")
     public ResponseEntity<String> CreatePost(@RequestBody ReviewPostForCreationAndUpdateDto reviewPost, @PathVariable Long gameId){
         ResponseEntity<String> response = null;
@@ -61,17 +59,16 @@ public class ReviewPostController {
             response = ResponseEntity.ok().body("Post created");
         }
 
-        //Hay que updatear el rating del juego
-
         return response;
     }
 
-    @PutMapping()
-    public ResponseEntity<GetReviewPostForUpdateDto> UpdateReviewPost(@RequestBody GetReviewPostForUpdateDto reviewPostToUpdate, @PathVariable Long reviewPostId){
-        ResponseEntity<GetReviewPostForUpdateDto> response = null;
+    @PutMapping("/{id}")
+    public ResponseEntity<ReviewPostForCreationAndUpdateDto> UpdateReviewPost(@RequestBody ReviewPostForCreationAndUpdateDto reviewPostToUpdate, @PathVariable Long id){
+        ResponseEntity<ReviewPostForCreationAndUpdateDto> response = null;
+        Long userId = currentUserUtil.GetCurrentUserId();
 
-        if (reviewPostId != null && reviewPostService.GetById(reviewPostId) != null) {
-            reviewPostService.Update(reviewPostToUpdate, reviewPostId);
+        if (id != null && reviewPostService.GetById(id) != null) {
+            reviewPostService.Update(reviewPostToUpdate, id, userId);
             response = ResponseEntity.status(HttpStatus.OK).body(reviewPostToUpdate);
         }
         else {
@@ -87,7 +84,8 @@ public class ReviewPostController {
 
         if (reviewPostService.GetById(id) != null){
             reviewPostService.Delete(id, userId);
-            response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted");}
+            response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted");
+        }
         else
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 

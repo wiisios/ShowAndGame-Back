@@ -2,7 +2,7 @@ package ShowAndGame.ShowAndGame.Persistence.Dto.GameDto;
 
 import java.util.List;
 
-public class GameForCreationDto {
+public class GameForCreationAndUpdateDto {
     private String name;
     private String description;
     private String profileImage;
