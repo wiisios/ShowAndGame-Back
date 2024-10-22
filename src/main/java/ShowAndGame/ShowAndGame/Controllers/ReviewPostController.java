@@ -62,13 +62,13 @@ public class ReviewPostController {
         return response;
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ReviewPostForCreationAndUpdateDto> UpdateReviewPost(@RequestBody ReviewPostForCreationAndUpdateDto reviewPostToUpdate, @PathVariable Long id){
+    @PutMapping("/{gameId}")
+    public ResponseEntity<ReviewPostForCreationAndUpdateDto> UpdateReviewPost(@RequestBody ReviewPostForCreationAndUpdateDto reviewPostToUpdate, Long id, @PathVariable Long gameId){
         ResponseEntity<ReviewPostForCreationAndUpdateDto> response = null;
         Long userId = currentUserUtil.GetCurrentUserId();
 
         if (id != null && reviewPostService.GetById(id) != null) {
-            reviewPostService.Update(reviewPostToUpdate, id, userId);
+            reviewPostService.Update(reviewPostToUpdate, id,gameId, userId);
             response = ResponseEntity.status(HttpStatus.OK).body(reviewPostToUpdate);
         }
         else {

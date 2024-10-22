@@ -36,7 +36,7 @@ public class FollowService {
         followRepository.save(newFollow);
     }
 
-    public Follow GetFollowById(Long id){
+    public Follow GetById(Long id){
         Optional<Follow> follow = followRepository.findById(id);
         return follow.orElse(null);
     }

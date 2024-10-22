@@ -8,16 +8,12 @@ public class GetFeedPostForUpdateDto {
     private String description;
     private String image;
 
-
-
-
     public GetFeedPostForUpdateDto(FeedPost feedPost) {
 
         this.description = feedPost.getDescription();
         this.image = feedPost.getImage();
 
     }
-
 
     public String getDescription() {
         return description;

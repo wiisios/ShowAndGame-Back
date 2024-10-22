@@ -40,7 +40,7 @@ public class UserLikeService {
         userLikeRepository.save(newUserLike);
     }
 
-    public UserLike GetLikeById(Long id){
+    public UserLike GetById(Long id){
         Optional<UserLike> like = userLikeRepository.findById(id);
         return like.orElse(null);
     }

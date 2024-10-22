@@ -9,6 +9,7 @@ import ShowAndGame.ShowAndGame.Persistence.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -72,7 +73,7 @@ public class GameService {
 
         if (game.isPresent()){
             Game currentGame = game.get();
-            User developer = userRepository.findById(currentGame.getId()).get();
+            User developer = userRepository.findById(currentGame.getOwner().getId()).get();
             boolean isFollowed = followService.isFollowedCheck(userId, gameId);
             return new GetGameDto(currentGame, isFollowed, developer.getUsername());
         }
@@ -112,8 +113,12 @@ public class GameService {
         Optional<Game> currentGame = gameRepository.findById(gameId);
 
         List<Long> tags = gameToUpdate.getTagsId();
+        
+        List<Tag> tagsForUpdate = new ArrayList<>();
+        for (Long tagId : gameToUpdate.getTagsId()) {
+            tagsForUpdate.add(tagRepository.findById(tagId).get());
+        }
 
-        List<Tag> tagsForUpdate = tags.stream().map(tag -> tagRepository.findById(tag).get()).toList();
 
         if(currentGame.isPresent()){
             Game game = currentGame.get();
@@ -129,6 +134,13 @@ public class GameService {
     public void UpdateRating(Game game, ReviewPostForCreationAndUpdateDto review){
         game.setTotalReview(review.getRating());
         game.setReviewAmount(game.getReviewAmount()+1);
+
+        game.setRating(game.getTotalReview() / game.getReviewAmount());
+        gameRepository.save(game);
+    }
+
+    public void UpdateRatingWhenUpdateReview(Game game, ReviewPostForCreationAndUpdateDto review) {
+        game.setTotalReview(review.getRating());
 
         game.setRating(game.getTotalReview() / game.getReviewAmount());
         gameRepository.save(game);

@@ -99,14 +99,23 @@ public class ReviewPostService {
                 .collect(Collectors.toList());
     }
 
-    public void Update(ReviewPostForCreationAndUpdateDto reviewPostToUpdate, Long reviewPostId, Long userId) {
+    public void Update(ReviewPostForCreationAndUpdateDto reviewPostToUpdate, Long reviewPostId, Long gameId, Long userId) {
         Optional<ReviewPost> currentPost = reviewPostRepository.findById(reviewPostId);
+        Optional<Game> game = gameRepository.findById(gameId);
+
+        if (game.isEmpty()) {
+            throw new EntityNotFoundException("Game with id " + gameId + " not found");
+        }
+
+        Game currentGame = game.get();
 
         if(currentPost.isPresent()){
             ReviewPost reviewPost = currentPost.get();
             if (Objects.equals(reviewPost.getUser().getId(), userId)) {
                 reviewPost.setDescription(reviewPostToUpdate.getDescription());
                 reviewPost.setRating(reviewPostToUpdate.getRating());
+
+                gameService.UpdateRatingWhenUpdateReview(currentGame, reviewPostToUpdate);
                 reviewPostRepository.save(reviewPost);
             }
         }

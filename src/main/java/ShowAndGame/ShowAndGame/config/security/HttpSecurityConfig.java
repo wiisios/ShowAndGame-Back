@@ -95,6 +95,20 @@ public class HttpSecurityConfig {
                     authConfig.requestMatchers(HttpMethod.PUT, "/users/adminUpdate/{userId}").hasAnyRole("ADMIN");
                     authConfig.requestMatchers(HttpMethod.DELETE, "/users/{id}").hasRole("ADMIN");
 
+                        //Like
+                    authConfig.requestMatchers(HttpMethod.GET, "/userlikes/all").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.GET, "/userlikes/{id}").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.POST, "/userlikes").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/userlikes/update/{id}").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.DELETE, "/userlikes/{id}").hasRole("ADMIN");
+
+                        //Follow
+                    authConfig.requestMatchers(HttpMethod.GET, "/follows/all").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.GET, "/follows/{id}").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.POST, "/follows").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/follows/update/{id}").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.DELETE, "/UserLikes/{id}").hasRole("ADMIN");
+
 
                     // Catch-all for other requests: anyRequest
                     authConfig.anyRequest().denyAll();

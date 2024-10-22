@@ -3,12 +3,11 @@ package ShowAndGame.ShowAndGame.Services;
 import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.FeedPostForCreationdDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.GetFeedPostDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.GetFeedPostForUpdateDto;
-import ShowAndGame.ShowAndGame.Persistence.Entities.Comment;
-import ShowAndGame.ShowAndGame.Persistence.Entities.FeedPost;
-import ShowAndGame.ShowAndGame.Persistence.Entities.Game;
-import ShowAndGame.ShowAndGame.Persistence.Entities.User;
+import ShowAndGame.ShowAndGame.Persistence.Dto.LikeDto.LikeForCreationDto;
+import ShowAndGame.ShowAndGame.Persistence.Entities.*;
 import ShowAndGame.ShowAndGame.Persistence.Repository.FeedPostRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.GameRepository;
+import ShowAndGame.ShowAndGame.Persistence.Repository.UserLikeRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +26,14 @@ public class FeedPostService {
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
     private final UserLikeService userLikeService;
+    private final UserLikeRepository userLikeRepository;
     @Autowired
-    public FeedPostService(FeedPostRepository feedPostRepository, GameRepository gameRepository, UserRepository userRepository, UserLikeService userLikeService){
+    public FeedPostService(FeedPostRepository feedPostRepository, GameRepository gameRepository, UserRepository userRepository, UserLikeService userLikeService, UserLikeRepository userLikeRepository){
         this.feedPostRepository = feedPostRepository;
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
         this.userLikeService = userLikeService;
+        this.userLikeRepository = userLikeRepository;
     }
 
     public void Create(FeedPostForCreationdDto newFeedPost, Long userId, Long gameId) {
@@ -114,11 +115,18 @@ public class FeedPostService {
         }
     }
 
-    public void UpdateLikesAmount(Long postId){
-        FeedPost currentPost = feedPostRepository.findById(postId).get();
+    public void UpdateLikesAmount(Long userId, Long feedPostId) {
+        UserLike like = userLikeRepository.findLikeByUserIdAndFeedPostId(userId, feedPostId).get();
+        FeedPost currentPost = feedPostRepository.findById(feedPostId).get();
 
-        currentPost.setLikesCounter(currentPost.getLikesCounter()+1);
-        feedPostRepository.save(currentPost);
 
+        if(like.isLiked()){
+            currentPost.setLikesCounter(currentPost.getLikesCounter()+1);
+            feedPostRepository.save(currentPost);
+        }
+        else{
+            currentPost.setLikesCounter(currentPost.getLikesCounter()-1);
+            feedPostRepository.save(currentPost);
+        }
     }
 }
