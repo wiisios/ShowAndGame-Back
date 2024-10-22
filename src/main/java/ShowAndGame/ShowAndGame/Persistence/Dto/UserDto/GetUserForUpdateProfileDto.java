@@ -7,6 +7,9 @@ public class GetUserForUpdateProfileDto {
     private String profileImage;
     private String backgroundImage;
 
+    public GetUserForUpdateProfileDto(){
+
+    }
     public GetUserForUpdateProfileDto(User user) {
         this.userName = user.getUsername();
         this.profileImage = user.getProfileImage();

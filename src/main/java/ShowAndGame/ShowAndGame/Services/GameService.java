@@ -113,7 +113,6 @@ public class GameService {
         Optional<Game> currentGame = gameRepository.findById(gameId);
 
         List<Long> tags = gameToUpdate.getTagsId();
-        
         List<Tag> tagsForUpdate = new ArrayList<>();
         for (Long tagId : gameToUpdate.getTagsId()) {
             tagsForUpdate.add(tagRepository.findById(tagId).get());

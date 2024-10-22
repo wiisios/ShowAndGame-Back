@@ -178,19 +178,19 @@ public class User implements UserDetails {
         this.feedPosts = feedPosts;
     }
 
-    public List<UserLike> getLikes() {
-        return userLikes;
-    }
-
-    public void setLikes(List<UserLike> userLikes) {
-        this.userLikes = userLikes;
-    }
-
     public List<Follow> getFollows() {
         return follows;
     }
 
     public void setFollows(List<Follow> follows) {
         this.follows = follows;
+    }
+
+    public List<UserLike> getUserLikes() {
+        return userLikes;
+    }
+
+    public void setUserLikes(List<UserLike> userLikes) {
+        this.userLikes = userLikes;
     }
 }
