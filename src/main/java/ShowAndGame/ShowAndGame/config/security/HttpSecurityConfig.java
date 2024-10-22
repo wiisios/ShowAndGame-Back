@@ -68,7 +68,7 @@ public class HttpSecurityConfig {
                         //Game
                     authConfig.requestMatchers(HttpMethod.GET, "/games/{id}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
                     authConfig.requestMatchers(HttpMethod.GET, "/games/explore").hasAnyRole("ADMIN", "USER", "DEVELOPER");
-                    authConfig.requestMatchers(HttpMethod.GET, "/games/user/{userId}").hasAnyRole("ADMIN", "USER");
+                    authConfig.requestMatchers(HttpMethod.GET, "/games/user/{userId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
                     authConfig.requestMatchers(HttpMethod.GET, "/games/dev/{devId}").hasAnyRole("ADMIN", "DEVELOPER");
                     authConfig.requestMatchers(HttpMethod.POST, "/games").hasAnyRole("ADMIN", "DEVELOPER");
                     authConfig.requestMatchers(HttpMethod.PUT, "/games/update/{gameId}").hasAnyRole("ADMIN", "DEVELOPER");
@@ -91,7 +91,7 @@ public class HttpSecurityConfig {
                         //User
                     authConfig.requestMatchers(HttpMethod.GET, "/users/all").hasAnyRole("ADMIN");
                     authConfig.requestMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
-                    authConfig.requestMatchers(HttpMethod.PUT, "/users/{userId}").hasAnyRole("ADMIN", "USER");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/users/{userId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
                     authConfig.requestMatchers(HttpMethod.PUT, "/users/adminUpdate/{userId}").hasAnyRole("ADMIN");
                     authConfig.requestMatchers(HttpMethod.DELETE, "/users/{id}").hasRole("ADMIN");
 

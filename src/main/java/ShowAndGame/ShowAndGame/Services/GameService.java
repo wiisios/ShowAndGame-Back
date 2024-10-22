@@ -97,7 +97,7 @@ public class GameService {
     }
 
     public List<GetGameCardDto> GetGameForUserProfile(Long userId) {
-        return gameRepository.findByFollows_UserWhoFollowed_Id(userId)
+        return gameRepository.findByFollows_UserWhoFollowed_IdAndFollows_IsFollowedTrue(userId)
                 .stream()
                 .map(GetGameCardDto::new)
                 .collect(Collectors.toList());
