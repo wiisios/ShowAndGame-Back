@@ -31,18 +31,22 @@ public class User implements UserDetails {
     private UserRole userRole;
     @OneToMany
     private List<Comment> comments;
-    @ManyToMany(mappedBy = "followers")
-    private List<Game> followedGames;
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Game> ownedGames;
     @OneToMany
     private List<ReviewPost> reviewPosts;
     @OneToMany
     private List<FeedPost> feedPosts;
+    @OneToMany(mappedBy = "userWhoLiked", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserLike> userLikes;
+    @OneToMany(mappedBy = "userWhoFollowed", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Follow> follows;
 
 
     public User(){
     };
 
-    public User(String userName, String password, String email, String profileImage, String backgroundImage, UserRole userRole, List<ReviewPost> reviewPosts, List<FeedPost> feedPosts,List<Comment> comments, List<Game> followedGames){
+    public User(String userName, String password, String email, String profileImage, String backgroundImage, UserRole userRole, List<ReviewPost> reviewPosts, List<FeedPost> feedPosts, List<Comment> comments, List<Game> ownedGames, List<UserLike> userLikes, List<Follow> follows){
         this.userName = userName;
         this.password = password;
         this.email = email;
@@ -52,8 +56,9 @@ public class User implements UserDetails {
         this.feedPosts = feedPosts;
         this.reviewPosts = reviewPosts;
         this.comments = comments;
-        this.followedGames = followedGames;
-
+        this.ownedGames = ownedGames;
+        this.userLikes = userLikes;
+        this.follows = follows;
     }
 
     @Override
@@ -149,12 +154,12 @@ public class User implements UserDetails {
         this.comments = comments;
     }
 
-    public List<Game> getFollowedGames() {
-        return followedGames;
+    public List<Game> getOwnedGames() {
+        return ownedGames;
     }
 
-    public void setFollowedGames(List<Game> followedGames) {
-        this.followedGames = followedGames;
+    public void setOwnedGames(List<Game> ownedGames) {
+        this.ownedGames = ownedGames;
     }
 
     public List<ReviewPost> getReviewPosts() {
@@ -171,5 +176,21 @@ public class User implements UserDetails {
 
     public void setFeedPosts(List<FeedPost> feedPosts) {
         this.feedPosts = feedPosts;
+    }
+
+    public List<Follow> getFollows() {
+        return follows;
+    }
+
+    public void setFollows(List<Follow> follows) {
+        this.follows = follows;
+    }
+
+    public List<UserLike> getUserLikes() {
+        return userLikes;
+    }
+
+    public void setUserLikes(List<UserLike> userLikes) {
+        this.userLikes = userLikes;
     }
 }

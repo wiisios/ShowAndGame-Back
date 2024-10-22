@@ -1,14 +1,15 @@
 package ShowAndGame.ShowAndGame.Services;
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostForCreationdDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetFeedPostDto;
-import ShowAndGame.ShowAndGame.Persistence.Entities.Comment;
-import ShowAndGame.ShowAndGame.Persistence.Entities.FeedPost;
-import ShowAndGame.ShowAndGame.Persistence.Entities.Game;
-import ShowAndGame.ShowAndGame.Persistence.Entities.User;
+import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.FeedPostForCreationdDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.GetFeedPostDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.GetFeedPostForUpdateDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.LikeDto.LikeForCreationDto;
+import ShowAndGame.ShowAndGame.Persistence.Entities.*;
 import ShowAndGame.ShowAndGame.Persistence.Repository.FeedPostRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.GameRepository;
+import ShowAndGame.ShowAndGame.Persistence.Repository.UserLikeRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,27 +25,32 @@ public class FeedPostService {
     private final FeedPostRepository feedPostRepository;
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
+    private final UserLikeService userLikeService;
+    private final UserLikeRepository userLikeRepository;
     @Autowired
-    public FeedPostService(FeedPostRepository feedPostRepository, GameRepository gameRepository, UserRepository userRepository){
+    public FeedPostService(FeedPostRepository feedPostRepository, GameRepository gameRepository, UserRepository userRepository, UserLikeService userLikeService, UserLikeRepository userLikeRepository){
         this.feedPostRepository = feedPostRepository;
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
+        this.userLikeService = userLikeService;
+        this.userLikeRepository = userLikeRepository;
     }
 
     public void Create(FeedPostForCreationdDto newFeedPost, Long userId, Long gameId) {
         FeedPost feedPostToCreate = new FeedPost();
         Optional<Game> game = gameRepository.findById(gameId);
         Optional<User> user = userRepository.findById(userId);
-        Game currentGame = null;
-        User currentUser = null;
         LocalDate dateNow = LocalDate.now();
 
-        if (game.isPresent()) {
-            currentGame = game.get();
+        if (game.isEmpty()) {
+            throw new EntityNotFoundException("Game with id " + gameId + " not found");
         }
-        if (user.isPresent()){
-            currentUser = user.get();
+        if (user.isEmpty()) {
+            throw new EntityNotFoundException("User with id " + userId + " not found");
         }
+
+        Game currentGame = game.get();
+        User currentUser = user.get();
 
         feedPostToCreate.setDescription(newFeedPost.getDescription());
         feedPostToCreate.setImage(newFeedPost.getImage());
@@ -52,17 +58,16 @@ public class FeedPostService {
         feedPostToCreate.setGame(currentGame);
         feedPostToCreate.setDate(dateNow);
         feedPostToCreate.setComments(new ArrayList<Comment>());
-        feedPostToCreate.setLikes(0);
+        feedPostToCreate.setLikesCounter(0);
 
         feedPostRepository.save(feedPostToCreate);
     }
 
     public void Delete(Long id, Long userId) {
         Optional<FeedPost> currentFeedPost = feedPostRepository.findById(id);
-        FeedPost feedPost = null;
 
         if(currentFeedPost.isPresent()){
-            feedPost = currentFeedPost.get();
+            FeedPost feedPost = currentFeedPost.get();
             if (Objects.equals(feedPost.getUser().getId(), userId)){
                 feedPostRepository.deleteById(id);
             }
@@ -70,32 +75,58 @@ public class FeedPostService {
 
     }
 
-    public Optional<GetFeedPostDto> GetById(Long id) {
-
-        return feedPostRepository.findById(id).map(feedPost -> new GetFeedPostDto(feedPost));
+    public Optional<GetFeedPostDto> GetById(Long id, Long userId) {
+        return feedPostRepository.findById(id)
+                .map(feedPost -> {
+                    boolean isLiked = userLikeService.isLikedCheck(userId, feedPost.getId());
+                    return new GetFeedPostDto(feedPost, isLiked);
+                });
     }
 
-    public List<GetFeedPostDto> GetAll() {
+    public List<GetFeedPostDto> GetAll(Long userId) {
         return feedPostRepository.findAll().stream()
-                .map(feedPost -> new GetFeedPostDto(feedPost))
+                .map(feedPost -> {
+                    boolean isLiked = userLikeService.isLikedCheck(userId, feedPost.getId());
+                    return new GetFeedPostDto(feedPost, isLiked);
+                })
                 .collect(Collectors.toList());
     }
 
-    public List<GetFeedPostDto> GetFeedPostsByGameId(Long gameId){
-        return  feedPostRepository.findByGameId(gameId).stream()
-                .map(feedPost -> new GetFeedPostDto(feedPost)).collect(Collectors.toList());
+    public List<GetFeedPostDto> GetFeedPostsByGameId(Long gameId, Long userId) {
+        return feedPostRepository.findByGameId(gameId).stream()
+                .map(feedPost -> {
+                    boolean isLiked = userLikeService.isLikedCheck(userId, feedPost.getId());
+                    return new GetFeedPostDto(feedPost, isLiked);
+                }).collect(Collectors.toList());
     }
 
-    public void Update(FeedPost feedPostDto, Long userId) {
-        Optional<FeedPost> currentFeedPost = feedPostRepository.findById(feedPostDto.getId());
+    public void Update(GetFeedPostForUpdateDto feedPostDto, Long userId, Long feedPostId) {
+        Optional<FeedPost> currentFeedPost = feedPostRepository.findById(feedPostId);
         FeedPost feedPost = null;
 
         if(currentFeedPost.isPresent()) {
             feedPost = currentFeedPost.get();
             if (Objects.equals(feedPost.getUser().getId(), userId)) {
-                feedPostRepository.save(feedPostDto);
+                feedPost.setDescription(feedPostDto.getDescription());
+                feedPost.setImage(feedPostDto.getImage());
+                feedPostRepository.save(feedPost);
 
             }
+        }
+    }
+
+    public void UpdateLikesAmount(Long userId, Long feedPostId) {
+        UserLike like = userLikeRepository.findLikeByUserIdAndFeedPostId(userId, feedPostId).get();
+        FeedPost currentPost = feedPostRepository.findById(feedPostId).get();
+
+
+        if(like.isLiked()){
+            currentPost.setLikesCounter(currentPost.getLikesCounter()+1);
+            feedPostRepository.save(currentPost);
+        }
+        else{
+            currentPost.setLikesCounter(currentPost.getLikesCounter()-1);
+            feedPostRepository.save(currentPost);
         }
     }
 }

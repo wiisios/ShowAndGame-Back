@@ -1,22 +1,23 @@
-package ShowAndGame.ShowAndGame.Persistence.Dto;
+package ShowAndGame.ShowAndGame.Persistence.Dto.GameDto;
 
+import ShowAndGame.ShowAndGame.Persistence.Dto.TagDto.GetTagDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.Game;
-import ShowAndGame.ShowAndGame.Persistence.Entities.Tag;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class GetGameForExploreDto {
+public class GetGameCardDto {
 
     private long id;
     private String name;
     private String backgroundImage;
-    private List<Tag> tags;
+    private List<GetTagDto> tags;
 
-    public GetGameForExploreDto(Game game) {
+    public GetGameCardDto(Game game) {
         this.id = game.getId();
         this.name = game.getName();
-        this.backgroundImage = game.getProfileImage();
-        this.tags = game.getTags();
+        this.backgroundImage = game.getBackgroundImage();
+        this.tags = game.getTags().stream().map(GetTagDto::new).collect(Collectors.toList());
     }
 
     public long getId() {
@@ -35,19 +36,19 @@ public class GetGameForExploreDto {
         this.name = name;
     }
 
-    public String getProfileImage() {
+    public String getBackgroundImage() {
         return backgroundImage;
     }
 
-    public void setProfileImage(String profileImage) {
+    public void setBackgroundImage  (String profileImage) {
         this.backgroundImage = profileImage;
     }
 
-    public List<Tag> getTags() {
+    public List<GetTagDto> getTags() {
         return tags;
     }
 
-    public void setTags(List<Tag> tags) {
+    public void setTags(List<GetTagDto> tags) {
         this.tags = tags;
     }
 }

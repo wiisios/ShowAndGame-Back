@@ -1,32 +1,32 @@
-package ShowAndGame.ShowAndGame.Persistence.Dto;
+package ShowAndGame.ShowAndGame.Persistence.Dto.GameDto;
 
+import ShowAndGame.ShowAndGame.Persistence.Dto.TagDto.GetTagDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GetGameDto {
     private Long id;
-    private String name;
-    private String description;
-    private int rating;
     private String profileImage;
     private String backgroundImage;
-    private List<FeedPost> feedPosts;
-    private List<ReviewPost> reviews;
-    private Integer followerAmount;
-    private List<Tag> tags;
+    private String name;
+    private String description;
+    private float rating;
+    private boolean isFollowed;
+    private List<GetTagDto> tags;
+    private String owner;
 
-    public GetGameDto(Game game) {
+    public GetGameDto(Game game, boolean isFollowed, String owner) {
         this.id = game.getId();
         this.name = game.getName();
         this.description = game.getDescription();
-        this.rating = game.getRating();
         this.profileImage = game.getProfileImage();
         this.backgroundImage = game.getBackgroundImage();
-        this.feedPosts = game.getPosts();
-        this.reviews = game.getReviews();
-        this.followerAmount = game.getFollowerAmount();
-        this.tags = game.getTags();
+        this.tags = game.getTags().stream().map(GetTagDto::new).collect(Collectors.toList());
+        this.rating = game.getRating();
+        this.isFollowed = isFollowed;
+        this.owner = owner;
     }
 
     public Long getId() {
@@ -53,14 +53,6 @@ public class GetGameDto {
         this.description = description;
     }
 
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-
     public String getProfileImage() {
         return profileImage;
     }
@@ -77,35 +69,35 @@ public class GetGameDto {
         this.backgroundImage = backgroundImage;
     }
 
-    public List<FeedPost> getFeedPosts() {
-        return feedPosts;
+    public float getRating() {
+        return rating;
     }
 
-    public void setFeedPosts(List<FeedPost> feedPosts) {
-        this.feedPosts = feedPosts;
+    public void setRating(float rating) {
+        this.rating = rating;
     }
 
-    public List<ReviewPost> getReviews() {
-        return reviews;
+    public boolean isFollowed() {
+        return isFollowed;
     }
 
-    public void setReviews(List<ReviewPost> reviews) {
-        this.reviews = reviews;
+    public void setFollowed(boolean followed) {
+        isFollowed = followed;
     }
 
-    public Integer getFollowerAmount() {
-        return followerAmount;
-    }
-
-    public void setFollowerAmount(Integer followerAmount) {
-        this.followerAmount = followerAmount;
-    }
-
-    public List<Tag> getTags() {
+    public List<GetTagDto> getTags() {
         return tags;
     }
 
-    public void setTags(List<Tag> tags) {
+    public void setTags(List<GetTagDto> tags) {
         this.tags = tags;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

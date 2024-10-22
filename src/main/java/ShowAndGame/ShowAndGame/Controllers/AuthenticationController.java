@@ -1,7 +1,7 @@
 package ShowAndGame.ShowAndGame.Controllers;
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.AuthenticationRequest;
-import ShowAndGame.ShowAndGame.Persistence.Dto.AuthenticationResponse;
+import ShowAndGame.ShowAndGame.Persistence.Dto.AuthenticationDto.AuthenticationRequest;
+import ShowAndGame.ShowAndGame.Persistence.Dto.AuthenticationDto.AuthenticationResponse;
 import ShowAndGame.ShowAndGame.Services.AuthenticationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

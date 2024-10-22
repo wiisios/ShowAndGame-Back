@@ -1,8 +1,8 @@
 package ShowAndGame.ShowAndGame.Controllers;
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetTagDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.TagForCreationAndUpdateDto;
-import ShowAndGame.ShowAndGame.Persistence.Entities.Tag;
+import ShowAndGame.ShowAndGame.Persistence.Dto.TagDto.GetTagDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.TagDto.TagForCreationDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.TagDto.TagForUpdateDto;
 import ShowAndGame.ShowAndGame.Services.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,8 +25,8 @@ public class TagController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Tag> getTag(@PathVariable Long id) {
-        Tag tag = tagService.GetById(id).orElse(null);
+    public ResponseEntity<GetTagDto> getTag(@PathVariable Long id) {
+        GetTagDto tag = tagService.GetById(id);
 
         if (tag != null){
             return ResponseEntity.ok(tag);
@@ -44,19 +44,19 @@ public class TagController {
     }
 
     @PostMapping()
-    public ResponseEntity<TagForCreationAndUpdateDto> createTag(@RequestBody TagForCreationAndUpdateDto newTag){
+    public ResponseEntity<TagForCreationDto> createTag(@RequestBody TagForCreationDto newTag){
 
         tagService.Create(newTag);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(newTag);
     }
 
-    @PutMapping()
-    public ResponseEntity<GetTagDto> updateTag(@RequestBody GetTagDto tagToUpdate){
-        ResponseEntity<GetTagDto> response = null;
+    @PutMapping("/{tagId}")
+    public ResponseEntity<TagForUpdateDto> updateTag(@RequestBody TagForUpdateDto tagToUpdate, @PathVariable Long tagId){
+        ResponseEntity<TagForUpdateDto> response = null;
 
-        if (tagToUpdate.getId() != null && tagService.GetById(tagToUpdate.getId()).isPresent()) {
-            tagService.Update(tagToUpdate);
+        if (tagId != null && tagService.GetById(tagId) != null) {
+            tagService.Update(tagToUpdate, tagId);
             response = ResponseEntity.status(HttpStatus.OK).body(tagToUpdate);
         }
         else {
@@ -71,7 +71,7 @@ public class TagController {
     public ResponseEntity<String> deleteTag(@PathVariable Long id){
         ResponseEntity<String> response = null;
 
-        if (tagService.GetById(id).isPresent()){
+        if (tagService.GetById(id) != null){
             tagService.Delete(id);
             response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted");}
         else

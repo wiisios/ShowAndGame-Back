@@ -1,8 +1,5 @@
-package ShowAndGame.ShowAndGame.Persistence.Dto;
+package ShowAndGame.ShowAndGame.Persistence.Dto.GameDto;
 
-import ShowAndGame.ShowAndGame.Persistence.Entities.*;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class GameForCreationAndUpdateDto {
@@ -10,7 +7,7 @@ public class GameForCreationAndUpdateDto {
     private String description;
     private String profileImage;
     private String backgroundImage;
-
+    private List<Long> tagsId;
 
     public String getName() {
         return name;
@@ -46,4 +43,11 @@ public class GameForCreationAndUpdateDto {
     }
 
 
+    public List<Long> getTagsId() {
+        return tagsId;
+    }
+
+    public void setTagsId(List<Long> tagsId) {
+        this.tagsId = tagsId;
+    }
 }

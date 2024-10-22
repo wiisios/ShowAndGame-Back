@@ -1,24 +1,21 @@
-package ShowAndGame.ShowAndGame.Persistence.Dto;
+package ShowAndGame.ShowAndGame.Persistence.Dto.UserDto;
 
 import ShowAndGame.ShowAndGame.Persistence.Entities.*;
 
 public class GetAllUsersDto {
+
+    private Long id;
     private String userName;
     private String email;
     private String profileImage;
     private UserRole userRole;
 
     public GetAllUsersDto(User user) {
+        this.id = user.getId();
         this.userName = user.getUsername();
         this.email = user.getEmail();
         this.profileImage = user.getProfileImage();
         this.userRole = user.getUserRole();
-    }
-    public GetAllUsersDto(UserDev userDev) {
-        this.userName = userDev.getUsername();
-        this.email = userDev.getEmail();
-        this.profileImage = userDev.getProfileImage();
-        this.userRole = userDev.getUserRole();
     }
 
     public String getUserName() {
@@ -51,5 +48,13 @@ public class GetAllUsersDto {
 
     public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

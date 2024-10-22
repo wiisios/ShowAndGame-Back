@@ -9,7 +9,7 @@ import java.time.LocalDate;
 public class ReviewPost extends Post {
 
     @Column
-    private Integer rating;
+    private int rating;
 
     public ReviewPost(){
 
@@ -19,11 +19,11 @@ public class ReviewPost extends Post {
         this.rating = rating;
     }
 
-    public Integer getRating() {
+    public int getRating() {
         return rating;
     }
 
-    public void setRating(Integer rating) {
+    public void setRating(int rating) {
         this.rating = rating;
     }
 }

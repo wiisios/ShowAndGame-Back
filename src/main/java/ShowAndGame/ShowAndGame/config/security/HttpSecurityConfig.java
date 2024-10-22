@@ -1,6 +1,13 @@
 package ShowAndGame.ShowAndGame.config.security;
 
 import ShowAndGame.ShowAndGame.config.security.Filter.JwtAuthenticationFilter;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,7 +37,7 @@ public class HttpSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource())) // Configuración CORS
+                .cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource())) // CORS Config
                 .csrf(csrfConfig -> csrfConfig.disable())
                 .sessionManagement(sessionMangConfig -> sessionMangConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
@@ -40,62 +47,76 @@ public class HttpSecurityConfig {
                     // Public URL (Swagger)
                     authConfig.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**", "/swagger-ui.html").permitAll();
 
-                    // Public URL
+                    // Public URLs
                     authConfig.requestMatchers(HttpMethod.POST, "/auth/authenticate").permitAll();
-                    authConfig.requestMatchers(HttpMethod.POST, "/authentication-controller/login").permitAll();
                     authConfig.requestMatchers(HttpMethod.POST, "/users").permitAll();
-
                     authConfig.requestMatchers("/error").permitAll();
 
+                    // Private URLs
 
-                    //Private URL
-                    authConfig.requestMatchers(HttpMethod.POST,"/comments/**").hasAnyRole()
-                            .anyRequest().authenticated();
+                        //Comment
+                    authConfig.requestMatchers(HttpMethod.GET, "/comments/post/{postId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.POST, "/comments").hasAnyRole("ADMIN", "USER", "DEVELOPER");
 
-                    authConfig.requestMatchers(HttpMethod.GET, "/feedPosts/**").hasAnyRole()
-                            .anyRequest().authenticated();
-                    authConfig.requestMatchers(HttpMethod.POST, "/feedPosts/**").hasAnyRole()
-                            .anyRequest().authenticated();
+                        //FeedPost
+                    authConfig.requestMatchers(HttpMethod.GET, "/feedPosts").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.GET, "/feedPosts/{postId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.GET, "/feedPosts/game/{gameId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.POST, "/feedPosts/{gameId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/feedPosts/like/{postId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
 
-                    authConfig.requestMatchers(HttpMethod.GET,"/reviewPosts/{gameId}").hasAnyRole()
-                            .anyRequest().authenticated();
-                    authConfig.requestMatchers(HttpMethod.POST,"/reviewPosts/**").hasAnyRole()
-                            .anyRequest().authenticated();
+                        //Game
+                    authConfig.requestMatchers(HttpMethod.GET, "/games/{id}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.GET, "/games/explore").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.GET, "/games/user/{userId}").hasAnyRole("ADMIN", "USER");
+                    authConfig.requestMatchers(HttpMethod.GET, "/games/dev/{devId}").hasAnyRole("ADMIN", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.POST, "/games").hasAnyRole("ADMIN", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/games/update/{gameId}").hasAnyRole("ADMIN", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/games/follow/{gameId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.DELETE, "/games/{id}").hasAnyRole("ADMIN", "DEVELOPER");
 
-                    authConfig.requestMatchers(HttpMethod.GET,"/tags").hasAnyRole()
-                            .anyRequest().authenticated();
-                    authConfig.requestMatchers(HttpMethod.GET,"/tags/{gameId}").hasAnyRole()
-                            .anyRequest().authenticated();
-                    authConfig.requestMatchers(HttpMethod.POST,"/tags/{gameId}").hasRole("ADMIN");
-                    authConfig.requestMatchers(HttpMethod.PUT,"/tags/{gameId}").hasRole("ADMIN");
-                    authConfig.requestMatchers(HttpMethod.DELETE,"/tags/{gameId}").hasRole("ADMIN");
+                        //ReviewPost
+                    authConfig.requestMatchers(HttpMethod.GET, "/reviewPosts/gamePosts/{gameId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.POST, "/reviewPosts/{gameId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/reviewPosts/{id}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.DELETE, "/reviewPosts/{id}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
 
-                    authConfig.requestMatchers(HttpMethod.GET,"/games/{id}").hasAnyRole()
-                            .anyRequest().authenticated();
-                    authConfig.requestMatchers(HttpMethod.GET,"/games/feed").hasAnyRole()
-                            .anyRequest().authenticated();
-                    authConfig.requestMatchers(HttpMethod.POST,"/games/**").hasRole("ADMIN");
-                    authConfig.requestMatchers(HttpMethod.PUT,"/games").hasRole("ADMIN");
-                    authConfig.requestMatchers(HttpMethod.PUT,"/games/{id}").hasAnyRole()
-                            .anyRequest().authenticated();
-                    authConfig.requestMatchers(HttpMethod.DELETE,"/games/**").hasRole("ADMIN");
+                        //Tag
+                    authConfig.requestMatchers(HttpMethod.GET, "/tags").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.GET, "/tags/{gameId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.POST, "/tags").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/tags/{tagId}").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.DELETE, "/tags/{id}").hasRole("ADMIN");
 
-                    authConfig.requestMatchers(HttpMethod.GET,"/users/all").hasRole("ADMIN");
-                    authConfig.requestMatchers(HttpMethod.GET,"/users/{id}").hasRole("USER");
-                    authConfig.requestMatchers(HttpMethod.POST,"/users/**").hasAnyRole()
-                            .anyRequest().authenticated();
-                    authConfig.requestMatchers(HttpMethod.PUT,"/users/**").hasAnyRole()
-                            .anyRequest().authenticated();
+                        //User
+                    authConfig.requestMatchers(HttpMethod.GET, "/users/all").hasAnyRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/users/{userId}").hasAnyRole("ADMIN", "USER");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/users/adminUpdate/{userId}").hasAnyRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.DELETE, "/users/{id}").hasRole("ADMIN");
 
-                    authConfig.requestMatchers(HttpMethod.GET,"/users/{id}").hasRole("DEVELOPER");
-                    authConfig.requestMatchers(HttpMethod.PUT,"/users/**").hasRole("DEVELOPER");
+                        //Like
+                    authConfig.requestMatchers(HttpMethod.GET, "/userlikes/all").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.GET, "/userlikes/{id}").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.POST, "/userlikes").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/userlikes/update/{id}").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.DELETE, "/userlikes/{id}").hasRole("ADMIN");
 
-                    // In case we forgot some Url
+                        //Follow
+                    authConfig.requestMatchers(HttpMethod.GET, "/follows/all").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.GET, "/follows/{id}").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.POST, "/follows").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.PUT, "/follows/update/{id}").hasRole("ADMIN");
+                    authConfig.requestMatchers(HttpMethod.DELETE, "/UserLikes/{id}").hasRole("ADMIN");
+
+
+                    // Catch-all for other requests: anyRequest
                     authConfig.anyRequest().denyAll();
                 });
 
         return http.build();
     }
+
 
     // CORS Configuration
     @Bean
@@ -110,4 +131,25 @@ public class HttpSecurityConfig {
         source.registerCorsConfiguration("/**", configuration); // CORS to all URL
         return source;
     }
+
+    @Bean
+    public OpenAPI openAPI() {
+        return new OpenAPI().addSecurityItem(new SecurityRequirement().
+                        addList("Bearer Authentication"))
+                .components(new Components().addSecuritySchemes
+                        ("Bearer Authentication", createAPIKeyScheme()))
+                .info(new Info().title("My REST API")
+                        .description("Some custom description of API.")
+                        .version("1.0").contact(new Contact().name("Sallo Szrajbman")
+                                .email( "www.baeldung.com").url("salloszraj@gmail.com"))
+                        .license(new License().name("License of API")
+                                .url("API license URL")));
+    }
+
+    private SecurityScheme createAPIKeyScheme() {
+        return new SecurityScheme().type(SecurityScheme.Type.HTTP)
+                .bearerFormat("JWT")
+                .scheme("bearer");
+    }
 }
+

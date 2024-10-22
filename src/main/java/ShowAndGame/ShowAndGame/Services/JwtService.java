@@ -33,7 +33,6 @@ public class JwtService {
                 .expiration(expiration)
                 .signWith(GetSignInKey(), Jwts.SIG.HS256)
                 .compact();
-
     }
 
     private SecretKey GetSignInKey() {
@@ -42,7 +41,6 @@ public class JwtService {
     }
 
     public String ExtractUsername(String jwt){
-
         return ExtractAllClaims(jwt).getSubject();
     }
 
@@ -52,6 +50,24 @@ public class JwtService {
                 .build()
                 .parseSignedClaims(jwt)
                 .getPayload();
+    }
+
+    public String ExtractClaim(String token, String claimName) {
+        return ExtractAllClaims(token).get(claimName, String.class);
+    }
+
+    public Integer ExtractIdClaim(String token, String claimName) {
+        return ExtractAllClaims(token).get(claimName, Integer.class);
+    }
+
+    public boolean isTokenValid(String token, User user) {
+        String usernameFromToken = ExtractUsername(token);
+        return (usernameFromToken.equals(user.getUsername()) && !isTokenExpired(token));
+    }
+
+    private boolean isTokenExpired(String token) {
+        Date expiration = ExtractAllClaims(token).getExpiration();
+        return expiration.before(new Date());
     }
 
 }

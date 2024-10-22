@@ -1,7 +1,7 @@
 package ShowAndGame.ShowAndGame.Controllers;
 
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.*;
+import ShowAndGame.ShowAndGame.Persistence.Dto.UserDto.*;
 import ShowAndGame.ShowAndGame.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,10 +18,10 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<GetAllUsersDto>> getAllUsers() {return  ResponseEntity.ok(userService.GetAll());}
+    public ResponseEntity<List<GetAllUsersDto>> GetAllUsers() {return  ResponseEntity.ok(userService.GetAll());}
 
     @GetMapping("/{id}")
-    public ResponseEntity<GetUserByIdDto> getUser(@PathVariable Long id) {
+    public ResponseEntity<GetUserByIdDto> GetUser(@PathVariable Long id) {
 
         GetUserByIdDto user = userService.GetById(id);
 
@@ -40,12 +40,12 @@ public class UserController {
         return ResponseEntity.ok().body("User created");
     }
 
-    @PutMapping()
-    public ResponseEntity<GetUserForUpdateProfileDto> UpdateUserProfile(@RequestBody GetUserForUpdateProfileDto userToUpdate){
+    @PutMapping("/{userId}")
+    public ResponseEntity<GetUserForUpdateProfileDto> UpdateUserProfile(@RequestBody GetUserForUpdateProfileDto userToUpdate, @PathVariable Long userId){
         ResponseEntity<GetUserForUpdateProfileDto> response = null;
 
-        if (userToUpdate.getId() != null && userService.GetById(userToUpdate.getId()) != null){
-            userService.UpdateProfile(userToUpdate);
+        if (userId != null && userService.GetById(userId) != null){
+            userService.UpdateProfile(userToUpdate, userId);
             response = ResponseEntity.ok(userToUpdate);
         }
         else {
@@ -55,7 +55,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id){
+    public ResponseEntity<String> DeleteUser(@PathVariable Long id){
         ResponseEntity<String> response = null;
 
         if (userService.GetById(id) != null){
@@ -67,12 +67,12 @@ public class UserController {
         return response;
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> UpdateUser(@PathVariable Long id, @RequestBody GetUserForAdminUpdateDto user){
+    @PutMapping("/adminUpdate/{userId}")
+    public ResponseEntity<String> UpdateUser(@PathVariable Long userId, @RequestBody GetUserForAdminUpdateDto user){
         ResponseEntity<String> response = null;
 
-        if (userService.GetById(id) != null){
-            userService.UpdateUser(user,id);
+        if (userService.GetById(userId) != null){
+            userService.UpdateUser(user, userId);
             response = ResponseEntity.ok("User updated");
         }
         else

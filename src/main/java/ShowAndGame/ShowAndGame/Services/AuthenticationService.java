@@ -1,7 +1,7 @@
 package ShowAndGame.ShowAndGame.Services;
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.AuthenticationRequest;
-import ShowAndGame.ShowAndGame.Persistence.Dto.AuthenticationResponse;
+import ShowAndGame.ShowAndGame.Persistence.Dto.AuthenticationDto.AuthenticationRequest;
+import ShowAndGame.ShowAndGame.Persistence.Dto.AuthenticationDto.AuthenticationResponse;
 import ShowAndGame.ShowAndGame.Persistence.Entities.User;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +41,9 @@ public class AuthenticationService {
     private Map<String, Object> GenerateExtraClaims(User user){
 
         Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("id", user.getId());
         extraClaims.put("name", user.getUsername());
-        extraClaims.put("role", user.getUserRole().name());
+        extraClaims.put("role", "ROLE_" + user.getUserRole().toString());
 
         return extraClaims;
 

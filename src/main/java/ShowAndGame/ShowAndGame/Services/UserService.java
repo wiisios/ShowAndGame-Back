@@ -1,6 +1,6 @@
 package ShowAndGame.ShowAndGame.Services;
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.*;
+import ShowAndGame.ShowAndGame.Persistence.Dto.UserDto.*;
 import ShowAndGame.ShowAndGame.Persistence.Entities.User;
 import ShowAndGame.ShowAndGame.Persistence.Entities.UserRole;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserRepository;
@@ -32,10 +32,12 @@ public class UserService {
         user.setProfileImage(null);
         user.setBackgroundImage(null);
         user.setUserRole(UserRole.USER);
-        user.setFollowedGames(new ArrayList<>());
-        user.setFeedPosts(new ArrayList<>());
-        user.setReviewPosts(new ArrayList<>());
         user.setComments(new ArrayList<>());
+        user.setOwnedGames(new ArrayList<>());
+        user.setReviewPosts(new ArrayList<>());
+        user.setFeedPosts(new ArrayList<>());
+        user.setUserLikes(new ArrayList<>());
+        user.setFollows(new ArrayList<>());
 
         return userRepository.save(user);
     }
@@ -62,8 +64,8 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public void UpdateProfile(GetUserForUpdateProfileDto userToUpdate) {
-        Optional<User> currentUser = userRepository.findById(userToUpdate.getId());
+    public void UpdateProfile(GetUserForUpdateProfileDto userToUpdate, Long userId) {
+        Optional<User> currentUser = userRepository.findById(userId);
         User user = null;
 
         if(currentUser.isPresent()){
@@ -78,8 +80,8 @@ public class UserService {
         return userRepository.findByUserName(userName);
     }
 
-    public void UpdateUser(GetUserForAdminUpdateDto userToUpdate, Long id) {
-        Optional<User> currentUser = userRepository.findById(id);
+    public void UpdateUser(GetUserForAdminUpdateDto userToUpdate, Long userId) {
+        Optional<User> currentUser = userRepository.findById(userId);
         User user = null;
 
         if(currentUser.isPresent()){

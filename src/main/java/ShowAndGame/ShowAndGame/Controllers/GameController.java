@@ -1,9 +1,7 @@
 package ShowAndGame.ShowAndGame.Controllers;
 
-import ShowAndGame.ShowAndGame.Persistence.Dto.GameForCreationAndUpdateDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetGameDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.GetGameForExploreDto;
-import ShowAndGame.ShowAndGame.Persistence.Entities.Tag;
+import ShowAndGame.ShowAndGame.Persistence.Dto.GameDto.*;
+import ShowAndGame.ShowAndGame.Services.FollowService;
 import ShowAndGame.ShowAndGame.Services.GameService;
 import ShowAndGame.ShowAndGame.Util.CurrentUserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +21,18 @@ public class GameController {
     @Autowired
     private CurrentUserUtil currentUserUtil;
 
+    @Autowired
+    private FollowService followService;
+
     @GetMapping
-    public ResponseEntity<List<GetGameDto>> GetAllGames() {
+    public ResponseEntity<List<GetGameCardDto>> GetAllGames() {
         return ResponseEntity.ok(gameService.GetAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<GetGameDto> GetGame(@PathVariable Long id) {
-
-        GetGameDto game = gameService.GetById(id);
+        Long userId = currentUserUtil.GetCurrentUserId();
+        GetGameDto game = gameService.GetById(id, userId);
 
         if (game != null){
             return ResponseEntity.ok(game);
@@ -41,26 +42,46 @@ public class GameController {
         }
     }
 
-    @GetMapping("/feed")
-    public ResponseEntity<List<GetGameForExploreDto>> GetGamesForExplore() {
-        List<GetGameForExploreDto> gameDTOs = gameService.GetAllForFeed();
+    @GetMapping("/explore")
+    public ResponseEntity<List<GetGameCardDto>> GetGamesForExplore() {
+        List<GetGameCardDto> gameDTOs = gameService.GetAllForExplore();
         return ResponseEntity.ok(gameDTOs);
     }
 
-    @PostMapping()
-    public ResponseEntity<String> CreateGame(@RequestBody GameForCreationAndUpdateDto newGame, List<Tag> tags){
-        Long currentUserDevId = currentUserUtil.GetCurrentUserDevId();
-        gameService.Create(newGame, currentUserDevId, tags);
-
-        return ResponseEntity.ok().body("Game created");
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<GetGameCardDto>> GetGamesByUser(@PathVariable Long userId) {
+        List<GetGameCardDto> gamesByUserDto = gameService.GetGameForUserProfile(userId);
+        return ResponseEntity.ok(gamesByUserDto);
     }
 
-    @PutMapping()
-    public ResponseEntity<GetGameDto> UpdateGame(@RequestBody GetGameDto gameToUpdate){
-        ResponseEntity<GetGameDto> response = null;
+    @GetMapping("/dev/{devId}")
+    public ResponseEntity<List<GetGamesForDeveloperDto>> GetGamesByDeveloper(@PathVariable Long devId){
+        List<GetGamesForDeveloperDto> gamesByDevDto = gameService.getGamesByDeveloper(devId);
+        return ResponseEntity.ok(gamesByDevDto);
+    }
 
-        if (gameToUpdate.getId() != null && gameService.GetById(gameToUpdate.getId()) != null){
-            gameService.Update(gameToUpdate);
+    @PostMapping()
+    public ResponseEntity<String> CreateGame(@RequestBody GameForCreationAndUpdateDto newGame){
+        Long currentUserId = currentUserUtil.GetCurrentUserId();
+        ResponseEntity<String> response = null;
+
+        if (currentUserId != null){
+        gameService.Create(newGame, currentUserId);
+        response = ResponseEntity.ok().body("Game created");
+        } else {
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return response;
+    }
+
+    @PutMapping("/update/{gameId}")
+    public ResponseEntity<GameForCreationAndUpdateDto> UpdateGame(@RequestBody GameForCreationAndUpdateDto gameToUpdate, @PathVariable Long gameId){
+        ResponseEntity<GameForCreationAndUpdateDto> response = null;
+        Long userId = currentUserUtil.GetCurrentUserId();
+
+        if (gameId != null && gameService.GetById(gameId, userId) != null){
+            gameService.Update(gameToUpdate, gameId);
             response = ResponseEntity.ok(gameToUpdate);
         }
         else {
@@ -73,9 +94,10 @@ public class GameController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> DeleteGame(@PathVariable Long id){
         ResponseEntity<String> response = null;
+        Long userDevId = currentUserUtil.GetCurrentUserId();
 
-        if (gameService.GetById(id) != null){
-            gameService.Delete(id);
+        if (gameService.GetById(id, userDevId) != null){
+            gameService.Delete(id, userDevId);
             response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted");}
         else
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -83,23 +105,16 @@ public class GameController {
         return response;
     }
 
-    @PutMapping("/{gameId}")
-    public ResponseEntity<String> FollowUnfollow(@RequestBody String state, @PathVariable Long gameId){
+    @PutMapping("/follow/{gameId}")
+    public ResponseEntity<String> Follow(@PathVariable Long gameId){
         Long userId = currentUserUtil.GetCurrentUserId();
-        ResponseEntity<String> response = null;
 
-        if(state == "follow"){
-            gameService.Follow(userId, gameId);
-            response = ResponseEntity.ok().body("Followed");
-        }
-        else if(state == "unfollow"){
-            gameService.Unfollow(userId, gameId);
-            response = ResponseEntity.ok().body("Unfollowed");
-        }
-        else{
-            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        followService.toggleFollow(userId, gameId);
 
-        return response;
+        boolean isFollowed = followService.isFollowedCheck(userId, gameId);
+
+        String response = isFollowed ? "Follow added" : "Followed removed";
+
+        return ResponseEntity.ok(response);
     }
 }
