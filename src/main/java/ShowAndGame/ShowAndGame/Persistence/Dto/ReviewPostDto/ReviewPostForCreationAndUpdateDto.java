@@ -6,7 +6,9 @@ public class ReviewPostForCreationAndUpdateDto {
     private String description;
     private Integer rating;
 
+    public ReviewPostForCreationAndUpdateDto(){
 
+    }
     public ReviewPostForCreationAndUpdateDto(ReviewPost reviewPost) {
         this.description = reviewPost.getDescription();
         this.rating = reviewPost.getRating();

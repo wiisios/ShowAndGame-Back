@@ -5,6 +5,10 @@ import ShowAndGame.ShowAndGame.Persistence.Entities.User;
 
 public class CommentForCreationAndUpdateDto {
     private String description;
+
+    public CommentForCreationAndUpdateDto(){
+
+    }
     public CommentForCreationAndUpdateDto(Comment comment, User user){
         this.description = comment.getDescription();
 

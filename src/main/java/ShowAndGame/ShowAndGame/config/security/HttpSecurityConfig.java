@@ -51,6 +51,7 @@ public class HttpSecurityConfig {
                     authConfig.requestMatchers(HttpMethod.POST, "/auth/authenticate").permitAll();
                     authConfig.requestMatchers(HttpMethod.POST, "/users").permitAll();
                     authConfig.requestMatchers("/error").permitAll();
+                    authConfig.requestMatchers(HttpMethod.GET, "/games/{gameName}/streams").permitAll();
 
                     // Private URLs
 
@@ -109,7 +110,6 @@ public class HttpSecurityConfig {
                     authConfig.requestMatchers(HttpMethod.PUT, "/follows/update/{id}").hasRole("ADMIN");
                     authConfig.requestMatchers(HttpMethod.DELETE, "/UserLikes/{id}").hasRole("ADMIN");
 
-
                     // Catch-all for other requests: anyRequest
                     authConfig.anyRequest().denyAll();
                 });
@@ -137,13 +137,7 @@ public class HttpSecurityConfig {
         return new OpenAPI().addSecurityItem(new SecurityRequirement().
                         addList("Bearer Authentication"))
                 .components(new Components().addSecuritySchemes
-                        ("Bearer Authentication", createAPIKeyScheme()))
-                .info(new Info().title("My REST API")
-                        .description("Some custom description of API.")
-                        .version("1.0").contact(new Contact().name("Sallo Szrajbman")
-                                .email( "www.baeldung.com").url("salloszraj@gmail.com"))
-                        .license(new License().name("License of API")
-                                .url("API license URL")));
+                        ("Bearer Authentication", createAPIKeyScheme()));
     }
 
     private SecurityScheme createAPIKeyScheme() {
