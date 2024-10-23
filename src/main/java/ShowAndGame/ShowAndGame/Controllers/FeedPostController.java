@@ -59,7 +59,7 @@ public class FeedPostController {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
         else {
-            feedPostService.Create(feedPost, gameId, userId);
+            feedPostService.Create(feedPost, userId, gameId);
             response = ResponseEntity.ok().body("Post created");
         }
 
