@@ -14,7 +14,7 @@ public class Game {
     private long id;
     @Column
     private String name;
-    @Column
+    @Column(length = 1000)
     private String description;
     @Column
     private float rating;
