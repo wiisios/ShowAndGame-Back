@@ -6,9 +6,12 @@ import ShowAndGame.ShowAndGame.Persistence.Entities.*;
 import ShowAndGame.ShowAndGame.Persistence.Repository.GameRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.TagRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserRepository;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ShowAndGame.ShowAndGame.util.GameReportGenerator;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -22,6 +25,9 @@ public class GameService {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final FollowService followService;
+
+    @Autowired
+    private GameReportGenerator gameReportGenerator;
     @Autowired
     public GameService(GameRepository gameRepository, UserRepository userRepository, TagRepository tagRepository, FollowService followService){
         this.gameRepository = gameRepository;
@@ -29,6 +35,8 @@ public class GameService {
         this.tagRepository = tagRepository;
         this.followService = followService;
     }
+
+
 
     public void Create(GameForCreationAndUpdateDto newGame, Long userId) {
         Game gameToCreate = new Game();
@@ -82,11 +90,9 @@ public class GameService {
         }
     }
 
-    public List<GetGameCardDto> GetAll() {
+    public List<Game> GetAll() {
         List<Game> allGames = gameRepository.findAll();
-        return allGames.stream()
-                .map(GetGameCardDto::new)
-                .collect(Collectors.toList());
+        return allGames;
     }
 
     public List<GetGameCardDto> GetAllForExplore() {
@@ -143,5 +149,8 @@ public class GameService {
 
         game.setRating(game.getTotalReview() / game.getReviewAmount());
         gameRepository.save(game);
+    }
+    public byte[] exportPdf() throws JRException, FileNotFoundException {
+        return gameReportGenerator.exportToPdf(gameRepository.findAll());
     }
 }

@@ -3,15 +3,20 @@ package ShowAndGame.ShowAndGame.Controllers;
 
 import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.FeedPostForCreationdDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.GetFeedPostDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.GetFeedPostForReportDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.GetFeedPostForUpdateDto;
 import ShowAndGame.ShowAndGame.Services.FeedPostService;
 import ShowAndGame.ShowAndGame.Services.UserLikeService;
 import ShowAndGame.ShowAndGame.Util.CurrentUserUtil;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 @RestController
@@ -107,6 +112,15 @@ public class FeedPostController {
         String response = isLiked ? "Like added" : "Like removed";
 
         return ResponseEntity.ok(response);
+    }
+
+
+    @GetMapping("/export-pdf")
+    public ResponseEntity<byte[]> exportPdf() throws JRException, FileNotFoundException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("postsReport", "feedPostsReport.pdf");
+        return ResponseEntity.ok().headers(headers).body(feedPostService.exportPdf());
     }
 }
 
