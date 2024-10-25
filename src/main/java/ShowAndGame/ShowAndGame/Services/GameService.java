@@ -4,6 +4,7 @@ import ShowAndGame.ShowAndGame.Persistence.Dto.GameDto.*;
 import ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostDto.ReviewPostForCreationAndUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.*;
 import ShowAndGame.ShowAndGame.Persistence.Repository.GameRepository;
+import ShowAndGame.ShowAndGame.Persistence.Repository.ReviewPostRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.TagRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,7 @@ public class GameService {
         gameToCreate.setOwner(currentDev);
         gameToCreate.setTags(tagsForCreation);
         gameToCreate.setReviewAmount(0);
-        gameToCreate.setTotalReview(0);
+        gameToCreate.setTotalRating(0);
 
         gameRepository.save(gameToCreate);
     }
@@ -131,17 +132,30 @@ public class GameService {
     }
 
     public void UpdateRating(Game game, ReviewPostForCreationAndUpdateDto review){
-        game.setTotalReview(review.getRating());
+        float oldRating = game.getTotalRating();
+        float newRating = review.getRating();
+        game.setTotalRating(oldRating + newRating);
+
         game.setReviewAmount(game.getReviewAmount()+1);
 
-        game.setRating(game.getTotalReview() / game.getReviewAmount());
+        game.setRating(game.getTotalRating() / game.getReviewAmount());
         gameRepository.save(game);
     }
 
-    public void UpdateRatingWhenUpdateReview(Game game, ReviewPostForCreationAndUpdateDto review) {
-        game.setTotalReview(review.getRating());
+    public void UpdateRatingWhenUpdateReview(Game game, ReviewPostForCreationAndUpdateDto review, float oldRating) {
+        float rating = game.getTotalRating() - oldRating;
+        float newRating = review.getRating();
+        game.setTotalRating(rating + newRating);
 
-        game.setRating(game.getTotalReview() / game.getReviewAmount());
+        game.setRating(game.getTotalRating() / game.getReviewAmount());
         gameRepository.save(game);
+    }
+
+    public void UpdateRatingWhenDeleteReview(Game gameToUpdate, ReviewPost reviewPost){
+        gameToUpdate.setTotalRating(gameToUpdate.getTotalRating() - reviewPost.getRating());
+        gameToUpdate.setReviewAmount(gameToUpdate.getReviewAmount() - 1);
+        gameToUpdate.setRating(gameToUpdate.getTotalRating() / gameToUpdate.getReviewAmount());
+
+        gameRepository.save(gameToUpdate);
     }
 }

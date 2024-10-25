@@ -67,6 +67,8 @@ public class ReviewPostService {
         if(currentReviewPost.isPresent()){
             ReviewPost reviewPost = currentReviewPost.get();
             if (Objects.equals(reviewPost.getUser().getId(), userId)){
+                Game gameToUpdate = reviewPostRepository.findGameByReviewPostId(id);
+                gameService.UpdateRatingWhenDeleteReview(gameToUpdate, reviewPost);
                 reviewPostRepository.deleteById(id);
             }
         }
@@ -112,10 +114,11 @@ public class ReviewPostService {
         if(currentPost.isPresent()){
             ReviewPost reviewPost = currentPost.get();
             if (Objects.equals(reviewPost.getUser().getId(), userId)) {
+                float oldRating = reviewPost.getRating();
                 reviewPost.setDescription(reviewPostToUpdate.getDescription());
                 reviewPost.setRating(reviewPostToUpdate.getRating());
 
-                gameService.UpdateRatingWhenUpdateReview(currentGame, reviewPostToUpdate);
+                gameService.UpdateRatingWhenUpdateReview(currentGame, reviewPostToUpdate, oldRating);
                 reviewPostRepository.save(reviewPost);
             }
         }
