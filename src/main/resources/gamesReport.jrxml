@@ -1,0 +1,121 @@
+<!-- Created with Jaspersoft Studio version 7.0.1.final using JasperReports Library version 7.0.1-573496633c2b4074e32f433154b543003f7d2498  -->
+<jasperReport name="books" language="java" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="71104859-cb8c-436d-a51b-f60d990baf82">
+	<property name="template.engine" value="tabular_template"/>
+	<style name="Table_TH" mode="Opaque" backcolor="#8A1C48">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" forecolor="#FFFFFF" backcolor="#8A1C48" hTextAlign="Center" fontSize="12.0">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF" hTextAlign="Center">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<dataset name="gamesDataSet" uuid="b93e8799-f7aa-4d00-842a-c4e2a600bc8c">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+		<field name="id" class="java.lang.Long"/>
+		<field name="name" class="java.lang.String"/>
+		<field name="followerAmount" class="java.lang.Integer"/>
+		<field name="rating" class="java.lang.Float"/>
+		<sortField name="id"/>
+	</dataset>
+	<parameter name="gamesData" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<title height="31">
+		<element kind="frame" uuid="25fef76e-caa9-470c-8255-3aa2b60f3e81" mode="Opaque" x="-20" y="-20" width="595" height="50" backcolor="#8A1C48">
+			<element kind="staticText" uuid="eceb496a-d5d0-4b4f-a3bb-1403ee25e2a6" x="20" y="10" width="555" height="30" forecolor="#FFFFFF" fontSize="20.0" bold="true" hTextAlign="Center">
+				<text><![CDATA[Games Report]]></text>
+			</element>
+		</element>
+	</title>
+	<detail>
+		<band height="204">
+			<element kind="component" uuid="382837ab-e830-4a98-8ce8-e5d01e399f13" x="0" y="4" width="555" height="200" forecolor="#FFFFFF">
+				<component kind="table">
+					<datasetRun uuid="eb6d77e7-0137-4151-b4ab-b4316afe36af" subDataset="gamesDataSet">
+						<dataSourceExpression><![CDATA[$P{gamesData}]]></dataSourceExpression>
+					</datasetRun>
+					<column kind="single" uuid="355b0a62-48d2-47e9-b8cc-32f7c7dea431" width="90">
+						<columnHeader height="30" rowSpan="1" style="Table_CH">
+							<element kind="staticText" uuid="e0ffbf9a-f51c-41be-955f-48594b331205" x="0" y="0" width="90" height="30" forecolor="#FFFFFF" fontName="SansSerif" fontSize="12.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+								<text><![CDATA[ID]]></text>
+								<box>
+									<pen lineColor="#FFFFFF"/>
+								</box>
+							</element>
+						</columnHeader>
+						<detailCell height="30" style="Table_TD">
+							<element kind="textField" uuid="c34423a1-8834-4831-8a3e-d5bc4d2e8da8" x="0" y="0" width="90" height="30" fontName="SansSerif" fontSize="12.0" hTextAlign="Center" vTextAlign="Middle">
+								<expression><![CDATA[$F{id}]]></expression>
+							</element>
+						</detailCell>
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+					</column>
+					<column kind="single" uuid="69f55cb2-9bee-4dde-a79e-46e636be1017" width="155">
+						<columnHeader height="30" rowSpan="1" style="Table_CH">
+							<element kind="staticText" uuid="44e19529-d39a-4330-92a0-24fb4c35e13d" x="0" y="0" width="155" height="30" forecolor="#FFFFFF" fontName="SansSerif" fontSize="12.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+								<text><![CDATA[Name]]></text>
+							</element>
+						</columnHeader>
+						<detailCell height="30" style="Table_TD">
+							<element kind="textField" uuid="050e6310-3782-4a48-a5fd-54574e45bd29" x="0" y="0" width="155" height="30" fontSize="12.0" hTextAlign="Center" vTextAlign="Middle">
+								<expression><![CDATA[$F{name}]]></expression>
+							</element>
+						</detailCell>
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+					</column>
+					<column kind="single" uuid="6a35055c-20b2-471a-8d13-2a179f5d0162" width="155">
+						<columnHeader height="30" rowSpan="1" style="Table_CH">
+							<element kind="staticText" uuid="3001f191-cfd3-4219-8526-222c0c437ed1" x="0" y="0" width="155" height="30" forecolor="#FFFFFF" fontName="SansSerif" fontSize="12.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+								<text><![CDATA[Followers]]></text>
+							</element>
+						</columnHeader>
+						<detailCell height="30" style="Table_TD">
+							<element kind="textField" uuid="b62f1f1d-caef-4f07-b3bd-b888f6b749d8" x="0" y="0" width="155" height="30" forecolor="#000000" fontSize="12.0" blankWhenNull="false" hTextAlign="Center" vTextAlign="Middle">
+								<expression><![CDATA[$F{followerAmount}]]></expression>
+							</element>
+						</detailCell>
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+					</column>
+					<column kind="single" uuid="9f01f2f4-f55a-46b4-be04-fd41c8de553b" width="155">
+						<columnHeader height="30" rowSpan="1" style="Table_CH">
+							<element kind="staticText" uuid="3001f191-cfd3-4219-8526-222c0c437ed1" x="0" y="0" width="155" height="30" forecolor="#FFFFFF" fontName="SansSerif" fontSize="12.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+								<text><![CDATA[Rating]]></text>
+							</element>
+						</columnHeader>
+						<detailCell height="30" style="Table_TD">
+							<element kind="textField" uuid="b62f1f1d-caef-4f07-b3bd-b888f6b749d8" x="0" y="0" width="155" height="30" forecolor="#000000" fontSize="12.0" blankWhenNull="false" hTextAlign="Center" vTextAlign="Middle">
+								<expression><![CDATA[$F{rating}]]></expression>
+							</element>
+						</detailCell>
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+					</column>
+				</component>
+				<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+				<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+				<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+				<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+				<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
+				<property name="com.jaspersoft.studio.components.autoresize.proportional" value="true"/>
+			</element>
+		</band>
+	</detail>
+	<pageFooter height="17">
+		<element kind="textField" uuid="30c0a284-556e-4d9a-a32d-6b076b547e35" mode="Opaque" x="0" y="4" width="515" height="13" backcolor="#E6E6E6" hTextAlign="Right">
+			<expression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></expression>
+		</element>
+		<element kind="textField" uuid="7d23f304-acaa-4007-aabe-cbbfb07c075e" mode="Opaque" x="515" y="4" width="40" height="13" backcolor="#E6E6E6" evaluationTime="Report">
+			<expression><![CDATA[" " + $V{PAGE_NUMBER}]]></expression>
+		</element>
+		<element kind="textField" uuid="8930534b-464e-4b09-bfca-2bc6e4b0b7b9" x="0" y="4" width="280" height="13" pattern="M/d/yy">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+	</pageFooter>
+</jasperReport>

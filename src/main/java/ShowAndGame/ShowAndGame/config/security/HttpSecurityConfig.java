@@ -52,6 +52,9 @@ public class HttpSecurityConfig {
                     authConfig.requestMatchers(HttpMethod.POST, "/users").permitAll();
                     authConfig.requestMatchers("/error").permitAll();
                     authConfig.requestMatchers(HttpMethod.GET, "/games/{gameName}/streams").permitAll();
+                    authConfig.requestMatchers(HttpMethod.GET, "/games/export-pdf").permitAll();
+                    authConfig.requestMatchers(HttpMethod.GET, "/games/all").permitAll();
+                    authConfig.requestMatchers(HttpMethod.GET, "/feedPosts/export-pdf").permitAll();
 
                     // Private URLs
 

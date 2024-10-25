@@ -2,6 +2,7 @@ package ShowAndGame.ShowAndGame.Services;
 
 import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.FeedPostForCreationdDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.GetFeedPostDto;
+import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.GetFeedPostForReportDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.GetFeedPostForUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.LikeDto.LikeForCreationDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.*;
@@ -9,10 +10,14 @@ import ShowAndGame.ShowAndGame.Persistence.Repository.FeedPostRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.GameRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserLikeRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserRepository;
+import ShowAndGame.ShowAndGame.util.PostReportGenerator;
+
 import jakarta.persistence.EntityNotFoundException;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +32,9 @@ public class FeedPostService {
     private final UserRepository userRepository;
     private final UserLikeService userLikeService;
     private final UserLikeRepository userLikeRepository;
+
+    @Autowired
+    private PostReportGenerator postReportGenerator;
     @Autowired
     public FeedPostService(FeedPostRepository feedPostRepository, GameRepository gameRepository, UserRepository userRepository, UserLikeService userLikeService, UserLikeRepository userLikeRepository){
         this.feedPostRepository = feedPostRepository;
@@ -128,5 +136,9 @@ public class FeedPostService {
             currentPost.setLikesCounter(currentPost.getLikesCounter()-1);
             feedPostRepository.save(currentPost);
         }
+    }
+
+    public byte[] exportPdf() throws JRException, FileNotFoundException {
+        return postReportGenerator.exportToPdf(feedPostRepository.findAll().stream().map(GetFeedPostForReportDto::new).collect(Collectors.toList()));
     }
 }

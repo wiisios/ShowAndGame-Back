@@ -1,14 +1,19 @@
 package ShowAndGame.ShowAndGame.Controllers;
 
 import ShowAndGame.ShowAndGame.Persistence.Dto.GameDto.*;
+import ShowAndGame.ShowAndGame.Persistence.Entities.Game;
 import ShowAndGame.ShowAndGame.Services.FollowService;
 import ShowAndGame.ShowAndGame.Services.GameService;
 import ShowAndGame.ShowAndGame.Util.CurrentUserUtil;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 @RestController
@@ -24,8 +29,8 @@ public class GameController {
     @Autowired
     private FollowService followService;
 
-    @GetMapping
-    public ResponseEntity<List<GetGameCardDto>> GetAllGames() {
+    @GetMapping("/all")
+    public ResponseEntity<List<Game>> GetAllGames() {
         return ResponseEntity.ok(gameService.GetAll());
     }
 
@@ -116,5 +121,14 @@ public class GameController {
         String response = isFollowed ? "Follow added" : "Followed removed";
 
         return ResponseEntity.ok(response);
+    }
+
+
+    @GetMapping("/export-pdf")
+    public ResponseEntity<byte[]> exportPdf() throws JRException, FileNotFoundException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("gamesReport", "gameReport.pdf");
+        return ResponseEntity.ok().headers(headers).body(gameService.exportPdf());
     }
 }
