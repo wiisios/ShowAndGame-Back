@@ -6,28 +6,24 @@ import java.time.LocalDate;
 
 @Entity
 public abstract class Post {
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
     private long id;
-
     @Column
     private String description;
-
     @Column
     private LocalDate date;
-
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id")
     private User user;
-
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "game_id")
     private Game game;
 
     public Post() {
     }
+
     public Post(String description, User user, Game game, LocalDate date) {
         this.description = description;
         this.user = user;
@@ -74,5 +70,4 @@ public abstract class Post {
     public void setDate(LocalDate date) {
         this.date = date;
     }
-
 }

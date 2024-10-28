@@ -13,52 +13,53 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/users")
 public class UserController {
-
     @Autowired
     private UserService userService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<GetAllUsersDto>> GetAllUsers() {return  ResponseEntity.ok(userService.GetAll());}
+    public ResponseEntity<List<GetAllUsersDto>> GetAllUsers() {
+        return  ResponseEntity.ok(userService.GetAll());
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<GetUserByIdDto> GetUser(@PathVariable Long id) {
-
         GetUserByIdDto user = userService.GetById(id);
 
         if (user != null) {
             return ResponseEntity.ok(user);
         }
-        else{
+        else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @PostMapping()
-    public ResponseEntity<String> CreateUser(@RequestBody UserForCreationDto user){
+    public ResponseEntity<String> CreateUser(@RequestBody UserForCreationDto user) {
         userService.Create(user);
 
         return ResponseEntity.ok().body("User created");
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<GetUserForUpdateProfileDto> UpdateUserProfile(@RequestBody GetUserForUpdateProfileDto userToUpdate, @PathVariable Long userId){
+    public ResponseEntity<GetUserForUpdateProfileDto> UpdateUserProfile(@RequestBody GetUserForUpdateProfileDto userToUpdate, @PathVariable Long userId) {
         ResponseEntity<GetUserForUpdateProfileDto> response = null;
 
-        if (userId != null && userService.GetById(userId) != null){
+        if (userId != null && userService.GetById(userId) != null) {
             userService.UpdateProfile(userToUpdate, userId);
             response = ResponseEntity.ok(userToUpdate);
         }
         else {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+
         return response;
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> DeleteUser(@PathVariable Long id){
+    public ResponseEntity<String> DeleteUser(@PathVariable Long id) {
         ResponseEntity<String> response = null;
 
-        if (userService.GetById(id) != null){
+        if (userService.GetById(id) != null) {
             userService.Delete(id);
             response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Eliminado");}
         else
@@ -68,10 +69,10 @@ public class UserController {
     }
 
     @PutMapping("/adminUpdate/{userId}")
-    public ResponseEntity<String> UpdateUser(@PathVariable Long userId, @RequestBody GetUserForAdminUpdateDto user){
+    public ResponseEntity<String> UpdateUser(@PathVariable Long userId, @RequestBody GetUserForAdminUpdateDto user) {
         ResponseEntity<String> response = null;
 
-        if (userService.GetById(userId) != null){
+        if (userService.GetById(userId) != null) {
             userService.UpdateUser(user, userId);
             response = ResponseEntity.ok("User updated");
         }

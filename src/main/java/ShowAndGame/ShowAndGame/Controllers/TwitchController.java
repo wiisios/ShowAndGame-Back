@@ -24,12 +24,12 @@ public class TwitchController {
         String gameId = twitchService.getGameIdByName(gameName);
         List<Map<String, Object>> streamList = twitchService.getStreamsByGame(gameId);
 
-        if(streamList == null || streamList.isEmpty() || gameId == null){
+        if (streamList == null || streamList.isEmpty() || gameId == null) {
             Map<String, String> response = new HashMap<>();
             response.put("message", "No streams found for this game");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-        else{
+        else {
             return ResponseEntity.ok(streamList);
         }
     }

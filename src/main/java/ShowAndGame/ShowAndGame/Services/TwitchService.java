@@ -20,16 +20,18 @@ import java.util.Map;
 public class TwitchService {
     @Value("${twitch.client-id}")
     private String clientId;
-
     @Value("${twitch.client-secret}")
     private String clientSecret;
 
     private static final String TWITCH_API_BASE_URL = "https://api.twitch.tv/helix/";
 
+    //Saving Twitch token to use it on every Method
     private String accessToken;
+
+    //Saving expire time to request it when it needs to
     private long tokenExpiryTime = 0;
 
-    public String getTwitchToken() {
+    public void getTwitchToken() {
         if (accessToken == null || System.currentTimeMillis() > tokenExpiryTime) {
             RestTemplate restTemplate = new RestTemplate();
 
@@ -65,7 +67,6 @@ public class TwitchService {
         }
 
 
-        return accessToken;
     }
 
     public String getGameIdByName(String gameName) throws UnsupportedEncodingException {
@@ -80,6 +81,7 @@ public class TwitchService {
 
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
+        //restTemplate.exchange returns a Map with data about the game
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
         Map<String, Object> body = response.getBody();
 
@@ -90,6 +92,7 @@ public class TwitchService {
                 return (String) data.get(0).get("id");
             }
         }
+
         return null;
     }
 
@@ -106,16 +109,17 @@ public class TwitchService {
 
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
+        //restTemplate.exchange returns a Map with data about the game
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
         Map<String, Object> body = response.getBody();
 
         List<Map<String, Object>> streams = new ArrayList<>();
 
-        // Verificar si la respuesta contiene data y mapearla a la estructura deseada
+        //Checking response data and mapping it with desired structure
         if (body != null && body.containsKey("data")) {
             List<Map<String, Object>> data = (List<Map<String, Object>>) body.get("data");
 
-            // Iterar sobre cada stream y crear un Map con los campos requeridos
+            //Iterating every stream to create a Map with desired information
             for (Map<String, Object> stream : data) {
                 Map<String, Object> streamInfo = new HashMap<>();
                 streamInfo.put("id", stream.get("id"));

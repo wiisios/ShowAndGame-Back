@@ -1,7 +1,6 @@
 package ShowAndGame.ShowAndGame.Persistence.Dto.UserDto;
 
 public class UserForCreationDto {
-
     private String userName;
     private String password;
     private String email;

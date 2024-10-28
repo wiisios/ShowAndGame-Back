@@ -25,7 +25,6 @@ public class GameForCreationAndUpdateDto {
         this.description = description;
     }
 
-
     public String getProfileImage() {
         return profileImage;
     }
@@ -41,7 +40,6 @@ public class GameForCreationAndUpdateDto {
     public void setBackgroundImage(String backgroundImage) {
         this.backgroundImage = backgroundImage;
     }
-
 
     public List<Long> getTagsId() {
         return tagsId;

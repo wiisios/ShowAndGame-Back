@@ -11,7 +11,6 @@ import java.util.List;
 
 @Repository
 public interface ReviewPostRepository extends JpaRepository<ReviewPost, Long> {
-
     List<ReviewPost> findByGameId(Long gameId);
     @Query("SELECT r.game FROM ReviewPost r WHERE r.id = :reviewPostId")
     Game findGameByReviewPostId(@Param("reviewPostId") Long reviewPostId);

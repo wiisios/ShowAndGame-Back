@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GetGamesForDeveloperDto {
-
     private Long id;
     private String profileImage;
     private String backgroundImage;
@@ -33,6 +32,14 @@ public class GetGamesForDeveloperDto {
         this.id = id;
     }
 
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
     public String getBackgroundImage() {
         return backgroundImage;
     }
@@ -47,14 +54,6 @@ public class GetGamesForDeveloperDto {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getProfileImage() {
-        return profileImage;
-    }
-
-    public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
     }
 
     public String getDescription() {

@@ -6,9 +6,10 @@ import ShowAndGame.ShowAndGame.Persistence.Entities.User;
 public class GetCommentForUpdateDto {
     private String description;
 
-    public GetCommentForUpdateDto(Comment comment, User user){
+    public GetCommentForUpdateDto(Comment comment, User user) {
         this.description = comment.getDescription();
     }
+
     public String getDescription() {
         return description;
     }
@@ -16,5 +17,4 @@ public class GetCommentForUpdateDto {
     public void setDescription(String description) {
         this.description = description;
     }
-
 }

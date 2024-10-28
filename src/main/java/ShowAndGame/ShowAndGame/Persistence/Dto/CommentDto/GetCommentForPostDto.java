@@ -4,17 +4,25 @@ import ShowAndGame.ShowAndGame.Persistence.Entities.Comment;
 import ShowAndGame.ShowAndGame.Persistence.Entities.User;
 
 public class GetCommentForPostDto {
-
     private  Long id;
     private String description;
     private String userName;
     private String userProfileImage;
 
-    public GetCommentForPostDto(Comment comment, User user){
+    public GetCommentForPostDto(Comment comment, User user) {
         this.description = comment.getDescription();
         this.userName = user.getUsername();
         this.userProfileImage = user.getProfileImage();
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -37,13 +45,5 @@ public class GetCommentForPostDto {
 
     public void setUserProfileImage(String userProfileImage) {
         this.userProfileImage = userProfileImage;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 }

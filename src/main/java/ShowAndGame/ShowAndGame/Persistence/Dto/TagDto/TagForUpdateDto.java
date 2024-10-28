@@ -4,8 +4,6 @@ public class TagForUpdateDto {
     private String name;
     private String color;
 
-
-
     public String getName() {
         return name;
     }

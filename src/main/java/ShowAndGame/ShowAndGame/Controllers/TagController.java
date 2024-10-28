@@ -14,13 +14,11 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/tags")
 public class TagController {
-
     @Autowired
     private TagService tagService;
 
     @GetMapping()
     public ResponseEntity<List<GetTagDto>> getAllTags() {
-
         return  ResponseEntity.ok(tagService.GetAll());
     }
 
@@ -28,31 +26,28 @@ public class TagController {
     public ResponseEntity<GetTagDto> getTag(@PathVariable Long id) {
         GetTagDto tag = tagService.GetById(id);
 
-        if (tag != null){
+        if (tag != null) {
             return ResponseEntity.ok(tag);
         }
-        else{
+        else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-
     }
 
     @GetMapping("/{gameId}")
-    public ResponseEntity<List<GetTagDto>> getTagsByGameId(@PathVariable Long gameId){
-
+    public ResponseEntity<List<GetTagDto>> getTagsByGameId(@PathVariable Long gameId) {
         return ResponseEntity.ok(tagService.GetTagsByGameId(gameId));
     }
 
     @PostMapping()
-    public ResponseEntity<TagForCreationDto> createTag(@RequestBody TagForCreationDto newTag){
-
+    public ResponseEntity<TagForCreationDto> createTag(@RequestBody TagForCreationDto newTag) {
         tagService.Create(newTag);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(newTag);
     }
 
     @PutMapping("/{tagId}")
-    public ResponseEntity<TagForUpdateDto> updateTag(@RequestBody TagForUpdateDto tagToUpdate, @PathVariable Long tagId){
+    public ResponseEntity<TagForUpdateDto> updateTag(@RequestBody TagForUpdateDto tagToUpdate, @PathVariable Long tagId) {
         ResponseEntity<TagForUpdateDto> response = null;
 
         if (tagId != null && tagService.GetById(tagId) != null) {
@@ -66,12 +61,11 @@ public class TagController {
         return response;
     }
 
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteTag(@PathVariable Long id){
+    public ResponseEntity<String> deleteTag(@PathVariable Long id) {
         ResponseEntity<String> response = null;
 
-        if (tagService.GetById(id) != null){
+        if (tagService.GetById(id) != null) {
             tagService.Delete(id);
             response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted");}
         else

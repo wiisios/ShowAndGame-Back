@@ -14,7 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/userlikes")
 public class UserLikeController {
-
     @Autowired
     private UserLikeService userLikeService;
 
@@ -29,15 +28,15 @@ public class UserLikeController {
     }
 
     @PostMapping()
-    public ResponseEntity<String> CreateLike(@RequestBody LikeForCreationDto newLike){
+    public ResponseEntity<String> CreateLike(@RequestBody LikeForCreationDto newLike) {
         userLikeService.Create(newLike);
+
         return ResponseEntity.ok().body("Like created");
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<GetLikeDto> UpdateLike(@RequestBody GetLikeDto likeToUpdate, @PathVariable Long id){
-
-        if (id != null && userLikeService.GetById(id) != null){
+    public ResponseEntity<GetLikeDto> UpdateLike(@RequestBody GetLikeDto likeToUpdate, @PathVariable Long id) {
+        if (id != null && userLikeService.GetById(id) != null) {
             userLikeService.Update(likeToUpdate);
             return ResponseEntity.ok(likeToUpdate);
         }
@@ -48,7 +47,6 @@ public class UserLikeController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> DeleteLike(@PathVariable Long id) {
-
         if (userLikeService.GetById(id) != null) {
             userLikeService.Delete(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted");
@@ -57,5 +55,4 @@ public class UserLikeController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
-
 }

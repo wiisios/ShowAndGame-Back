@@ -17,21 +17,39 @@ import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
-
-
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final FeedPostRepository feedPostRepository;
     @Autowired
-    public CommentService(CommentRepository commentRepository, UserRepository userRepository, FeedPostRepository feedPostRepository){
-
+    public CommentService(CommentRepository commentRepository, UserRepository userRepository, FeedPostRepository feedPostRepository) {
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.feedPostRepository = feedPostRepository;
     }
 
+    public Optional<GetCommentForPostDto> GetById(Long id) {
+        return commentRepository.findById(id)
+                .map(comment -> new GetCommentForPostDto(comment, comment.getUser()));
+    }
+
+    public List<GetCommentForPostDto> GetAll() {
+        return commentRepository.findAll().stream()
+                .map(comment -> new GetCommentForPostDto(comment, comment.getUser()))
+                .collect(Collectors.toList());
+    }
+
+    public List<GetCommentForPostDto> GetCommentsByPostId(Long postId) {
+        List<Comment> comments = commentRepository.findByFeedPostId(postId);
+
+        return comments.stream()
+                .map(comment -> new GetCommentForPostDto(comment, comment.getUser()))
+                .collect(Collectors.toList());
+    }
+
     public void Create(CommentForCreationAndUpdateDto commentDto, Long postId, Long userId) {
         Comment commentToCreate = new Comment();
+
+        //Looking for the correct feedPost and User to create the Comment
         Optional<FeedPost> feedPost = feedPostRepository.findById(postId);
         Optional<User> user = userRepository.findById(userId);
         FeedPost currentPost = null;
@@ -44,11 +62,27 @@ public class CommentService {
             currentUser = user.get();
         }
 
+        //Setting values to Comment attributes
         commentToCreate.setDescription(commentDto.getDescription());
         commentToCreate.setUser(currentUser);
         commentToCreate.setFeedPost(currentPost);
 
         commentRepository.save((commentToCreate));
+    }
+
+    public void Update(GetCommentForUpdateDto commentToUpdate, Long userId, Long commentId) {
+        Optional<Comment> currentComment = commentRepository.findById(commentId);
+        Comment comment = null;
+
+        if(currentComment.isPresent()) {
+            comment = currentComment.get();
+
+            //Checking that the current User is the same as the one who created the Comment
+            if (Objects.equals(comment.getUser().getId(), userId)) {
+                comment.setDescription(commentToUpdate.getDescription());
+                commentRepository.save(comment);
+            }
+        }
     }
 
     public void Delete(Long commentId, Long userId) {
@@ -57,43 +91,11 @@ public class CommentService {
 
         if(currentComment.isPresent()){
             comment = currentComment.get();
+
+            //Checking that the current User is the same as the one who created the Comment
             if (Objects.equals(comment.getUser().getId(), userId)) {
                 commentRepository.deleteById(commentId);
-            }}
-
-    }
-
-    public Optional<GetCommentForPostDto> GetById(Long id) {
-         return commentRepository.findById(id).map(comment -> new GetCommentForPostDto(comment, comment.getUser()))
-         ;
-    }
-
-    public List<GetCommentForPostDto> GetAll() {
-        return commentRepository.findAll().stream()
-                .map(comment -> new GetCommentForPostDto(comment, comment.getUser()))
-                .collect(Collectors.toList());
-    }
-
-    public List<GetCommentForPostDto> GetCommentsByPostId(Long postId) {
-        List<Comment> comments = commentRepository.findByFeedPostId(postId);
-        return comments.stream()
-                .map(comment -> new GetCommentForPostDto(comment, comment.getUser()))
-                .collect(Collectors.toList());
-    }
-
-    public void Update(GetCommentForUpdateDto commentToUpdate, Long userId, Long commentId) {
-
-        Optional<Comment> currentComment = commentRepository.findById(commentId);
-        Comment comment = null;
-
-        if(currentComment.isPresent()){
-            comment = currentComment.get();
-            if (Objects.equals(comment.getUser().getId(), userId)) {
-                comment.setDescription(commentToUpdate.getDescription());
-                commentRepository.save(comment);
             }
         }
     }
-
-
 }

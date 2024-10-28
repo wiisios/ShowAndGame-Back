@@ -8,12 +8,20 @@ public class GetUserForUpdateProfileDto {
     private String backgroundImage;
 
     public GetUserForUpdateProfileDto(){
-
     }
+
     public GetUserForUpdateProfileDto(User user) {
         this.userName = user.getUsername();
         this.profileImage = user.getProfileImage();
         this.backgroundImage = user.getBackgroundImage();
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getProfileImage() {
@@ -30,13 +38,5 @@ public class GetUserForUpdateProfileDto {
 
     public void setBackgroundImage(String backgroundImage) {
         this.backgroundImage = backgroundImage;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 }

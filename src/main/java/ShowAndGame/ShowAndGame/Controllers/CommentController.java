@@ -15,41 +15,38 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/comments")
 public class CommentController {
-
     @Autowired
     private CommentService commentService;
 
     @Autowired
     private CurrentUserUtil currentUserUtil;
 
-
     @GetMapping()
-    public ResponseEntity<List<GetCommentForPostDto>> getAllComments() {return  ResponseEntity.ok(commentService.GetAll());}
+    public ResponseEntity<List<GetCommentForPostDto>> getAllComments() {
+        return  ResponseEntity.ok(commentService.GetAll());
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<GetCommentForPostDto> getComment(@PathVariable Long id) {
-
         GetCommentForPostDto comment = commentService.GetById(id).orElse((null));
 
         return ResponseEntity.ok(comment);
     }
 
     @GetMapping("/post/{postId}")
-    public ResponseEntity<List<GetCommentForPostDto>> getCommentsByPost(@PathVariable Long postId){
+    public ResponseEntity<List<GetCommentForPostDto>> getCommentsByPost(@PathVariable Long postId) {
         return ResponseEntity.ok(commentService.GetCommentsByPostId(postId));
     }
 
-
     @PostMapping()
-        public ResponseEntity<String> createComment(@RequestBody CommentForCreationAndUpdateDto comment, Long postId){
+    public ResponseEntity<String> createComment(@RequestBody CommentForCreationAndUpdateDto comment, Long postId) {
         ResponseEntity<String> response = null;
-
         Long userId = currentUserUtil.GetCurrentUserId();
 
         if (userId == null) {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        } else {
-
+        }
+        else {
             commentService.Create(comment, postId, userId);
             response = ResponseEntity.ok().body("Comment created");
         }
@@ -58,11 +55,11 @@ public class CommentController {
     }
 
     @PutMapping("/{commentId}")
-    public ResponseEntity<GetCommentForUpdateDto> updateComment(@RequestBody GetCommentForUpdateDto commentToUpdate, @PathVariable Long commentId){
+    public ResponseEntity<GetCommentForUpdateDto> updateComment(@RequestBody GetCommentForUpdateDto commentToUpdate, @PathVariable Long commentId) {
         ResponseEntity<GetCommentForUpdateDto> response = null;
         Long userId = currentUserUtil.GetCurrentUserId();
 
-        if (commentId != null && commentService.GetById(commentId).isPresent()){
+        if (commentId != null && commentService.GetById(commentId).isPresent()) {
             commentService.Update(commentToUpdate, userId, commentId);
             response = ResponseEntity.status(HttpStatus.OK).body(commentToUpdate);
         }
@@ -72,15 +69,15 @@ public class CommentController {
         return response;
     }
 
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteComment(@PathVariable Long id){
+    public ResponseEntity<String> deleteComment(@PathVariable Long id) {
         ResponseEntity<String> response = null;
         Long userId = currentUserUtil.GetCurrentUserId();
 
-        if (commentService.GetById(id).isPresent()){
+        if (commentService.GetById(id).isPresent()) {
             commentService.Delete(id, userId);
-            response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Eliminado");}
+            response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Eliminado");
+        }
         else
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 

@@ -14,7 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/reviewPosts")
 public class ReviewPostController {
-
     @Autowired
     private ReviewPostService reviewPostService;
     @Autowired
@@ -22,7 +21,6 @@ public class ReviewPostController {
 
     @GetMapping()
     public ResponseEntity<List<GetReviewPostDto>> GetAllPosts() {
-
         return ResponseEntity.ok(reviewPostService.GetAll());
     }
 
@@ -30,7 +28,7 @@ public class ReviewPostController {
     public ResponseEntity<GetReviewPostDto> GetPost(@PathVariable Long id) {
         GetReviewPostDto reviewPost = reviewPostService.GetById(id);
 
-        if (reviewPost != null){
+        if (reviewPost != null) {
             return ResponseEntity.ok(reviewPost);
         }
         else {
@@ -39,19 +37,19 @@ public class ReviewPostController {
     }
 
     @GetMapping("/gamePosts/{gameId}")
-    public ResponseEntity<List<GetReviewPostDto>> GetReviewsPostsByGameId(@PathVariable Long gameId){
-
+    public ResponseEntity<List<GetReviewPostDto>> GetReviewsPostsByGameId(@PathVariable Long gameId) {
         return ResponseEntity.ok(reviewPostService.GetReviewPostsByGameId(gameId));
     }
 
     @PostMapping("/{gameId}")
-    public ResponseEntity<String> CreatePost(@RequestBody ReviewPostForCreationAndUpdateDto reviewPost, @PathVariable Long gameId){
+    public ResponseEntity<String> CreatePost(@RequestBody ReviewPostForCreationAndUpdateDto reviewPost, @PathVariable Long gameId) {
         ResponseEntity<String> response = null;
         Long userId = currentUserUtil.GetCurrentUserId();
 
-        if (gameId == null){
+        if (gameId == null) {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game not found");
-        } else if (userId == null) {
+        }
+        else if (userId == null) {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
         else {
@@ -63,7 +61,7 @@ public class ReviewPostController {
     }
 
     @PutMapping("/{gameId}")
-    public ResponseEntity<ReviewPostForCreationAndUpdateDto> UpdateReviewPost(@RequestBody ReviewPostForCreationAndUpdateDto reviewPostToUpdate, Long id, @PathVariable Long gameId){
+    public ResponseEntity<ReviewPostForCreationAndUpdateDto> UpdateReviewPost(@RequestBody ReviewPostForCreationAndUpdateDto reviewPostToUpdate, Long id, @PathVariable Long gameId) {
         ResponseEntity<ReviewPostForCreationAndUpdateDto> response = null;
         Long userId = currentUserUtil.GetCurrentUserId();
 
@@ -78,11 +76,11 @@ public class ReviewPostController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> DeletePost(@PathVariable Long id){
+    public ResponseEntity<String> DeletePost(@PathVariable Long id) {
         ResponseEntity<String> response = null;
         Long userId  = currentUserUtil.GetCurrentUserId();
 
-        if (reviewPostService.GetById(id) != null){
+        if (reviewPostService.GetById(id) != null) {
             reviewPostService.Delete(id, userId);
             response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted");
         }

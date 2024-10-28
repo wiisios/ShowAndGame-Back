@@ -8,7 +8,6 @@ import java.util.List;
 
 @Repository
 public interface GameRepository extends JpaRepository<Game , Long> {
-
     List<Game> findByFollows_UserWhoFollowed_IdAndFollows_IsFollowedTrue(Long userId);
     List<Game> findByOwnerId(Long developerId);
 }

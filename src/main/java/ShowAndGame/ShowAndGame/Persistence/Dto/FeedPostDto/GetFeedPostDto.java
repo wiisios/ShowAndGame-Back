@@ -5,7 +5,6 @@ import ShowAndGame.ShowAndGame.Persistence.Entities.FeedPost;
 import java.time.LocalDate;
 
 public class GetFeedPostDto {
-
     private Long id;
     private String description;
     private String image;
@@ -14,7 +13,6 @@ public class GetFeedPostDto {
     private String username;
     private String userProfileImage;
     private boolean isLiked;
-
 
     public GetFeedPostDto(FeedPost feedPost, boolean isLiked) {
         this.id = feedPost.getId();
@@ -51,6 +49,14 @@ public class GetFeedPostDto {
         this.image = image;
     }
 
+    public Integer getLikesCounter() {
+        return likesCounter;
+    }
+
+    public void setLikesCounter(Integer likesCounter) {
+        this.likesCounter = likesCounter;
+    }
+
     public LocalDate getDate() {
         return date;
     }
@@ -73,14 +79,6 @@ public class GetFeedPostDto {
 
     public void setUserProfileImage(String userProfileImage) {
         this.userProfileImage = userProfileImage;
-    }
-
-    public Integer getLikesCounter() {
-        return likesCounter;
-    }
-
-    public void setLikesCounter(Integer likesCounter) {
-        this.likesCounter = likesCounter;
     }
 
     public boolean isLiked() {

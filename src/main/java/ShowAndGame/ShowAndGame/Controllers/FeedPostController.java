@@ -3,7 +3,6 @@ package ShowAndGame.ShowAndGame.Controllers;
 
 import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.FeedPostForCreationdDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.GetFeedPostDto;
-import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.GetFeedPostForReportDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.GetFeedPostForUpdateDto;
 import ShowAndGame.ShowAndGame.Services.FeedPostService;
 import ShowAndGame.ShowAndGame.Services.UserLikeService;
@@ -22,7 +21,6 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/feedPosts")
 public class FeedPostController {
-
     @Autowired
     private FeedPostService feedPostService;
 
@@ -35,6 +33,7 @@ public class FeedPostController {
     @GetMapping()
     public ResponseEntity<List<GetFeedPostDto>> getAllPosts() {
         Long userId = currentUserUtil.GetCurrentUserId();
+
         return  ResponseEntity.ok(feedPostService.GetAll(userId));
     }
 
@@ -47,18 +46,18 @@ public class FeedPostController {
     }
 
     @GetMapping("/game/{gameId}")
-    public ResponseEntity<List<GetFeedPostDto>> getPostByGameId(@PathVariable Long gameId){
+    public ResponseEntity<List<GetFeedPostDto>> getPostByGameId(@PathVariable Long gameId) {
         Long userId = currentUserUtil.GetCurrentUserId();
+
         return ResponseEntity.ok(feedPostService.GetFeedPostsByGameId(gameId, userId));
     }
 
     @PostMapping("/{gameId}")
-    public ResponseEntity<String> createPost(@RequestBody FeedPostForCreationdDto feedPost, @PathVariable Long gameId ){
+    public ResponseEntity<String> createPost(@RequestBody FeedPostForCreationdDto feedPost, @PathVariable Long gameId ) {
         ResponseEntity<String> response = null;
         Long userId = currentUserUtil.GetCurrentUserId();
 
-
-        if (gameId == null){
+        if (gameId == null) {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game not found");
         } else if (userId == null) {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
@@ -72,11 +71,11 @@ public class FeedPostController {
     }
 
     @PutMapping("/{postId}")
-    public ResponseEntity<GetFeedPostForUpdateDto> updatePost(@RequestBody GetFeedPostForUpdateDto feedPost, @PathVariable Long postId){
+    public ResponseEntity<GetFeedPostForUpdateDto> updatePost(@RequestBody GetFeedPostForUpdateDto feedPost, @PathVariable Long postId) {
         ResponseEntity<GetFeedPostForUpdateDto> response = null;
         Long userId = currentUserUtil.GetCurrentUserId();
 
-        if (postId != null && feedPostService.GetById(postId, userId).isPresent()){
+        if (postId != null && feedPostService.GetById(postId, userId).isPresent()) {
             feedPostService.Update(feedPost, userId, postId);
             response = ResponseEntity.ok(feedPost);}
         else
@@ -85,13 +84,12 @@ public class FeedPostController {
         return response;
     }
 
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePost(@PathVariable Long id){
+    public ResponseEntity<String> deletePost(@PathVariable Long id) {
         ResponseEntity<String> response = null;
         Long userId = currentUserUtil.GetCurrentUserId();
 
-        if (feedPostService.GetById(id, userId).isPresent()){
+        if (feedPostService.GetById(id, userId).isPresent()) {
             feedPostService.Delete(id, userId);
             response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Eliminado");}
         else
@@ -101,25 +99,24 @@ public class FeedPostController {
     }
 
     @PutMapping("/like/{postId}")
-    public ResponseEntity<String> Like(@PathVariable Long postId){
+    public ResponseEntity<String> Like(@PathVariable Long postId) {
         Long userId = currentUserUtil.GetCurrentUserId();
 
         userLikeService.toggleLike(userId, postId);
         feedPostService.UpdateLikesAmount(userId, postId);
 
         boolean isLiked = userLikeService.isLikedCheck(userId, postId);
-
         String response = isLiked ? "Like added" : "Like removed";
 
         return ResponseEntity.ok(response);
     }
-
 
     @GetMapping("/export-pdf")
     public ResponseEntity<byte[]> exportPdf() throws JRException, FileNotFoundException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDispositionFormData("postsReport", "feedPostsReport.pdf");
+
         return ResponseEntity.ok().headers(headers).body(feedPostService.exportPdf());
     }
 }

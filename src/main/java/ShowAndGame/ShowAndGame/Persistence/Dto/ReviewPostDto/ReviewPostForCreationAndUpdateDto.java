@@ -7,7 +7,6 @@ public class ReviewPostForCreationAndUpdateDto {
     private Integer rating;
 
     public ReviewPostForCreationAndUpdateDto(){
-
     }
     public ReviewPostForCreationAndUpdateDto(ReviewPost reviewPost) {
         this.description = reviewPost.getDescription();
@@ -29,7 +28,5 @@ public class ReviewPostForCreationAndUpdateDto {
     public void setRating(Integer rating) {
         this.rating = rating;
     }
-
-
 }
 

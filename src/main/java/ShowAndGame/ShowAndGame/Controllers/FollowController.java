@@ -14,7 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/follows")
 public class FollowController {
-
     @Autowired
     private FollowService followService;
 
@@ -29,15 +28,15 @@ public class FollowController {
     }
 
     @PostMapping()
-    public ResponseEntity<String> CreateLike(@RequestBody FollowForCreationDto newFollow){
+    public ResponseEntity<String> CreateLike(@RequestBody FollowForCreationDto newFollow) {
         followService.Create(newFollow);
+
         return ResponseEntity.ok().body("Like created");
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<GetFollowDto> UpdateLike(@RequestBody GetFollowDto followToUpdate, @PathVariable Long id){
-
-        if (id != null && followService.GetById(id) != null){
+    public ResponseEntity<GetFollowDto> UpdateLike(@RequestBody GetFollowDto followToUpdate, @PathVariable Long id) {
+        if (id != null && followService.GetById(id) != null) {
             followService.Update(followToUpdate);
             return ResponseEntity.ok(followToUpdate);
         }
@@ -48,7 +47,6 @@ public class FollowController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> DeleteLike(@PathVariable Long id) {
-
         if (followService.GetById(id) != null) {
             followService.Delete(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted");

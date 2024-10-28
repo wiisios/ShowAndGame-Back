@@ -14,15 +14,12 @@ import java.util.Map;
 
 @Service
 public class JwtService {
-
     @Value("${security.jwt.expiration-minutes}")
     private long EXPIRATION_MINUTES;
-
     @Value("${security.jwt.secret-key}")
     private String SECRET_KEY;
 
-    public String GenerateToken(User user, Map<String, Object> extraClaims){
-
+    public String GenerateToken(User user, Map<String, Object> extraClaims) {
         Date issuedAt = new Date(System.currentTimeMillis());
         Date expiration = new Date(issuedAt.getTime() + (EXPIRATION_MINUTES*60*1000));
 
@@ -37,10 +34,11 @@ public class JwtService {
 
     private SecretKey GetSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String ExtractUsername(String jwt){
+    public String ExtractUsername(String jwt) {
         return ExtractAllClaims(jwt).getSubject();
     }
 
@@ -52,22 +50,25 @@ public class JwtService {
                 .getPayload();
     }
 
+    //Getting String claims (this one is used to get the User role)
     public String ExtractClaim(String token, String claimName) {
         return ExtractAllClaims(token).get(claimName, String.class);
     }
 
+    //Getting Integer claims (this one is used to get the User id)
     public Integer ExtractIdClaim(String token, String claimName) {
         return ExtractAllClaims(token).get(claimName, Integer.class);
     }
 
     public boolean isTokenValid(String token, User user) {
         String usernameFromToken = ExtractUsername(token);
+
         return (usernameFromToken.equals(user.getUsername()) && !isTokenExpired(token));
     }
 
     private boolean isTokenExpired(String token) {
         Date expiration = ExtractAllClaims(token).getExpiration();
+
         return expiration.before(new Date());
     }
-
 }

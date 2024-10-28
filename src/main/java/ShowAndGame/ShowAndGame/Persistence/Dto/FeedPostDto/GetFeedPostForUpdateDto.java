@@ -9,10 +9,8 @@ public class GetFeedPostForUpdateDto {
     private String image;
 
     public GetFeedPostForUpdateDto(FeedPost feedPost) {
-
         this.description = feedPost.getDescription();
         this.image = feedPost.getImage();
-
     }
 
     public String getDescription() {
@@ -30,7 +28,5 @@ public class GetFeedPostForUpdateDto {
     public void setImage(String image) {
         this.image = image;
     }
-
-
 }
 

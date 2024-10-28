@@ -4,23 +4,19 @@ import jakarta.persistence.*;
 
 @Entity
 public class Follow {
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name="id", nullable = false)
     private Long id;
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User userWhoFollowed;
-
     @ManyToOne
     @JoinColumn(name = "game_id", nullable = false)
     private Game gameFollowed;
     private boolean isFollowed;
 
     public Follow(){
-
     }
 
     public Follow(Long id, User userWhoFollowed, Game gameFollowed, boolean isFollowed) {

@@ -8,18 +8,16 @@ public class UserLike {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name="id", nullable = false)
     private Long id;
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User userWhoLiked;
-
     @ManyToOne
     @JoinColumn(name = "feed_post_id", nullable = false)
     private FeedPost feedPostLiked;
+    @Column
     private boolean isLiked;
 
     public UserLike(){
-
     }
 
     public UserLike(Long id, User userWhoLiked, FeedPost feedPostLiked, boolean isLiked) {

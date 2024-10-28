@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GetGameCardDto {
-
     private long id;
     private String name;
     private String backgroundImage;

@@ -9,7 +9,7 @@ import ShowAndGame.ShowAndGame.Persistence.Repository.UserRepository;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ShowAndGame.ShowAndGame.util.GameReportGenerator;
+import ShowAndGame.ShowAndGame.Util.GameReportGenerator;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class GameService {
-
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
@@ -36,14 +35,56 @@ public class GameService {
         this.followService = followService;
     }
 
+    public GetGameDto GetById(Long gameId, Long userId) {
+        Optional<Game> game = gameRepository.findById(gameId);
 
+        if (game.isPresent()) {
+            Game currentGame = game.get();
+            User developer = userRepository.findById(currentGame.getOwner().getId()).get();
+            boolean isFollowed = followService.isFollowedCheck(userId, gameId);
+
+            return new GetGameDto(currentGame, isFollowed, developer.getUsername());
+        }
+        else {
+            return null;
+        }
+    }
+
+    public List<Game> GetAll() {
+        return gameRepository.findAll();
+    }
+
+    public List<GetGameCardDto> GetAllForExplore() {
+        List<Game> games = gameRepository.findAll();
+
+        //This Method returns a List of GetGameCardDto for the explore page
+        return games.stream()
+                .map(GetGameCardDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<GetGameCardDto> GetGameForUserProfile(Long userId) {
+
+        //This Method returns a List of GetGameCardDto for the User (with "USER" role) page
+        return gameRepository.findByFollows_UserWhoFollowed_IdAndFollows_IsFollowedTrue(userId)
+                .stream()
+                .map(GetGameCardDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<GetGamesForDeveloperDto> GetGamesByDeveloper(Long devId) {
+
+        //This Method returns a List of GetGamesForDeveloperDto for the User (with "DEVELOPER" role) page
+        return gameRepository.findByOwnerId(devId).stream()
+                .map(GetGamesForDeveloperDto::new)
+                .collect(Collectors.toList());
+    }
 
     public void Create(GameForCreationAndUpdateDto newGame, Long userId) {
         Game gameToCreate = new Game();
         Optional<User> dev = userRepository.findById(userId);
         User currentDev = null;
         List<Long> tags = newGame.getTagsId();
-
         List<Tag> tagsForCreation = tags.stream().map(tag -> tagRepository.findById(tag).get()).toList();
 
         if (dev.isPresent()){
@@ -64,66 +105,14 @@ public class GameService {
         gameRepository.save(gameToCreate);
     }
 
-    public void Delete(Long id, Long userDevId) {
-        Optional<Game> currentGame = gameRepository.findById(id);
-        Game game = null;
-
-        if(currentGame.isPresent()){
-            game = currentGame.get();
-            if (Objects.equals(game.getOwner().getId(), userDevId)){
-                gameRepository.deleteById(id);
-            }
-        }
-    }
-
-    public GetGameDto GetById(Long gameId, Long userId) {
-        Optional<Game> game = gameRepository.findById(gameId);
-
-        if (game.isPresent()){
-            Game currentGame = game.get();
-            User developer = userRepository.findById(currentGame.getOwner().getId()).get();
-            boolean isFollowed = followService.isFollowedCheck(userId, gameId);
-            return new GetGameDto(currentGame, isFollowed, developer.getUsername());
-        }
-        else {
-            return null;
-        }
-    }
-
-    public List<Game> GetAll() {
-        List<Game> allGames = gameRepository.findAll();
-        return allGames;
-    }
-
-    public List<GetGameCardDto> GetAllForExplore() {
-        List<Game> games = gameRepository.findAll();
-        return games.stream()
-                .map(GetGameCardDto::new)
-                .collect(Collectors.toList());
-    }
-
-    public List<GetGameCardDto> GetGameForUserProfile(Long userId) {
-        return gameRepository.findByFollows_UserWhoFollowed_IdAndFollows_IsFollowedTrue(userId)
-                .stream()
-                .map(GetGameCardDto::new)
-                .collect(Collectors.toList());
-    }
-
-    public List<GetGamesForDeveloperDto> getGamesByDeveloper(Long devId) {
-        return gameRepository.findByOwnerId(devId).stream()
-                .map(GetGamesForDeveloperDto::new)
-                .collect(Collectors.toList());
-    }
-
     public void Update(GameForCreationAndUpdateDto gameToUpdate, Long gameId) {
         Optional<Game> currentGame = gameRepository.findById(gameId);
 
-        List<Long> tags = gameToUpdate.getTagsId();
         List<Tag> tagsForUpdate = new ArrayList<>();
+
         for (Long tagId : gameToUpdate.getTagsId()) {
             tagsForUpdate.add(tagRepository.findById(tagId).get());
         }
-
 
         if(currentGame.isPresent()){
             Game game = currentGame.get();
@@ -136,7 +125,9 @@ public class GameService {
         }
     }
 
-    public void UpdateRating(Game game, ReviewPostForCreationAndUpdateDto review){
+    public void UpdateRating(Game game, ReviewPostForCreationAndUpdateDto review) {
+
+        //Updates rating when a ReviewPost is created
         float newRating = review.getRating();
         game.setTotalRating(game.getTotalRating() + newRating);
 
@@ -148,6 +139,8 @@ public class GameService {
     }
 
     public void UpdateRatingWhenUpdateReview(Game game, ReviewPostForCreationAndUpdateDto review, float oldRating) {
+
+        //Updates rating when a ReviewPost is edited
         float newRating = review.getRating();
         game.setTotalRating(game.getTotalRating() - oldRating);
         game.setTotalRating(game.getTotalRating() + newRating);
@@ -158,6 +151,8 @@ public class GameService {
     }
 
     public void UpdateRatingWhenDeleteReview(Game game, ReviewPost reviewToDelete) {
+
+        //Updates rating when a ReviewPost is deleted
         float rating = reviewToDelete.getRating();
         game.setTotalRating(game.getTotalRating() - rating);
 
@@ -166,6 +161,20 @@ public class GameService {
         game.setRating(game.getTotalRating() / game.getReviewAmount());
 
         gameRepository.save(game);
+    }
+
+    public void Delete(Long id, Long userDevId) {
+        Optional<Game> currentGame = gameRepository.findById(id);
+        Game game = null;
+
+        if(currentGame.isPresent()) {
+            game = currentGame.get();
+
+            //Checking that the current User is the owner of the Game
+            if (Objects.equals(game.getOwner().getId(), userDevId)){
+                gameRepository.deleteById(id);
+            }
+        }
     }
 
     public byte[] exportPdf() throws JRException, FileNotFoundException {

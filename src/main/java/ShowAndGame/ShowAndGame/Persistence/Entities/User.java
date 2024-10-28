@@ -12,7 +12,6 @@ import java.util.List;
 
 @Entity
 public class User implements UserDetails {
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name="id", nullable = false)
@@ -42,9 +41,8 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "userWhoFollowed", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Follow> follows;
 
-
     public User(){
-    };
+    }
 
     public User(String userName, String password, String email, String profileImage, String backgroundImage, UserRole userRole, List<ReviewPost> reviewPosts, List<FeedPost> feedPosts, List<Comment> comments, List<Game> ownedGames, List<UserLike> userLikes, List<Follow> follows){
         this.userName = userName;

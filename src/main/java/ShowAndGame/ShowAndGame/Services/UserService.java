@@ -18,9 +18,28 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder){
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public GetUserByIdDto GetById(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        User currentUser = null;
+
+        if (user.isPresent()) {
+            currentUser = user.get();
+        }
+
+        return new GetUserByIdDto(currentUser);
+    }
+
+    public List<GetAllUsersDto> GetAll() {
+        List<User> allUsers = userRepository.findAll();
+
+        return allUsers.stream()
+                .map(GetAllUsersDto::new)
+                .collect(Collectors.toList());
     }
 
     public User Create(UserForCreationDto newUser) {
@@ -42,33 +61,12 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void Delete(Long id) {
-        userRepository.deleteById(id);
-    }
-
-    public GetUserByIdDto GetById(Long id){
-        Optional<User> user = userRepository.findById(id);
-        User currentUser = null;
-
-        if (user.isPresent()){
-            currentUser = user.get();
-        }
-
-        return new GetUserByIdDto(currentUser);
-    }
-
-    public List<GetAllUsersDto> GetAll() {
-        List<User> allUsers = userRepository.findAll();
-        return allUsers.stream()
-                .map(GetAllUsersDto::new)
-                .collect(Collectors.toList());
-    }
-
+    //Method for Users to edit their own profile
     public void UpdateProfile(GetUserForUpdateProfileDto userToUpdate, Long userId) {
         Optional<User> currentUser = userRepository.findById(userId);
         User user = null;
 
-        if(currentUser.isPresent()){
+        if(currentUser.isPresent()) {
             user = currentUser.get();
             user.setBackgroundImage(userToUpdate.getBackgroundImage());
             user.setProfileImage(userToUpdate.getProfileImage());
@@ -76,19 +74,20 @@ public class UserService {
         }
     }
 
-    public Optional<User> GetByUserName(String userName){
-        return userRepository.findByUserName(userName);
-    }
-
+    //Method to edit a User as an Admin
     public void UpdateUser(GetUserForAdminUpdateDto userToUpdate, Long userId) {
         Optional<User> currentUser = userRepository.findById(userId);
         User user = null;
 
-        if(currentUser.isPresent()){
+        if(currentUser.isPresent()) {
             user = currentUser.get();
             user.setUserName(userToUpdate.getUserName());
             user.setUserRole(userToUpdate.getUserRole());
             userRepository.save(user);
         }
+    }
+
+    public void Delete(Long id) {
+        userRepository.deleteById(id);
     }
 }

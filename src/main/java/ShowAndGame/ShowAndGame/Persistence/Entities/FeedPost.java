@@ -7,19 +7,18 @@ import java.util.List;
 
 @Entity
 public class FeedPost extends Post {
-
+    @Column
     private String image;
+    @Column
     private Integer likesCounter;
     @OneToMany(mappedBy = "feedPostLiked", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserLike> userLikes;
-
     @OneToMany(mappedBy = "feedPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
-
     public FeedPost(){
-
     }
+
     public FeedPost(String description, User user, Game game, LocalDate date, String image, List<Comment> comments, Integer likesCounter, List<UserLike> userLikes) {
         super(description, user, game, date);
         this.image = image;

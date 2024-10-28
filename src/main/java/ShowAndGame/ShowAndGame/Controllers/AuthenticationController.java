@@ -13,15 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path = "/auth")
-public class
-AuthenticationController {
-
+public class AuthenticationController {
     @Autowired
     private AuthenticationService authenticationService;
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> login(
-            @RequestBody @Valid AuthenticationRequest authRequest){
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid AuthenticationRequest authRequest) {
 
         AuthenticationResponse jwtDto = authenticationService.Login(authRequest);
 

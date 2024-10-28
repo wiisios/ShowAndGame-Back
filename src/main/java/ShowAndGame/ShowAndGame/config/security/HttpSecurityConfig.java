@@ -3,9 +3,6 @@ package ShowAndGame.ShowAndGame.config.security;
 import ShowAndGame.ShowAndGame.config.security.Filter.JwtAuthenticationFilter;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Contact;
-import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +24,6 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 public class HttpSecurityConfig {
-
     @Autowired
     private AuthenticationProvider authenticationProvider;
 
@@ -57,7 +53,6 @@ public class HttpSecurityConfig {
                     authConfig.requestMatchers(HttpMethod.GET, "/feedPosts/export-pdf").permitAll();
 
                     // Private URLs
-
                         //Comment
                     authConfig.requestMatchers(HttpMethod.GET, "/comments/post/{postId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
                     authConfig.requestMatchers(HttpMethod.POST, "/comments").hasAnyRole("ADMIN", "USER", "DEVELOPER");
@@ -116,7 +111,6 @@ public class HttpSecurityConfig {
                     // Catch-all for other requests: anyRequest
                     authConfig.anyRequest().denyAll();
                 });
-
         return http.build();
     }
 

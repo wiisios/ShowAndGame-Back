@@ -69,6 +69,14 @@ public class GetGameDto {
         this.backgroundImage = backgroundImage;
     }
 
+    public List<GetTagDto> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<GetTagDto> tags) {
+        this.tags = tags;
+    }
+
     public float getRating() {
         return rating;
     }
@@ -83,14 +91,6 @@ public class GetGameDto {
 
     public void setFollowed(boolean followed) {
         isFollowed = followed;
-    }
-
-    public List<GetTagDto> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<GetTagDto> tags) {
-        this.tags = tags;
     }
 
     public String getOwner() {

@@ -1,7 +1,6 @@
 package ShowAndGame.ShowAndGame.Persistence.Dto.AuthenticationDto;
 
 public class AuthenticationResponse {
-
     private String jwt;
 
     public AuthenticationResponse(String jwt) {

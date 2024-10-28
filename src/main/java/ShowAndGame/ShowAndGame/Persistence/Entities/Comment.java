@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 @Entity
 public class Comment {
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
@@ -43,19 +42,19 @@ public class Comment {
         this.description = description;
     }
 
-    public FeedPost getfeedPost() {
-        return feedPost;
-    }
-
-    public void setFeedPost(FeedPost feedPost) {
-        this.feedPost = feedPost;
-    }
-
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public FeedPost getfeedPost() {
+        return feedPost;
+    }
+
+    public void setFeedPost(FeedPost feedPost) {
+        this.feedPost = feedPost;
     }
 }

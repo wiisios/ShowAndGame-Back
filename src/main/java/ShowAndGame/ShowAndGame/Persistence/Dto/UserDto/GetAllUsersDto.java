@@ -3,7 +3,6 @@ package ShowAndGame.ShowAndGame.Persistence.Dto.UserDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.*;
 
 public class GetAllUsersDto {
-
     private Long id;
     private String userName;
     private String email;
@@ -16,6 +15,14 @@ public class GetAllUsersDto {
         this.email = user.getEmail();
         this.profileImage = user.getProfileImage();
         this.userRole = user.getUserRole();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getUserName() {
@@ -48,13 +55,5 @@ public class GetAllUsersDto {
 
     public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 }

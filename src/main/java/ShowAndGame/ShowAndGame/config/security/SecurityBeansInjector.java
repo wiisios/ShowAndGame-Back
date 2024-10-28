@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SecurityBeansInjector {
-
     @Autowired
     private UserRepository userRepository;
 
@@ -27,7 +26,7 @@ public class SecurityBeansInjector {
 
     @Bean
     @Lazy
-    public UserDetailsService userDetailsService(){
+    public UserDetailsService userDetailsService() {
         return userName -> userRepository.findByUserName(userName)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
@@ -46,7 +45,7 @@ public class SecurityBeansInjector {
 
     @Bean
     public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authenticationConfiguration) throws  Exception{
+            AuthenticationConfiguration authenticationConfiguration) throws  Exception {
         return authenticationConfiguration.getAuthenticationManager();
         //ProviderManager implements AuthenticationManager
     }

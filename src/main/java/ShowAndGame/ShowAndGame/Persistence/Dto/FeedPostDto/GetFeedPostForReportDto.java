@@ -25,6 +25,14 @@ public class GetFeedPostForReportDto {
         this.id = id;
     }
 
+    public Integer getLikesCounter() {
+        return likesCounter;
+    }
+
+    public void setLikesCounter(Integer likesCounter) {
+        this.likesCounter = likesCounter;
+    }
+
     public LocalDate getDate() {
         return date;
     }
@@ -40,13 +48,4 @@ public class GetFeedPostForReportDto {
     public void setUsername(String username) {
         this.username = username;
     }
-
-    public Integer getLikesCounter() {
-        return likesCounter;
-    }
-
-    public void setLikesCounter(Integer likesCounter) {
-        this.likesCounter = likesCounter;
-    }
-
 }

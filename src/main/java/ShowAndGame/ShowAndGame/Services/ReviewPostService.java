@@ -2,7 +2,6 @@ package ShowAndGame.ShowAndGame.Services;
 
 import ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostDto.GetReviewPostDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostDto.ReviewPostForCreationAndUpdateDto;
-import ShowAndGame.ShowAndGame.Persistence.Entities.FeedPost;
 import ShowAndGame.ShowAndGame.Persistence.Entities.Game;
 import ShowAndGame.ShowAndGame.Persistence.Entities.ReviewPost;
 import ShowAndGame.ShowAndGame.Persistence.Entities.User;
@@ -27,11 +26,37 @@ public class ReviewPostService {
     private final GameService gameService;
 
     @Autowired
-    public ReviewPostService(ReviewPostRepository reviewPostRepository, GameRepository gameRepository, UserRepository userRepository, GameService gameService){
+    public ReviewPostService(ReviewPostRepository reviewPostRepository, GameRepository gameRepository, UserRepository userRepository, GameService gameService) {
         this.reviewPostRepository = reviewPostRepository;
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
         this.gameService = gameService;
+    }
+
+    public GetReviewPostDto GetById(Long postId) {
+        Optional<ReviewPost> reviewPost = reviewPostRepository.findById(postId);
+
+        if (reviewPost.isEmpty()){
+            throw new EntityNotFoundException("Review with id " + postId + " not found");
+        }
+
+        ReviewPost currentReview = reviewPost.get();
+
+        return new GetReviewPostDto(currentReview);
+    }
+
+    public List<GetReviewPostDto> GetAll() {
+        return reviewPostRepository.findAll().stream()
+                .map(GetReviewPostDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<GetReviewPostDto> GetReviewPostsByGameId(Long gameId) {
+        List<ReviewPost> allReviewPosts =  reviewPostRepository.findByGameId(gameId);
+
+        return allReviewPosts.stream()
+                .map(GetReviewPostDto::new)
+                .collect(Collectors.toList());
     }
 
     public void Create(ReviewPostForCreationAndUpdateDto newReviewPost, Long gameId, Long userId) {
@@ -56,49 +81,9 @@ public class ReviewPostService {
         reviewPostToCreate.setGame(currentGame);
         reviewPostToCreate.setUser(currentUser);
 
+        //Update rating
         gameService.UpdateRating(currentGame, newReviewPost);
-
         reviewPostRepository.save(reviewPostToCreate);
-    }
-
-    public void Delete(Long id, Long userId) {
-        Optional<ReviewPost> currentReviewPost = reviewPostRepository.findById(id);
-
-        if(currentReviewPost.isPresent()){
-            ReviewPost reviewPost = currentReviewPost.get();
-            if (Objects.equals(reviewPost.getUser().getId(), userId)){
-                Game gameToUpdate = reviewPostRepository.findGameByReviewPostId(id);
-                gameService.UpdateRatingWhenDeleteReview(gameToUpdate, reviewPost);
-                reviewPostRepository.deleteById(id);
-            }
-        }
-    }
-
-    public GetReviewPostDto GetById(Long postId) {
-        Optional<ReviewPost> reviewPost = reviewPostRepository.findById(postId);
-
-        if (reviewPost.isEmpty()){
-            throw new EntityNotFoundException("Review with id " + postId + " not found");
-        }
-
-        ReviewPost currentReview = reviewPost.get();
-
-        return new GetReviewPostDto(currentReview);
-    }
-
-    public List<GetReviewPostDto> GetAll() {
-
-        return reviewPostRepository.findAll().stream()
-                .map(GetReviewPostDto::new)
-                .collect(Collectors.toList());
-    }
-
-    public List<GetReviewPostDto> GetReviewPostsByGameId(Long gameId){
-        List<ReviewPost> allReviewPosts =  reviewPostRepository.findByGameId(gameId);
-
-        return allReviewPosts.stream()
-                .map(GetReviewPostDto::new)
-                .collect(Collectors.toList());
     }
 
     public void Update(ReviewPostForCreationAndUpdateDto reviewPostToUpdate, Long reviewPostId, Long gameId, Long userId) {
@@ -113,13 +98,33 @@ public class ReviewPostService {
 
         if(currentPost.isPresent()){
             ReviewPost reviewPost = currentPost.get();
+
+            //Checking that the current User is the same as the one who created the ReviewPost
             if (Objects.equals(reviewPost.getUser().getId(), userId)) {
                 float oldRating = reviewPost.getRating();
                 reviewPost.setDescription(reviewPostToUpdate.getDescription());
                 reviewPost.setRating(reviewPostToUpdate.getRating());
 
+                //Update rating
                 gameService.UpdateRatingWhenUpdateReview(currentGame, reviewPostToUpdate, oldRating);
                 reviewPostRepository.save(reviewPost);
+            }
+        }
+    }
+
+    public void Delete(Long id, Long userId) {
+        Optional<ReviewPost> currentReviewPost = reviewPostRepository.findById(id);
+
+        if(currentReviewPost.isPresent()){
+            ReviewPost reviewPost = currentReviewPost.get();
+
+            //Checking that the current User is the same as the one who created the ReviewPost
+            if (Objects.equals(reviewPost.getUser().getId(), userId)){
+                Game gameToUpdate = reviewPostRepository.findGameByReviewPostId(id);
+
+                //Update rating
+                gameService.UpdateRatingWhenDeleteReview(gameToUpdate, reviewPost);
+                reviewPostRepository.deleteById(id);
             }
         }
     }

@@ -19,7 +19,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/games")
 public class GameController {
-
     @Autowired
     private GameService gameService;
 
@@ -39,10 +38,10 @@ public class GameController {
         Long userId = currentUserUtil.GetCurrentUserId();
         GetGameDto game = gameService.GetById(id, userId);
 
-        if (game != null){
+        if (game != null) {
             return ResponseEntity.ok(game);
         }
-        else{
+        else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
@@ -50,30 +49,34 @@ public class GameController {
     @GetMapping("/explore")
     public ResponseEntity<List<GetGameCardDto>> GetGamesForExplore() {
         List<GetGameCardDto> gameDTOs = gameService.GetAllForExplore();
+
         return ResponseEntity.ok(gameDTOs);
     }
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<GetGameCardDto>> GetGamesByUser(@PathVariable Long userId) {
         List<GetGameCardDto> gamesByUserDto = gameService.GetGameForUserProfile(userId);
+
         return ResponseEntity.ok(gamesByUserDto);
     }
 
     @GetMapping("/dev/{devId}")
-    public ResponseEntity<List<GetGamesForDeveloperDto>> GetGamesByDeveloper(@PathVariable Long devId){
-        List<GetGamesForDeveloperDto> gamesByDevDto = gameService.getGamesByDeveloper(devId);
+    public ResponseEntity<List<GetGamesForDeveloperDto>> GetGamesByDeveloper(@PathVariable Long devId) {
+        List<GetGamesForDeveloperDto> gamesByDevDto = gameService.GetGamesByDeveloper(devId);
+
         return ResponseEntity.ok(gamesByDevDto);
     }
 
     @PostMapping()
-    public ResponseEntity<String> CreateGame(@RequestBody GameForCreationAndUpdateDto newGame){
+    public ResponseEntity<String> CreateGame(@RequestBody GameForCreationAndUpdateDto newGame) {
         Long currentUserId = currentUserUtil.GetCurrentUserId();
         ResponseEntity<String> response = null;
 
-        if (currentUserId != null){
-        gameService.Create(newGame, currentUserId);
-        response = ResponseEntity.ok().body("Game created");
-        } else {
+        if (currentUserId != null) {
+            gameService.Create(newGame, currentUserId);
+            response = ResponseEntity.ok().body("Game created");
+        }
+        else {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
@@ -81,11 +84,11 @@ public class GameController {
     }
 
     @PutMapping("/update/{gameId}")
-    public ResponseEntity<GameForCreationAndUpdateDto> UpdateGame(@RequestBody GameForCreationAndUpdateDto gameToUpdate, @PathVariable Long gameId){
+    public ResponseEntity<GameForCreationAndUpdateDto> UpdateGame(@RequestBody GameForCreationAndUpdateDto gameToUpdate, @PathVariable Long gameId) {
         ResponseEntity<GameForCreationAndUpdateDto> response = null;
         Long userId = currentUserUtil.GetCurrentUserId();
 
-        if (gameId != null && gameService.GetById(gameId, userId) != null){
+        if (gameId != null && gameService.GetById(gameId, userId) != null) {
             gameService.Update(gameToUpdate, gameId);
             response = ResponseEntity.ok(gameToUpdate);
         }
@@ -97,13 +100,14 @@ public class GameController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> DeleteGame(@PathVariable Long id){
+    public ResponseEntity<String> DeleteGame(@PathVariable Long id) {
         ResponseEntity<String> response = null;
         Long userDevId = currentUserUtil.GetCurrentUserId();
 
-        if (gameService.GetById(id, userDevId) != null){
+        if (gameService.GetById(id, userDevId) != null) {
             gameService.Delete(id, userDevId);
-            response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted");}
+            response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted");
+        }
         else
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
@@ -111,24 +115,22 @@ public class GameController {
     }
 
     @PutMapping("/follow/{gameId}")
-    public ResponseEntity<String> Follow(@PathVariable Long gameId){
+    public ResponseEntity<String> Follow(@PathVariable Long gameId) {
         Long userId = currentUserUtil.GetCurrentUserId();
-
         followService.toggleFollow(userId, gameId);
 
         boolean isFollowed = followService.isFollowedCheck(userId, gameId);
-
         String response = isFollowed ? "Follow added" : "Followed removed";
 
         return ResponseEntity.ok(response);
     }
-
 
     @GetMapping("/export-pdf")
     public ResponseEntity<byte[]> exportPdf() throws JRException, FileNotFoundException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDispositionFormData("gamesReport", "gameReport.pdf");
+
         return ResponseEntity.ok().headers(headers).body(gameService.exportPdf());
     }
 }

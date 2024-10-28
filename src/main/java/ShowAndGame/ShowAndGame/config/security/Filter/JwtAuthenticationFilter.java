@@ -20,7 +20,6 @@ import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
     @Autowired
     private JwtService jwtService;
 
@@ -45,7 +44,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String username = jwtService.ExtractUsername(jwt);
 
         //4. Setting an object Authentication inside SecurityContext
-
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             User user = userRepository.findByUserName(username).orElse(null);
             if (user != null && jwtService.isTokenValid(jwt, user)) {
@@ -60,16 +58,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         user, jwt, authorities
                 );
-                System.out.println(authToken);
 
                 // 8. Setting security context
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
 
             //9. Running remaining filters
-
             filterChain.doFilter(request, response);
-
         }
     }
 }

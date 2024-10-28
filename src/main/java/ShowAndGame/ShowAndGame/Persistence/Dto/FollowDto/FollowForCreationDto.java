@@ -1,7 +1,6 @@
 package ShowAndGame.ShowAndGame.Persistence.Dto.FollowDto;
 
 public class FollowForCreationDto {
-
     private Long userId;
     private Long gameId;
 
