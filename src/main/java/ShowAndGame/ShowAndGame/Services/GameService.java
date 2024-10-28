@@ -59,7 +59,7 @@ public class GameService {
         gameToCreate.setOwner(currentDev);
         gameToCreate.setTags(tagsForCreation);
         gameToCreate.setReviewAmount(0);
-        gameToCreate.setTotalReview(0);
+        gameToCreate.setTotalRating(0);
 
         gameRepository.save(gameToCreate);
     }
@@ -137,19 +137,37 @@ public class GameService {
     }
 
     public void UpdateRating(Game game, ReviewPostForCreationAndUpdateDto review){
-        game.setTotalReview(review.getRating());
-        game.setReviewAmount(game.getReviewAmount()+1);
+        float newRating = review.getRating();
+        game.setTotalRating(game.getTotalRating() + newRating);
 
-        game.setRating(game.getTotalReview() / game.getReviewAmount());
+        game.setReviewAmount(game.getReviewAmount() + 1);
+
+        game.setRating(game.getTotalRating() / game.getReviewAmount());
+
         gameRepository.save(game);
     }
 
-    public void UpdateRatingWhenUpdateReview(Game game, ReviewPostForCreationAndUpdateDto review) {
-        game.setTotalReview(review.getRating());
+    public void UpdateRatingWhenUpdateReview(Game game, ReviewPostForCreationAndUpdateDto review, float oldRating) {
+        float newRating = review.getRating();
+        game.setTotalRating(game.getTotalRating() - oldRating);
+        game.setTotalRating(game.getTotalRating() + newRating);
 
-        game.setRating(game.getTotalReview() / game.getReviewAmount());
+        game.setRating(game.getTotalRating() / game.getReviewAmount());
+
         gameRepository.save(game);
     }
+
+    public void UpdateRatingWhenDeleteReview(Game game, ReviewPost reviewToDelete) {
+        float rating = reviewToDelete.getRating();
+        game.setTotalRating(game.getTotalRating() - rating);
+
+        game.setReviewAmount(game.getReviewAmount() - 1);
+
+        game.setRating(game.getTotalRating() / game.getReviewAmount());
+
+        gameRepository.save(game);
+    }
+
     public byte[] exportPdf() throws JRException, FileNotFoundException {
         return gameReportGenerator.exportToPdf(gameRepository.findAll());
     }
