@@ -27,7 +27,7 @@ public class Game {
     private String backgroundImage;
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FeedPost> feedPosts;
-    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
     private List<ReviewPost> reviews;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "owner_id")

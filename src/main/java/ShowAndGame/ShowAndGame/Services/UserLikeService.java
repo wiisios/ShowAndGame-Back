@@ -8,6 +8,8 @@ import ShowAndGame.ShowAndGame.Persistence.Entities.User;
 import ShowAndGame.ShowAndGame.Persistence.Repository.FeedPostRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserLikeRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,13 +40,6 @@ public class UserLikeService {
         return userLikeRepository.findAll();
     }
 
-    public boolean isLikedCheck(Long userId, Long feedPostId) {
-        Optional<UserLike> like = userLikeRepository.findLikeByUserIdAndFeedPostId(userId, feedPostId);
-
-        //Checking if current User liked current FeedPost
-        return like.map(UserLike::isLiked).orElse(false);
-    }
-
     public void Create (LikeForCreationDto likeToCreate) {
         UserLike newUserLike = new UserLike();
         User userWhoLiked = userRepository.findById(likeToCreate.getUserId()).get();
@@ -67,19 +62,33 @@ public class UserLikeService {
         }
     }
 
-    public void toggleLike(Long userId, Long feedPostId) {
-        Optional<UserLike> like = userLikeRepository.findLikeByUserIdAndFeedPostId(userId, feedPostId);
+    @Transactional
+    public String toggleLike(Long userId, Long feedPostId) {
+        Optional<UserLike> likeOpt = userLikeRepository.findLikeByUserIdAndFeedPostId(userId, feedPostId);
+        FeedPost currentPost = feedPostRepository.findById(feedPostId).orElseThrow(() -> new EntityNotFoundException("Post not found"));
 
+        if (likeOpt.isPresent()) {
+            UserLike existingLike = likeOpt.get();
+            boolean isLiked = existingLike.isLiked();
+            existingLike.setLiked(!isLiked);
+            userLikeRepository.save(existingLike);
 
-        //Checking if Follow already exists to toggle between "like/dislike" state
-        if (like.isPresent()) {
-            UserLike existingUserLike = like.get();
-            existingUserLike.setLiked(!existingUserLike.isLiked());
-            userLikeRepository.save(existingUserLike);
-        } //If it doesn't exist, it creates a new one with "like" state
-        else {
+            if (isLiked) {
+                currentPost.setLikesCounter(currentPost.getLikesCounter() - 1);
+                feedPostRepository.save(currentPost);
+                return "Like removed";
+            } else {
+                currentPost.setLikesCounter(currentPost.getLikesCounter() + 1);
+                feedPostRepository.save(currentPost);
+                return "Like added";
+            }
+        } else {
             LikeForCreationDto newLike = new LikeForCreationDto(userId, feedPostId);
             Create(newLike);
+
+            currentPost.setLikesCounter(currentPost.getLikesCounter() + 1);
+            feedPostRepository.save(currentPost);
+            return "Like added";
         }
     }
 

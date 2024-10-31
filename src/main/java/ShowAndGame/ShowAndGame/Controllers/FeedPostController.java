@@ -92,13 +92,7 @@ public class FeedPostController {
     @PutMapping("/like/{postId}")
     public ResponseEntity<String> Like(@PathVariable Long postId, @AuthenticationPrincipal User currentUser) {
         Long userId = currentUser.getId();
-
-        userLikeService.toggleLike(userId, postId);
-        feedPostService.UpdateLikesAmount(userId, postId);
-
-        boolean isLiked = userLikeService.isLikedCheck(userId, postId);
-        String response = isLiked ? "Like added" : "Like removed";
-
+        String response = userLikeService.toggleLike(userId, postId);
         return ResponseEntity.ok(response);
     }
 

@@ -112,11 +112,7 @@ public class GameController {
     @PutMapping("/follow/{gameId}")
     public ResponseEntity<String> Follow(@PathVariable Long gameId, @AuthenticationPrincipal User currentUser) {
         Long userId = currentUser.getId();
-        followService.toggleFollow(userId, gameId);
-
-        boolean isFollowed = followService.isFollowedCheck(userId, gameId);
-        String response = isFollowed ? "Follow added" : "Followed removed";
-
+        String response = followService.toggleFollow(userId, gameId);
         return ResponseEntity.ok(response);
     }
 

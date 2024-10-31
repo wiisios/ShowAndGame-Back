@@ -5,6 +5,7 @@ import ShowAndGame.ShowAndGame.Persistence.Dto.TagDto.TagForCreationDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.TagDto.TagForUpdateDto;
 import ShowAndGame.ShowAndGame.Services.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -63,14 +64,11 @@ public class TagController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTag(@PathVariable Long id) {
-        ResponseEntity<String> response = null;
-
-        if (tagService.GetById(id) != null) {
+        try {
             tagService.Delete(id);
-            response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted");}
-        else
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-
-        return response;
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted");
+        } catch (EmptyResultDataAccessException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 }

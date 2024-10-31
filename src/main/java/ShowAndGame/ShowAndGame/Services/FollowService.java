@@ -4,6 +4,7 @@ import ShowAndGame.ShowAndGame.Persistence.Dto.FollowDto.FollowForCreationDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.FollowDto.GetFollowDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.*;
 import ShowAndGame.ShowAndGame.Persistence.Repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,26 +56,19 @@ public class FollowService {
         }
     }
 
-    public boolean isFollowedCheck(Long userId, Long gameId) {
-        Optional<Follow> follow = followRepository.findFollowByUserIdAndGameId(userId, gameId);
+    @Transactional
+    public String toggleFollow(Long userId, Long gameId) {
+        Optional<Follow> followOpt = followRepository.findFollowByUserIdAndGameId(userId, gameId);
 
-        //Checking Follow state to display at specific game page
-        return follow.map(Follow::isFollowed).orElse(false);
-    }
-
-    public void toggleFollow(Long userId, Long gameId) {
-        Optional<Follow> follow = followRepository.findFollowByUserIdAndGameId(userId, gameId);
-
-
-        //Checking if Follow already exists to toggle between "follow/unfollow" state
-        if (follow.isPresent()) {
-            Follow existingFollow = follow.get();
+        if (followOpt.isPresent()) {
+            Follow existingFollow = followOpt.get();
             existingFollow.setFollowed(!existingFollow.isFollowed());
             followRepository.save(existingFollow);
-        } //If it doesn't exist, it creates a new one with "follow" state
-        else {
+            return existingFollow.isFollowed() ? "Follow added" : "Follow removed";
+        } else {
             FollowForCreationDto newFollow = new FollowForCreationDto(userId, gameId);
             Create(newFollow);
+            return "Follow added";
         }
     }
 

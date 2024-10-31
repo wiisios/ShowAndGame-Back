@@ -10,6 +10,7 @@ public class GetCommentForPostDto {
     private String userProfileImage;
 
     public GetCommentForPostDto(Comment comment, User user) {
+        this.id = comment.getId();
         this.description = comment.getDescription();
         this.userName = user.getUsername();
         this.userProfileImage = user.getProfileImage();
