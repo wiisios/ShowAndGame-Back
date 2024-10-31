@@ -1,11 +1,13 @@
 package ShowAndGame.ShowAndGame.Services;
 
 import ShowAndGame.ShowAndGame.Persistence.Dto.GameDto.*;
+import ShowAndGame.ShowAndGame.Persistence.Dto.TagDto.*;
 import ShowAndGame.ShowAndGame.Persistence.Dto.ReviewPostDto.ReviewPostForCreationAndUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Entities.*;
 import ShowAndGame.ShowAndGame.Persistence.Repository.GameRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.TagRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserRepository;
+import jakarta.transaction.Transactional;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,26 +38,27 @@ public class GameService {
     }
 
     public GetGameDto GetById(Long gameId, Long userId) {
-        Optional<Game> game = gameRepository.findById(gameId);
+        Optional<GetGameDto> gameDtoOptional = gameRepository.findGameWithOwnerAndFollowStatus(gameId, userId);
 
-        if (game.isPresent()) {
-            Game currentGame = game.get();
-            User developer = userRepository.findById(currentGame.getOwner().getId()).get();
-            boolean isFollowed = followService.isFollowedCheck(userId, gameId);
+        if (gameDtoOptional.isPresent()) {
+            GetGameDto gameDto = gameDtoOptional.get();
 
-            return new GetGameDto(currentGame, isFollowed, developer.getUsername());
+            List<Tag> tags = tagRepository.findTagsByGameId(gameId);
+
+            gameDto.setTags(tags.stream().map(GetTagDto::new).collect(Collectors.toList())); // Asumiendo que tienes un constructor en GetTagDto
+            return gameDto;
         }
-        else {
-            return null;
-        }
+
+        return null;
     }
+
 
     public List<Game> GetAll() {
         return gameRepository.findAll();
     }
 
     public List<GetGameCardDto> GetAllForExplore() {
-        List<Game> games = gameRepository.findAll();
+        List<Game> games = gameRepository.findAllForExplore();
 
         //This Method returns a List of GetGameCardDto for the explore page
         return games.stream()
@@ -125,17 +128,11 @@ public class GameService {
         }
     }
 
+    @Transactional
     public void UpdateRating(Game game, ReviewPostForCreationAndUpdateDto review) {
 
         //Updates rating when a ReviewPost is created
-        float newRating = review.getRating();
-        game.setTotalRating(game.getTotalRating() + newRating);
-
-        game.setReviewAmount(game.getReviewAmount() + 1);
-
-        game.setRating(game.getTotalRating() / game.getReviewAmount());
-
-        gameRepository.save(game);
+        gameRepository.updateRating(game.getId(), review.getRating());
     }
 
     public void UpdateRatingWhenUpdateReview(Game game, ReviewPostForCreationAndUpdateDto review, float oldRating) {

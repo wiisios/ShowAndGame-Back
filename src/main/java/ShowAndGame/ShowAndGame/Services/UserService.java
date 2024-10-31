@@ -3,6 +3,7 @@ package ShowAndGame.ShowAndGame.Services;
 import ShowAndGame.ShowAndGame.Persistence.Dto.UserDto.*;
 import ShowAndGame.ShowAndGame.Persistence.Entities.User;
 import ShowAndGame.ShowAndGame.Persistence.Entities.UserRole;
+import ShowAndGame.ShowAndGame.Persistence.Repository.FeedPostRepository;
 import ShowAndGame.ShowAndGame.Persistence.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,10 +18,12 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FeedPostRepository feedPostRepository;
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, FeedPostRepository feedPostRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.feedPostRepository = feedPostRepository;
     }
 
     public GetUserByIdDto GetById(Long id) {

@@ -28,13 +28,13 @@ public class User implements UserDetails {
     private String backgroundImage;
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
-    @OneToMany
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Game> ownedGames;
-    @OneToMany
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewPost> reviewPosts;
-    @OneToMany
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FeedPost> feedPosts;
     @OneToMany(mappedBy = "userWhoLiked", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserLike> userLikes;

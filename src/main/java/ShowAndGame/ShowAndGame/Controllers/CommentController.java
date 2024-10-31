@@ -3,11 +3,12 @@ package ShowAndGame.ShowAndGame.Controllers;
 import ShowAndGame.ShowAndGame.Persistence.Dto.CommentDto.CommentForCreationAndUpdateDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.CommentDto.GetCommentForPostDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.CommentDto.GetCommentForUpdateDto;
+import ShowAndGame.ShowAndGame.Persistence.Entities.User;
 import ShowAndGame.ShowAndGame.Services.CommentService;
-import ShowAndGame.ShowAndGame.Util.CurrentUserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,9 +18,6 @@ import java.util.List;
 public class CommentController {
     @Autowired
     private CommentService commentService;
-
-    @Autowired
-    private CurrentUserUtil currentUserUtil;
 
     @GetMapping()
     public ResponseEntity<List<GetCommentForPostDto>> getAllComments() {
@@ -39,9 +37,9 @@ public class CommentController {
     }
 
     @PostMapping()
-    public ResponseEntity<String> createComment(@RequestBody CommentForCreationAndUpdateDto comment, Long postId) {
+    public ResponseEntity<String> createComment(@RequestBody CommentForCreationAndUpdateDto comment, Long postId, @AuthenticationPrincipal User currentUser) {
         ResponseEntity<String> response = null;
-        Long userId = currentUserUtil.GetCurrentUserId();
+        Long userId = currentUser.getId();
 
         if (userId == null) {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
@@ -55,9 +53,9 @@ public class CommentController {
     }
 
     @PutMapping("/{commentId}")
-    public ResponseEntity<GetCommentForUpdateDto> updateComment(@RequestBody GetCommentForUpdateDto commentToUpdate, @PathVariable Long commentId) {
+    public ResponseEntity<GetCommentForUpdateDto> updateComment(@RequestBody GetCommentForUpdateDto commentToUpdate, @PathVariable Long commentId, @AuthenticationPrincipal User currentUser) {
         ResponseEntity<GetCommentForUpdateDto> response = null;
-        Long userId = currentUserUtil.GetCurrentUserId();
+        Long userId = currentUser.getId();
 
         if (commentId != null && commentService.GetById(commentId).isPresent()) {
             commentService.Update(commentToUpdate, userId, commentId);
@@ -70,9 +68,9 @@ public class CommentController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteComment(@PathVariable Long id) {
+    public ResponseEntity<String> deleteComment(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
         ResponseEntity<String> response = null;
-        Long userId = currentUserUtil.GetCurrentUserId();
+        Long userId = currentUser.getId();
 
         if (commentService.GetById(id).isPresent()) {
             commentService.Delete(id, userId);

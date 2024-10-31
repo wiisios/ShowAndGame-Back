@@ -29,6 +29,18 @@ public class GetGameDto {
         this.owner = owner;
     }
 
+    public GetGameDto(Long id, String profileImage, String backgroundImage, String name, String description,
+                      float rating, boolean isFollowed, String owner) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.profileImage = profileImage;
+        this.backgroundImage = backgroundImage;
+        this.rating = rating;
+        this.isFollowed = isFollowed;
+        this.owner = owner;
+    }
+
     public Long getId() {
         return id;
     }

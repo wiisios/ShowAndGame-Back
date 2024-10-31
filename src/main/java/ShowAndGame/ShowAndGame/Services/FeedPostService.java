@@ -18,10 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,31 +41,18 @@ public class FeedPostService {
         this.userLikeRepository = userLikeRepository;
     }
 
-    public Optional<GetFeedPostDto> GetById(Long id, Long userId) {
-        return feedPostRepository.findById(id)
-                .map(feedPost -> {
-                    boolean isLiked = userLikeService.isLikedCheck(userId, feedPost.getId());
-                    return new GetFeedPostDto(feedPost, isLiked);
-                });
+    public GetFeedPostDto GetById(Long id, Long userId) {
+        return feedPostRepository.findByIdWithLikes(id, userId);
     }
 
     public List<GetFeedPostDto> GetAll(Long userId) {
-        return feedPostRepository.findAll().stream()
-                .map(feedPost -> {
-                    boolean isLiked = userLikeService.isLikedCheck(userId, feedPost.getId());
-                    return new GetFeedPostDto(feedPost, isLiked);
-                })
-                .collect(Collectors.toList());
+        return feedPostRepository.findAllWithLikes(userId);
     }
 
     public List<GetFeedPostDto> GetFeedPostsByGameId(Long gameId, Long userId) {
 
         //This returns a List of GetFeedPostDto when a User selects a specific game on the feed
-        return feedPostRepository.findByGameId(gameId).stream()
-                .map(feedPost -> {
-                    boolean isLiked = userLikeService.isLikedCheck(userId, feedPost.getId());
-                    return new GetFeedPostDto(feedPost, isLiked);
-                }).collect(Collectors.toList());
+        return feedPostRepository.findAllByGameIdWithLikes(gameId, userId);
     }
 
     public void Create(FeedPostForCreationdDto newFeedPost, Long userId, Long gameId) {

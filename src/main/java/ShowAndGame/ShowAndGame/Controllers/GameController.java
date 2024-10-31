@@ -2,15 +2,16 @@ package ShowAndGame.ShowAndGame.Controllers;
 
 import ShowAndGame.ShowAndGame.Persistence.Dto.GameDto.*;
 import ShowAndGame.ShowAndGame.Persistence.Entities.Game;
+import ShowAndGame.ShowAndGame.Persistence.Entities.User;
 import ShowAndGame.ShowAndGame.Services.FollowService;
 import ShowAndGame.ShowAndGame.Services.GameService;
-import ShowAndGame.ShowAndGame.Util.CurrentUserUtil;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
@@ -23,9 +24,6 @@ public class GameController {
     private GameService gameService;
 
     @Autowired
-    private CurrentUserUtil currentUserUtil;
-
-    @Autowired
     private FollowService followService;
 
     @GetMapping("/all")
@@ -34,9 +32,8 @@ public class GameController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GetGameDto> GetGame(@PathVariable Long id) {
-        Long userId = currentUserUtil.GetCurrentUserId();
-        GetGameDto game = gameService.GetById(id, userId);
+    public ResponseEntity<GetGameDto> GetGame(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
+        GetGameDto game = gameService.GetById(id, currentUser.getId());
 
         if (game != null) {
             return ResponseEntity.ok(game);
@@ -48,9 +45,7 @@ public class GameController {
 
     @GetMapping("/explore")
     public ResponseEntity<List<GetGameCardDto>> GetGamesForExplore() {
-        List<GetGameCardDto> gameDTOs = gameService.GetAllForExplore();
-
-        return ResponseEntity.ok(gameDTOs);
+        return ResponseEntity.ok(gameService.GetAllForExplore());
     }
 
     @GetMapping("/user/{userId}")
@@ -68,8 +63,8 @@ public class GameController {
     }
 
     @PostMapping()
-    public ResponseEntity<String> CreateGame(@RequestBody GameForCreationAndUpdateDto newGame) {
-        Long currentUserId = currentUserUtil.GetCurrentUserId();
+    public ResponseEntity<String> CreateGame(@RequestBody GameForCreationAndUpdateDto newGame, @AuthenticationPrincipal User currentUser) {
+        Long currentUserId = currentUser.getId();
         ResponseEntity<String> response = null;
 
         if (currentUserId != null) {
@@ -84,9 +79,9 @@ public class GameController {
     }
 
     @PutMapping("/update/{gameId}")
-    public ResponseEntity<GameForCreationAndUpdateDto> UpdateGame(@RequestBody GameForCreationAndUpdateDto gameToUpdate, @PathVariable Long gameId) {
+    public ResponseEntity<GameForCreationAndUpdateDto> UpdateGame(@RequestBody GameForCreationAndUpdateDto gameToUpdate, @PathVariable Long gameId, @AuthenticationPrincipal User currentUser) {
         ResponseEntity<GameForCreationAndUpdateDto> response = null;
-        Long userId = currentUserUtil.GetCurrentUserId();
+        Long userId = currentUser.getId();
 
         if (gameId != null && gameService.GetById(gameId, userId) != null) {
             gameService.Update(gameToUpdate, gameId);
@@ -100,9 +95,9 @@ public class GameController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> DeleteGame(@PathVariable Long id) {
+    public ResponseEntity<String> DeleteGame(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
         ResponseEntity<String> response = null;
-        Long userDevId = currentUserUtil.GetCurrentUserId();
+        Long userDevId = currentUser.getId();
 
         if (gameService.GetById(id, userDevId) != null) {
             gameService.Delete(id, userDevId);
@@ -115,8 +110,8 @@ public class GameController {
     }
 
     @PutMapping("/follow/{gameId}")
-    public ResponseEntity<String> Follow(@PathVariable Long gameId) {
-        Long userId = currentUserUtil.GetCurrentUserId();
+    public ResponseEntity<String> Follow(@PathVariable Long gameId, @AuthenticationPrincipal User currentUser) {
+        Long userId = currentUser.getId();
         followService.toggleFollow(userId, gameId);
 
         boolean isFollowed = followService.isFollowedCheck(userId, gameId);

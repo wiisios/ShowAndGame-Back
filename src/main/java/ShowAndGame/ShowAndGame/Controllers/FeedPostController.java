@@ -4,15 +4,16 @@ package ShowAndGame.ShowAndGame.Controllers;
 import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.FeedPostForCreationdDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.GetFeedPostDto;
 import ShowAndGame.ShowAndGame.Persistence.Dto.FeedPostDto.GetFeedPostForUpdateDto;
+import ShowAndGame.ShowAndGame.Persistence.Entities.User;
 import ShowAndGame.ShowAndGame.Services.FeedPostService;
 import ShowAndGame.ShowAndGame.Services.UserLikeService;
-import ShowAndGame.ShowAndGame.Util.CurrentUserUtil;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
@@ -25,37 +26,27 @@ public class FeedPostController {
     private FeedPostService feedPostService;
 
     @Autowired
-    private CurrentUserUtil currentUserUtil;
-
-    @Autowired
     private UserLikeService userLikeService;
 
     @GetMapping()
-    public ResponseEntity<List<GetFeedPostDto>> getAllPosts() {
-        Long userId = currentUserUtil.GetCurrentUserId();
-
-        return  ResponseEntity.ok(feedPostService.GetAll(userId));
+    public ResponseEntity<List<GetFeedPostDto>> getAllPosts(@AuthenticationPrincipal User currentUser) {
+        return  ResponseEntity.ok(feedPostService.GetAll(currentUser.getId()));
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<GetFeedPostDto> getPost(@PathVariable Long postId) {
-        Long userId = currentUserUtil.GetCurrentUserId();
-        GetFeedPostDto feedPost = feedPostService.GetById(postId, userId).orElse((null));
-
-        return ResponseEntity.ok(feedPost);
+    public ResponseEntity<GetFeedPostDto> getPost(@PathVariable Long postId, @AuthenticationPrincipal User currentUser) {
+        return ResponseEntity.ok(feedPostService.GetById(postId, currentUser.getId()));
     }
 
     @GetMapping("/game/{gameId}")
-    public ResponseEntity<List<GetFeedPostDto>> getPostByGameId(@PathVariable Long gameId) {
-        Long userId = currentUserUtil.GetCurrentUserId();
-
-        return ResponseEntity.ok(feedPostService.GetFeedPostsByGameId(gameId, userId));
+    public ResponseEntity<List<GetFeedPostDto>> getPostByGameId(@PathVariable Long gameId, @AuthenticationPrincipal User currentUser) {
+        return ResponseEntity.ok(feedPostService.GetFeedPostsByGameId(gameId, currentUser.getId()));
     }
 
     @PostMapping("/{gameId}")
-    public ResponseEntity<String> createPost(@RequestBody FeedPostForCreationdDto feedPost, @PathVariable Long gameId ) {
+    public ResponseEntity<String> createPost(@RequestBody FeedPostForCreationdDto feedPost, @PathVariable Long gameId, @AuthenticationPrincipal User currentUser) {
         ResponseEntity<String> response = null;
-        Long userId = currentUserUtil.GetCurrentUserId();
+        Long userId = currentUser.getId();
 
         if (gameId == null) {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game not found");
@@ -71,11 +62,11 @@ public class FeedPostController {
     }
 
     @PutMapping("/{postId}")
-    public ResponseEntity<GetFeedPostForUpdateDto> updatePost(@RequestBody GetFeedPostForUpdateDto feedPost, @PathVariable Long postId) {
+    public ResponseEntity<GetFeedPostForUpdateDto> updatePost(@RequestBody GetFeedPostForUpdateDto feedPost, @PathVariable Long postId, @AuthenticationPrincipal User currentUser) {
         ResponseEntity<GetFeedPostForUpdateDto> response = null;
-        Long userId = currentUserUtil.GetCurrentUserId();
+        Long userId = currentUser.getId();
 
-        if (postId != null && feedPostService.GetById(postId, userId).isPresent()) {
+        if (postId != null && feedPostService.GetById(postId, userId) != null) {
             feedPostService.Update(feedPost, userId, postId);
             response = ResponseEntity.ok(feedPost);}
         else
@@ -85,11 +76,11 @@ public class FeedPostController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePost(@PathVariable Long id) {
+    public ResponseEntity<String> deletePost(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
         ResponseEntity<String> response = null;
-        Long userId = currentUserUtil.GetCurrentUserId();
+        Long userId = currentUser.getId();
 
-        if (feedPostService.GetById(id, userId).isPresent()) {
+        if (feedPostService.GetById(id, userId) != null) {
             feedPostService.Delete(id, userId);
             response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Eliminado");}
         else
@@ -99,8 +90,8 @@ public class FeedPostController {
     }
 
     @PutMapping("/like/{postId}")
-    public ResponseEntity<String> Like(@PathVariable Long postId) {
-        Long userId = currentUserUtil.GetCurrentUserId();
+    public ResponseEntity<String> Like(@PathVariable Long postId, @AuthenticationPrincipal User currentUser) {
+        Long userId = currentUser.getId();
 
         userLikeService.toggleLike(userId, postId);
         feedPostService.UpdateLikesAmount(userId, postId);

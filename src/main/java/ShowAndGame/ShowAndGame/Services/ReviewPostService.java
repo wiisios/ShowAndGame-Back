@@ -60,28 +60,23 @@ public class ReviewPostService {
     }
 
     public void Create(ReviewPostForCreationAndUpdateDto newReviewPost, Long gameId, Long userId) {
+        Optional<Game> gameOpt = gameRepository.findById(gameId);
+        Optional<User> userOpt = userRepository.findById(userId);
+
+        if (gameOpt.isEmpty() || userOpt.isEmpty()) {
+            throw new EntityNotFoundException("Game or User not found");
+        }
+
+        Game currentGame = gameOpt.get();
+        User currentUser = userOpt.get();
+
         ReviewPost reviewPostToCreate = new ReviewPost();
-        Optional<Game> game = gameRepository.findById(gameId);
-        Optional<User> user = userRepository.findById(userId);
-        LocalDate dateNow = LocalDate.now();
-
-        if (game.isEmpty()) {
-            throw new EntityNotFoundException("Game with id " + gameId + " not found");
-        }
-        if (user.isEmpty()) {
-            throw new EntityNotFoundException("User with id " + userId + " not found");
-        }
-
-        Game currentGame = game.get();
-        User currentUser = user.get();
-
         reviewPostToCreate.setDescription(newReviewPost.getDescription());
-        reviewPostToCreate.setDate(dateNow);
+        reviewPostToCreate.setDate(LocalDate.now());
         reviewPostToCreate.setRating(newReviewPost.getRating());
         reviewPostToCreate.setGame(currentGame);
         reviewPostToCreate.setUser(currentUser);
 
-        //Update rating
         gameService.UpdateRating(currentGame, newReviewPost);
         reviewPostRepository.save(reviewPostToCreate);
     }

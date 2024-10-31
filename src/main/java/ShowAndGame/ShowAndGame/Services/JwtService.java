@@ -5,6 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,12 @@ public class JwtService {
     private long EXPIRATION_MINUTES;
     @Value("${security.jwt.secret-key}")
     private String SECRET_KEY;
+    private SecretKey signInKey;
+
+    @PostConstruct
+    public void initSignInKey() {
+        this.signInKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY));
+    }
 
     public String GenerateToken(User user, Map<String, Object> extraClaims) {
         Date issuedAt = new Date(System.currentTimeMillis());
@@ -28,14 +35,8 @@ public class JwtService {
                 .subject(user.getUsername())
                 .issuedAt(issuedAt)
                 .expiration(expiration)
-                .signWith(GetSignInKey(), Jwts.SIG.HS256)
+                .signWith(signInKey, Jwts.SIG.HS256)
                 .compact();
-    }
-
-    private SecretKey GetSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
-
-        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String ExtractUsername(String jwt) {
@@ -44,7 +45,7 @@ public class JwtService {
 
     private Claims ExtractAllClaims(String jwt) {
         return Jwts.parser()
-                .verifyWith(GetSignInKey())
+                .verifyWith(signInKey)
                 .build()
                 .parseSignedClaims(jwt)
                 .getPayload();

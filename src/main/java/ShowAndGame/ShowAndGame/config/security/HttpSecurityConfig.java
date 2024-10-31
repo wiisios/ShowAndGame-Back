@@ -51,11 +51,14 @@ public class HttpSecurityConfig {
                     authConfig.requestMatchers(HttpMethod.GET, "/games/export-pdf").permitAll();
                     authConfig.requestMatchers(HttpMethod.GET, "/games/all").permitAll();
                     authConfig.requestMatchers(HttpMethod.GET, "/feedPosts/export-pdf").permitAll();
+                    authConfig.requestMatchers(HttpMethod.GET, "/actuator/metrics").permitAll();
+                    authConfig.requestMatchers(HttpMethod.GET, "/actuator/metrics/**").permitAll();
 
                     // Private URLs
                         //Comment
                     authConfig.requestMatchers(HttpMethod.GET, "/comments/post/{postId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
                     authConfig.requestMatchers(HttpMethod.POST, "/comments").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.DELETE, "/comments/{id}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
 
                         //FeedPost
                     authConfig.requestMatchers(HttpMethod.GET, "/feedPosts").hasAnyRole("ADMIN", "USER", "DEVELOPER");
@@ -63,6 +66,7 @@ public class HttpSecurityConfig {
                     authConfig.requestMatchers(HttpMethod.GET, "/feedPosts/game/{gameId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
                     authConfig.requestMatchers(HttpMethod.POST, "/feedPosts/{gameId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
                     authConfig.requestMatchers(HttpMethod.PUT, "/feedPosts/like/{postId}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
+                    authConfig.requestMatchers(HttpMethod.DELETE, "/feedPosts/{id}").hasAnyRole("ADMIN", "USER", "DEVELOPER");
 
                         //Game
                     authConfig.requestMatchers(HttpMethod.GET, "/games/{id}").hasAnyRole("ADMIN", "USER", "DEVELOPER");

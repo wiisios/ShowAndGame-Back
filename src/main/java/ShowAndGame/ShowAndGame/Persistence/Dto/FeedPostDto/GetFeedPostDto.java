@@ -25,6 +25,18 @@ public class GetFeedPostDto {
         this.isLiked = isLiked;
     }
 
+    public GetFeedPostDto(Long id, String description, String image, Integer likesCounter, LocalDate date,
+                          String username, String userProfileImage, boolean isLiked) {
+        this.id = id;
+        this.description = description;
+        this.image = image;
+        this.likesCounter = likesCounter;
+        this.date = date;
+        this.username = username;
+        this.userProfileImage = userProfileImage;
+        this.isLiked = isLiked;
+    }
+
     public Long getId() {
         return id;
     }
